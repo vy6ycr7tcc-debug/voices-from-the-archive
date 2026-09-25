@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voices from the Archive</title>
+<style>
+  :root{
+    --ink:#0d1021; --ink2:#141833; --gold:#d8b56b; --gold-dim:#9a7f4c;
+    --paper:#ece5d3; --paper-dim:#b9b09a; --line:#2a2f55;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 800px at 50% -10%,#1b2148 0%,var(--ink) 60%);
+       color:var(--paper);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+  header{max-width:900px;margin:0 auto;padding:48px 20px 8px;text-align:center}
+  header h1{font-weight:400;font-size:2rem;letter-spacing:.14em;color:var(--gold);margin:0 0 6px}
+  header p{color:var(--paper-dim);font-style:italic;margin:4px 0}
+  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em}
+  #controls{max-width:900px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  #controls input,#controls select{background:var(--ink2);border:1px solid var(--line);color:var(--paper);
+    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit}
+  #controls input{flex:1 1 240px}
+  #controls select{flex:0 1 auto;max-width:220px}
+  #controls input::placeholder{color:#6f7599}
+  main{max-width:900px;margin:0 auto;padding:20px}
+  .card{background:rgba(20,24,51,.75);border:1px solid var(--line);border-radius:12px;
+        padding:16px 18px;margin:10px 0;cursor:pointer;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:var(--gold-dim);transform:translateY(-1px)}
+  .card .ep{color:var(--gold-dim);font-size:.78rem;letter-spacing:.18em}
+  .card h2{margin:6px 0 8px;font-weight:400;font-size:1.25rem}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;color:var(--paper-dim)}
+  .chip{border:1px solid var(--gold-dim);color:var(--gold);border-radius:20px;padding:2px 10px;font-size:.75rem;letter-spacing:.04em}
+  .dot{opacity:.5}
+  #more{display:block;margin:26px auto;padding:12px 34px;background:transparent;border:1px solid var(--gold-dim);
+        color:var(--gold);border-radius:24px;font-family:inherit;font-size:1rem;cursor:pointer;letter-spacing:.08em}
+  #more:hover{background:rgba(216,181,107,.08)}
+  /* detail */
+  #detail{position:fixed;inset:0;background:rgba(8,10,22,.92);display:none;overflow-y:auto;z-index:10}
+  #detail.open{display:block}
+  #sheet{max-width:760px;margin:4vh auto;background:var(--ink2);border:1px solid var(--line);
+         border-radius:14px;padding:28px 30px 40px}
+  #sheet .ep{color:var(--gold-dim);letter-spacing:.18em;font-size:.8rem}
+  #sheet h2{font-weight:400;font-size:1.7rem;margin:8px 0 4px;color:var(--gold)}
+  #close{float:right;background:none;border:1px solid var(--line);color:var(--paper-dim);
+         border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
+  #close:hover{border-color:var(--gold);color:var(--gold)}
+  audio{width:100%;margin:16px 0 6px}
+  #transcript{white-space:pre-wrap;line-height:1.75;color:var(--paper);font-size:1.02rem}
+  #sources{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--paper-dim)}
+  #sources div{margin:4px 0}
+  #empty{text-align:center;color:var(--paper-dim);font-style:italic;margin:60px 0}
+  footer{max-width:900px;margin:0 auto;padding:30px 20px 60px;text-align:center;color:#5d6390;font-size:.8rem;font-style:italic}
+</style>
+</head>
+<body>
+<header>
+  <h1>VOICES FROM THE ARCHIVE</h1>
+  <p>Interpretive narrations drawn from the L/L Research channeling archive</p>
+  <div id="count"></div>
+</header>
+<div id="controls">
+  <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
+  <select id="fEntity"><option value="">All entities</option></select>
+  <select id="fSeason"><option value="">All seasons</option></select>
+  <select id="fTheme"><option value="">All themes</option></select>
+</div>
+<main id="list"></main>
+<button id="more" style="display:none">Show more</button>
+<div id="empty" style="display:none">Nothing matches — try clearing a filter.</div>
+
+<div id="detail"><div id="sheet">
+  <button id="close" aria-label="Close">✕</button>
+  <div class="ep" id="dEp"></div>
+  <h2 id="dTitle"></h2>
+  <div class="meta" id="dMeta"></div>
+  <audio id="player" controls preload="none"></audio>
+  <div id="transcript"></div>
+  <div id="sources"></div>
+</div></div>
+
+<footer>Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</footer>
+
+<script>
+let EPS=[];
+const PAGE=40; let shown=0, filtered=[];
+const $=id=>document.getElementById(id);
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function seasonLabel(e){return "Season "+e.season+(e.season_name?" · "+e.season_name:"");}
+
+function initFilters(){
+  const ents=[...new Set(EPS.flatMap(e=>e.entities))].sort();
+  ents.forEach(x=>{const o=document.createElement("option");o.value=o.textContent=x;$("fEntity").appendChild(o);});
+  [...new Set(EPS.map(e=>e.season))].sort().forEach(s=>{
+    const o=document.createElement("option");o.value=s;
+    o.textContent=seasonLabel(EPS.find(e=>e.season===s));$("fSeason").appendChild(o);});
+  [...new Set(EPS.map(e=>e.theme))].sort().forEach(t=>{
+    const o=document.createElement("option");o.value=o.textContent=t;$("fTheme").appendChild(o);});
+}
+
+function applyFilters(){
+  const q=$("q").value.trim().toLowerCase(), fe=$("fEntity").value,
+        fs=$("fSeason").value, ft=$("fTheme").value;
+  filtered=EPS.filter(e=>
+    (!fe||e.entities.includes(fe))&&(!fs||e.season==fs)&&(!ft||e.theme===ft)&&
+    (!q||e.title.toLowerCase().includes(q)||e.transcript.toLowerCase().includes(q)));
+  shown=0;$("list").innerHTML="";renderMore();
+  $("empty").style.display=filtered.length?"none":"block";
+  $("count").textContent=filtered.length+" of "+EPS.length+" episodes";
+}
+
+function card(e){
+  const d=document.createElement("div");d.className="card";
+  d.innerHTML='<div class="ep">EPISODE '+String(e.n).padStart(2,"0")+" · "+esc(seasonLabel(e)).toUpperCase()+'</div>'
+    +"<h2>"+esc(e.title)+"</h2>"
+    +'<div class="meta">'+e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
+    +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span></div>";
+  d.onclick=()=>openDetail(e);
+  return d;
+}
+
+function renderMore(){
+  const slice=filtered.slice(shown,shown+PAGE);
+  slice.forEach(e=>$("list").appendChild(card(e)));
+  shown+=slice.length;
+  $("more").style.display=shown<filtered.length?"block":"none";
+}
+
+function openDetail(e){
+  $("dEp").textContent="EPISODE "+String(e.n).padStart(2,"0")+" · "+seasonLabel(e).toUpperCase();
+  $("dTitle").textContent=e.title;
+  $("dMeta").innerHTML=e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
+    +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>";
+  const p=$("player");p.src=e.audio;p.load();
+  $("transcript").textContent=e.transcript;
+  $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
+    +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
+  $("detail").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeDetail(){$("detail").classList.remove("open");$("player").pause();document.body.style.overflow="";}
+
+$("close").onclick=closeDetail;
+$("detail").addEventListener("click",ev=>{if(ev.target.id==="detail")closeDetail();});
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
+["q","fEntity","fSeason","fTheme"].forEach(id=>$(id).addEventListener("input",applyFilters));
+$("more").onclick=renderMore;
+
+fetch("episodes.json").then(r=>r.json()).then(data=>{
+  EPS=data;initFilters();applyFilters();
+}).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
+</script>
+</body>
+</html>
