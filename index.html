@@ -45,6 +45,9 @@
          border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
   #close:hover{border-color:var(--gold);color:var(--gold)}
   audio{width:100%;margin:16px 0 6px}
+  #related h3{margin:18px 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+  .rel{padding:8px 0;border-top:1px solid #2a2a2e;cursor:pointer}
+  .rel strong{font-weight:600}
   #transcript{white-space:pre-wrap;line-height:1.75;color:var(--paper);font-size:1.02rem}
   #sources{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--paper-dim)}
   #sources div{margin:4px 0}
@@ -76,6 +79,7 @@
   <audio id="player" controls preload="none"></audio>
   <div id="transcript"></div>
   <div id="sources"></div>
+  <div id="related"></div>
 </div></div>
 
 <footer>Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</footer>
@@ -138,6 +142,10 @@ function openDetail(e){
   $("transcript").textContent=e.transcript;
   $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
     +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
+  const rel=EPS.filter(x=>x.theme===e.theme&&x.id!==e.id).slice(0,4);
+  $("related").innerHTML=rel.length?("<h3>Related episodes</h3>"+rel.map(x=>
+    '<div class="rel" data-id="'+x.id+'"><strong>'+esc(x.title)+"</strong> · "+esc(seasonLabel(x))+"</div>").join("")):"";
+  $("related").querySelectorAll(".rel").forEach(d=>d.onclick=ev=>{ev.stopPropagation();openDetail(EPS.find(x=>x.id===d.dataset.id));});
   $("detail").classList.add("open");document.body.style.overflow="hidden";
 }
 function closeDetail(){$("detail").classList.remove("open");$("player").pause();document.body.style.overflow="";}
