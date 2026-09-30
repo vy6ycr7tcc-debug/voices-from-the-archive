@@ -9,24 +9,24 @@
   color-scheme: dark;
 
   /* Night baseline — moods.ts NIGHT: zenith / mid / horizon */
-  --zen:      #04060f;
-  --mid:      #0a0b1f;
-  --horizon:  #1b1a38;
-  --stone:    #1c1a2c;
-  --bark:     #08070f;
-  --lake:     #12122a;
+  --zen:      #0d1021;
+  --mid:      #111529;
+  --horizon:  #181e3a;
+  --stone:    #1e2544;
+  --bark:     #0a0d1c;
+  --lake:     #131830;
 
   /* Moonlight silver text */
-  --moon:       #dfe3f4;
-  --moon-soft:  #a9b0cc;
-  --moon-faint: #7e85a3;
+  --moon:       #f0f2f5;
+  --moon-soft:  #9ba3c4;
+  --moon-faint: #636b8c;
 
   /* Muted gold — etched stone lines / path lamps / rings */
-  --gold:        #e9c37d;
-  --gold-bright: #ffe6a0;
-  --gold-deep:   #c29653;
-  --gold-wash:   rgba(233, 195, 125, 0.10);
-  --gold-wash-2: rgba(233, 195, 125, 0.20);
+  --gold:        #d8b56b;
+  --gold-bright: #f4d693;
+  --gold-deep:   #b08846;
+  --gold-wash:   rgba(216, 181, 107, 0.10);
+  --gold-wash-2: rgba(216, 181, 107, 0.20);
 
   /* Cool light — beams / starlight rim / etched rock */
   --beam: #b8d1ff;
@@ -38,9 +38,8 @@
   --surface:   rgba(16, 16, 38, 0.78);
   --surface-2: rgba(28, 26, 44, 0.55);
 
-  --serif: Georgia, 'Iowan Old Style', Charter, 'Times New Roman', serif;
-  --sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, sans-serif;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Lato', -apple-system, sans-serif;
 
   --wrap: 720px;
   --radius: 10px;
