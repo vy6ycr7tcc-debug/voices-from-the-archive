@@ -37,13 +37,13 @@
     return s;
   }
 
-  var goldSprite = makeSprite(216, 181, 107, 0.8);
-  var blueSprite = makeSprite(138, 154, 199, 0.6);
+  var goldSprite = makeSprite(216, 181, 107, 0.95);
+  var blueSprite = makeSprite(176, 136, 70, 0.7);
 
   var motes = [];
 
   function seed() {
-    var count = Math.max(30, Math.min(80, Math.round((vw * vh) / 20000)));
+    var count = Math.max(50, Math.min(120, Math.round((vw * vh) / 15000)));
     motes.length = 0;
     for (var i = 0; i < count; i++) {
       motes.push({
