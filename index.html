@@ -2,344 +2,123 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAF8">
+<meta name="description" content="A browsable archive of interpretive narrations drawn from the L/L Research channeling archive.">
 <title>Voices from the Archive</title>
-<style>
-  :root{
-    --ink:#0d1021; --ink2:#141833; --gold:#d8b56b; --gold-dim:#9a7f4c;
-    --paper:#ece5d3; --paper-dim:#b9b09a; --line:#2a2f55;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1200px 800px at 50% -10%,#1b2148 0%,var(--ink) 60%);
-       color:var(--paper);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
-  header{max-width:900px;margin:0 auto;padding:48px 20px 8px;text-align:center}
-  header h1{font-weight:400;font-size:2rem;letter-spacing:.14em;color:var(--gold);margin:0 0 6px}
-  header p{color:var(--paper-dim);font-style:italic;margin:4px 0}
-  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em;margin-bottom:12px}
-
-  #nav-tabs{max-width:900px;margin:0 auto;display:flex;justify-content:center;gap:20px;border-bottom:1px solid var(--line);padding-bottom:10px}
-  .nav-tab{background:none;border:none;color:var(--paper-dim);font-family:inherit;font-size:1.1rem;cursor:pointer;padding:8px 16px;min-height:44px;}
-  .nav-tab:hover{color:var(--gold-dim)}
-  .nav-tab.active{color:var(--gold);font-weight:bold;border-bottom:2px solid var(--gold);margin-bottom:-11px}
-
-  #controls-wrapper{position:sticky;top:0;background:var(--ink);z-index:5;padding:12px 0;border-bottom:1px solid var(--line)}
-  #controls{max-width:900px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  #controls input,#controls select{background:var(--ink2);border:1px solid var(--line);color:var(--paper);
-    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit;min-height:44px;}
-  #controls input{flex:1 1 240px}
-  #controls select{flex:0 1 auto;max-width:220px}
-  #controls input::placeholder{color:#6f7599}
-  .filter-chip{background:var(--ink2);border:1px solid var(--line);color:var(--paper-dim);
-               border-radius:20px;padding:8px 16px;font-size:.9rem;font-family:inherit;cursor:pointer;
-               transition:border-color .2s,color .2s,background .2s;min-height:44px;}
-  .filter-chip:hover{border-color:var(--gold-dim);color:var(--gold)}
-  .filter-chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-  .btn-bookmark{color:var(--paper-dim);margin-left:auto}
-  .btn-bookmark.active{color:var(--gold)}
-  main{max-width:900px;margin:0 auto;padding:20px}
-  .card{background:rgba(20,24,51,.75);border:1px solid var(--line);border-radius:12px;
-        padding:16px 18px;margin:10px 0;cursor:pointer;transition:border-color .2s,transform .2s}
-  .card:hover{border-color:var(--gold-dim);transform:translateY(-1px)}
-  .card .ep{color:var(--gold-dim);font-size:.78rem;letter-spacing:.18em}
-  .card h2{margin:6px 0 8px;font-weight:400;font-size:1.25rem}
-  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;color:var(--paper-dim)}
-  .chip{border:1px solid var(--gold-dim);color:var(--gold);border-radius:20px;padding:2px 10px;font-size:.75rem;letter-spacing:.04em}
-  .dot{opacity:.5}
-  #more{display:block;margin:26px auto;padding:12px 34px;background:transparent;border:1px solid var(--gold-dim);
-        color:var(--gold);border-radius:24px;font-family:inherit;font-size:1rem;cursor:pointer;letter-spacing:.08em}
-  #more:hover{background:rgba(216,181,107,.08)}
-  /* detail */
-  #detail{position:fixed;inset:0;background:rgba(8,10,22,.92);display:none;overflow-y:auto;z-index:10}
-  #detail.open{display:block}
-  #sheet{max-width:760px;margin:4vh auto;background:var(--ink2);border:1px solid var(--line);
-         border-radius:14px;padding:28px 30px 40px}
-  #sheet .ep{color:var(--gold-dim);letter-spacing:.18em;font-size:.8rem}
-  #sheet h2{font-weight:400;font-size:1.7rem;margin:8px 0 4px;color:var(--gold)}
-  #close{float:right;background:none;border:1px solid var(--line);color:var(--paper-dim);
-         border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
-  #close:hover{border-color:var(--gold);color:var(--gold)}
-  audio{width:100%;margin:16px 0 6px}
-  /* custom player */
-  #player-ui{display:flex;align-items:center;gap:12px;margin:16px 0 20px}
-  #btn-play{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--ink);color:var(--gold);
-            cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
-  #btn-play:hover{border-color:var(--gold)}
-  #scrubber-container{flex:1;height:44px;display:flex;align-items:center;cursor:pointer;touch-action:none}
-  #scrubber-track{width:100%;height:6px;background:var(--line);border-radius:3px;position:relative}
-  #scrubber-fill{height:100%;background:var(--gold);border-radius:3px;width:0%;position:absolute;top:0;left:0}
-  #scrubber-thumb{width:16px;height:16px;background:var(--gold);border-radius:50%;position:absolute;top:-5px;left:0%;
-                  transform:translateX(-50%);box-shadow:0 0 4px rgba(0,0,0,0.5);display:none}
-  #scrubber-container.loading #scrubber-track{background:repeating-linear-gradient(45deg,var(--line),var(--line) 10px,var(--ink2) 10px,var(--ink2) 20px);animation:loadbg 1s linear infinite}
-  @keyframes loadbg{0%{background-position:0 0}100%{background-position:28px 0}}
-  #time-readout{font-size:.85rem;color:var(--paper-dim);min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
-  .action-btn{background:none;border:1px solid var(--line);color:var(--paper-dim);border-radius:22px;
-              min-height:44px;min-width:44px;cursor:pointer;font-family:inherit;font-size:14px;padding:0 12px;
-              display:inline-flex;align-items:center;justify-content:center;margin-left:auto}
-  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
-  mark{background:rgba(216,181,107,.3);color:var(--gold);border-radius:2px;padding:0 2px}
-  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);
-         padding:12px 24px;border-radius:24px;font-size:.95rem;font-weight:bold;opacity:0;pointer-events:none;
-         transition:opacity .3s;z-index:100}
-  #toast.show{opacity:1}
-  #related h3{margin:18px 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
-  .rel{padding:8px 0;border-top:1px solid #2a2a2e;cursor:pointer}
-  .rel strong{font-weight:600}
-  #transcript{white-space:pre-wrap;line-height:1.75;color:var(--paper);font-size:1.02rem}
-  #sources{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--paper-dim)}
-  #sources div{margin:4px 0}
-  #empty{text-align:center;color:var(--paper-dim);font-style:italic;margin:60px 0}
-  footer{max-width:900px;margin:0 auto;padding:30px 20px 60px;text-align:center;color:#5d6390;font-size:.8rem;font-style:italic}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
-  <h1>VOICES FROM THE ARCHIVE</h1>
-  <p>Interpretive narrations drawn from the L/L Research channeling archive</p>
-  <div id="count"></div>
-  <div id="nav-tabs">
-    <button id="tab-episodes" class="nav-tab active">Episodes</button>
-    <button id="tab-bookmarks" class="nav-tab">Bookmarks</button>
+
+<header class="site-header">
+  <div class="wrap">
+    <h1 class="site-title">Voices from the Archive</h1>
+    <p class="site-sub">Interpretive narrations drawn from the L/L Research channeling archive</p>
   </div>
 </header>
-<div id="controls-wrapper">
-  <div id="controls">
-    <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
-    <button id="fBookmark" class="filter-chip" style="display:none">★ Bookmarks</button>
-    <select id="fEntity"><option value="">All entities</option></select>
-    <select id="fSeason"><option value="">All seasons</option></select>
-    <select id="fTheme"><option value="">All themes</option></select>
-  </div>
-</div>
-<main id="list"></main>
-<button id="more" style="display:none">Show more</button>
-<div id="empty" style="display:none">Nothing matches — try clearing a filter.</div>
 
-<div id="toast">Link copied</div>
-<div id="detail"><div id="sheet">
-  <button id="close" aria-label="Close">✕</button>
-  <div class="ep" id="dEp"></div>
-  <h2 id="dTitle"></h2>
-  <div class="meta" id="dMeta"></div>
-  <audio id="player" preload="metadata" style="display:none"></audio>
-  <div id="player-ui">
-    <button id="btn-play">▶</button>
-    <div id="scrubber-container">
-      <div id="scrubber-track">
-        <div id="scrubber-fill"></div>
-        <div id="scrubber-thumb"></div>
+<div class="sticky-top">
+  <div class="wrap">
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab active" data-tab="episodes" type="button">Episodes</button>
+      <button class="tab" data-tab="bookmarks" type="button">Bookmarks</button>
+    </nav>
+    <div class="search-row">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+        <input id="q" type="search" placeholder="Search titles, transcripts, themes…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Search episodes">
+        <button id="qClear" class="search-clear" type="button" aria-label="Clear search">✕</button>
       </div>
     </div>
-    <div id="time-readout">0:00 / 0:00</div>
   </div>
-  <div id="transcript"></div>
-  <div id="sources"></div>
-  <div id="related"></div>
-</div></div>
+</div>
 
-<footer>Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</footer>
+<div class="wrap filter-row">
+  <select id="fTheme" aria-label="Filter by theme"><option value="">All themes</option></select>
+  <select id="fEntity" aria-label="Filter by entity"><option value="">All entities</option></select>
+  <select id="fSeason" aria-label="Filter by season"><option value="">All seasons</option></select>
+</div>
 
-<script>
-let EPS=[];
-const PAGE=40; let shown=0, filtered=[];
-const $=id=>document.getElementById(id);
-const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
-const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+<div class="wrap result-count" id="count"></div>
 
-function debounce(func, wait) {
-  let timeout;
-  return function(...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
+<main class="wrap list" id="list"></main>
 
-let BOOKMARKS = [];
-try {
-  const b = localStorage.getItem("vfa-bookmarks");
-  if(b) BOOKMARKS = JSON.parse(b) || [];
-  if(!Array.isArray(BOOKMARKS)) BOOKMARKS = [];
-} catch(e) { BOOKMARKS = []; }
+<div class="wrap more-wrap" id="moreWrap" hidden>
+  <button id="more" type="button">Show more</button>
+</div>
 
-window.toggleBookmark = (ev, id) => {
-  if(ev) ev.stopPropagation();
-  if(BOOKMARKS.includes(id)) {
-    BOOKMARKS = BOOKMARKS.filter(x => x !== id);
-  } else {
-    BOOKMARKS.push(id);
-  }
-  try { localStorage.setItem("vfa-bookmarks", JSON.stringify(BOOKMARKS)); } catch(e){}
+<div class="wrap empty" id="empty" hidden></div>
 
-  if(ev && ev.target) ev.target.classList.toggle("active", BOOKMARKS.includes(id));
+<footer class="site-footer">
+  <div class="wrap">
+    Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research
+  </div>
+</footer>
 
-  const cardBtns = document.querySelectorAll(`.card .btn-bookmark[data-id="${id}"]`);
-  cardBtns.forEach(b => b.classList.toggle("active", BOOKMARKS.includes(id)));
-  const detailBtn = document.querySelector(`#sheet .btn-bookmark[data-id="${id}"]`);
-  if(detailBtn) detailBtn.classList.toggle("active", BOOKMARKS.includes(id));
+<!-- Mini player -->
+<div class="mini" id="mini" hidden>
+  <div class="mini-inner">
+    <button class="mini-play" id="miniPlay" type="button" aria-label="Play">▶</button>
+    <div class="mini-body">
+      <div class="mini-top">
+        <span class="mini-title" id="miniTitle" role="button" tabindex="0"></span>
+        <span class="mini-time" id="miniTime">0:00</span>
+      </div>
+      <div class="mini-scrub" id="miniScrub" role="slider" aria-label="Seek">
+        <div class="mini-track"><div class="mini-fill" id="miniFill"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  if($("fBookmark").classList.contains("active")) applyFilters();
-};
+<!-- Detail reading sheet -->
+<div class="detail" id="detail" hidden>
+  <div class="detail-bar">
+    <button class="back-btn" id="detailBack" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <div class="detail-bar-actions">
+      <button class="icon-btn bookmark" id="detailBookmark" data-action="bookmark" type="button" aria-label="Bookmark episode" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.55 5.17 5.7.83-4.13 4.02.98 5.68L12 16.62l-5.1 2.68.98-5.68L3.75 9.6l5.7-.83z"/></svg>
+      </button>
+      <button class="icon-btn" id="detailShare" data-action="share" type="button" aria-label="Share episode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg>
+      </button>
+    </div>
+  </div>
 
-function seasonLabel(e){return "Season "+e.season+(e.season_name?" · "+e.season_name:"");}
+  <div class="detail-scroll" id="detailScroll">
+    <article class="sheet">
+      <div class="ep-kicker" id="dKicker"></div>
+      <h1 class="sheet-title" id="dTitle"></h1>
+      <div class="ep-meta" id="dMeta"></div>
 
-function initFilters(){
-  const ents=[...new Set(EPS.flatMap(e=>e.entities))].sort();
-  ents.forEach(x=>{const o=document.createElement("option");o.value=o.textContent=x;$("fEntity").appendChild(o);});
-  [...new Set(EPS.map(e=>e.season))].sort().forEach(s=>{
-    const o=document.createElement("option");o.value=s;
-    o.textContent=seasonLabel(EPS.find(e=>e.season===s));$("fSeason").appendChild(o);});
-  [...new Set(EPS.map(e=>e.theme))].sort().forEach(t=>{
-    const o=document.createElement("option");o.value=o.textContent=t;$("fTheme").appendChild(o);});
-}
+      <div class="player">
+        <div class="player-row">
+          <button class="play-btn" id="btnPlay" type="button" aria-label="Play">▶</button>
+          <div class="player-body">
+            <div class="scrub" id="scrub" role="slider" aria-label="Seek">
+              <div class="scrub-track">
+                <div class="scrub-fill" id="scrubFill"></div>
+                <div class="scrub-thumb" id="scrubThumb"></div>
+              </div>
+            </div>
+            <div class="player-time" id="timeReadout">0:00 / 0:00</div>
+          </div>
+        </div>
+      </div>
 
-function applyFilters(){
-  const q=$("q").value.trim().toLowerCase(), fe=$("fEntity").value,
-        fs=$("fSeason").value, ft=$("fTheme").value, onlyB=$("fBookmark").classList.contains("active");
-  filtered=EPS.filter(e=>{
-    if(fe&&!e.entities.includes(fe)) return false;
-    if(fs&&e.season!=fs) return false;
-    if(ft&&e.theme!==ft) return false;
-    if(onlyB&&!BOOKMARKS.includes(e.id)) return false;
-    if(q){
-      const allText = (e.title+" "+e.transcript+" "+e.theme+" "+e.entities.join(" ")).toLowerCase();
-      if(!allText.includes(q)) return false;
-    }
-    return true;
-  });
-  shown=0;$("list").innerHTML="";renderMore();
-  $("empty").style.display=filtered.length?"none":"block";
-  $("count").textContent=filtered.length+" of "+EPS.length+" episodes";
-}
+      <div class="transcript" id="dTranscript"></div>
+      <div class="sources" id="dSources"></div>
+      <div class="related" id="dRelated"></div>
+    </article>
+  </div>
+</div>
 
-window.shareEpisode = (ev, id) => {
-  if(ev) ev.stopPropagation();
-  const url = window.location.origin + window.location.pathname + "?episode=" + id;
-  const e = EPS.find(x => x.id === id);
-  if (navigator.share) {
-    navigator.share({ title: e.title, text: "Voices from the Archive: " + e.title, url: url }).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(url).then(() => {
-      const t = $("toast");
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 2000);
-    });
-  }
-};
+<audio id="audio" preload="metadata"></audio>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-function card(e){
-  const d=document.createElement("div");d.className="card";
-  const q=$("q").value.trim();
-  let hlTitle = esc(e.title);
-  if(q){
-    const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+")", "gi");
-    hlTitle = hlTitle.replace(re, "<mark>$1</mark>");
-  }
-  d.innerHTML='<div class="ep">EPISODE '+String(e.n).padStart(2,"0")+" · "+esc(seasonLabel(e)).toUpperCase()+'</div>'
-    +"<h2>"+hlTitle+"</h2>"
-    +'<div class="meta">'+e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
-    +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>"
-    +'<button class="action-btn btn-bookmark '+(BOOKMARKS.includes(e.id)?"active":"")+'" data-id="'+e.id+'" onclick="toggleBookmark(event, \''+e.id+'\')">★</button>'
-    +'<button class="action-btn" style="margin-left:8px" onclick="shareEpisode(event, \''+e.id+'\')">Share</button></div>';
-  d.onclick=()=>openDetail(e);
-  return d;
-}
-
-function renderMore(){
-  const slice=filtered.slice(shown,shown+PAGE);
-  slice.forEach(e=>$("list").appendChild(card(e)));
-  shown+=slice.length;
-  $("more").style.display=shown<filtered.length?"block":"none";
-}
-
-let isDragging=false;
-function initPlayer(){
-  const p=$("player"), btn=$("btn-play"), sc=$("scrubber-container"), fill=$("scrubber-fill"), thumb=$("scrubber-thumb"), time=$("time-readout");
-  btn.onclick=()=>p.paused?p.play():p.pause();
-  p.onplay=()=>btn.textContent="⏸";
-  p.onpause=()=>btn.textContent="▶";
-  p.onloadstart=()=>{sc.classList.add("loading");thumb.style.display="none";fill.style.width="0%";time.textContent="0:00 / 0:00";btn.textContent="▶";}
-  p.onloadedmetadata=()=>{sc.classList.remove("loading");thumb.style.display="block";updateTime();}
-  p.ontimeupdate=()=>{if(!isDragging)updateProgress(p.currentTime/p.duration);updateTime();}
-  function updateTime(){
-    if(isNaN(p.duration)) return;
-    time.textContent=fmt(isDragging?previewTime:p.currentTime)+" / "+fmt(p.duration);
-  }
-  function updateProgress(frac){
-    if(isNaN(p.duration)) return;
-    const pcent=Math.max(0,Math.min(100,frac*100))+"%";
-    fill.style.width=pcent; thumb.style.left=pcent;
-  }
-  let previewTime=0;
-  function handlePointer(ev){
-    if(isNaN(p.duration)) return;
-    const rect=sc.getBoundingClientRect();
-    let frac=(ev.clientX-rect.left)/rect.width;
-    frac=Math.max(0,Math.min(1,frac));
-    previewTime=frac*p.duration;
-    updateProgress(frac);
-    updateTime();
-  }
-  sc.onpointerdown=ev=>{isDragging=true;sc.setPointerCapture(ev.pointerId);handlePointer(ev);};
-  sc.onpointermove=ev=>{if(isDragging)handlePointer(ev);};
-  sc.onpointerup=ev=>{if(isDragging){isDragging=false;handlePointer(ev);p.currentTime=previewTime;sc.releasePointerCapture(ev.pointerId);}};
-  sc.onpointercancel=ev=>{if(isDragging){isDragging=false;sc.releasePointerCapture(ev.pointerId);updateProgress(p.currentTime/p.duration);updateTime();}};
-}
-
-function openDetail(e, noLoad=false){
-  $("dEp").textContent="EPISODE "+String(e.n).padStart(2,"0")+" · "+seasonLabel(e).toUpperCase();
-  $("dTitle").textContent=e.title;
-  $("dMeta").innerHTML=e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
-    +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>"
-    +'<button class="action-btn btn-bookmark '+(BOOKMARKS.includes(e.id)?"active":"")+'" data-id="'+e.id+'" onclick="toggleBookmark(event, \''+e.id+'\')">★</button>'
-    +'<button class="action-btn" style="margin-left:8px" onclick="shareEpisode(event, \''+e.id+'\')">Share</button>';
-  const p=$("player");p.src=e.audio;
-  if(!noLoad) p.load();
-  $("transcript").textContent=e.transcript;
-  $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
-    +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
-  const rel=EPS.filter(x=>x.theme===e.theme&&x.id!==e.id).slice(0,4);
-  $("related").innerHTML=rel.length?("<h3>Related episodes</h3>"+rel.map(x=>
-    '<div class="rel" data-id="'+x.id+'"><strong>'+esc(x.title)+"</strong> · "+esc(seasonLabel(x))+"</div>").join("")):"";
-  $("related").querySelectorAll(".rel").forEach(d=>d.onclick=ev=>{ev.stopPropagation();openDetail(EPS.find(x=>x.id===d.dataset.id));});
-  $("detail").classList.add("open");document.body.style.overflow="hidden";
-}
-function closeDetail(){$("detail").classList.remove("open");$("player").pause();document.body.style.overflow="";}
-
-$("close").onclick=closeDetail;
-$("detail").addEventListener("click",ev=>{if(ev.target.id==="detail")closeDetail();});
-document.addEventListener("keydown",ev=>{
-  if(ev.key==="Escape")closeDetail();
-  if(ev.key==="/" && ev.target.tagName!=="INPUT" && ev.target.tagName!=="TEXTAREA"){
-    ev.preventDefault(); $("q").focus();
-  }
-});
-["fEntity","fSeason","fTheme"].forEach(id=>$(id).addEventListener("input",applyFilters));
-$("q").addEventListener("input", debounce(applyFilters, 200));
-$("fBookmark").onclick=()=>{ $("fBookmark").classList.toggle("active"); applyFilters(); };
-
-$("tab-episodes").onclick=()=>{
-  $("tab-episodes").classList.add("active");
-  $("tab-bookmarks").classList.remove("active");
-  $("fBookmark").classList.remove("active");
-  applyFilters();
-};
-$("tab-bookmarks").onclick=()=>{
-  $("tab-bookmarks").classList.add("active");
-  $("tab-episodes").classList.remove("active");
-  $("fBookmark").classList.add("active");
-  applyFilters();
-};
-$("more").onclick=renderMore;
-
-fetch("episodes.json").then(r=>r.json()).then(data=>{
-  EPS=data;initFilters();applyFilters();initPlayer();
-  const deepId = new URLSearchParams(window.location.search).get('episode');
-  if(deepId){
-    const e = EPS.find(x => x.id === deepId);
-    if(e) openDetail(e, true);
-  }
-}).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
-</script>
+<script src="app.js"></script>
 </body>
 </html>
