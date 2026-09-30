@@ -15,13 +15,27 @@
   header{max-width:900px;margin:0 auto;padding:48px 20px 8px;text-align:center}
   header h1{font-weight:400;font-size:2rem;letter-spacing:.14em;color:var(--gold);margin:0 0 6px}
   header p{color:var(--paper-dim);font-style:italic;margin:4px 0}
-  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em}
-  #controls{max-width:900px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em;margin-bottom:12px}
+
+  #nav-tabs{max-width:900px;margin:0 auto;display:flex;justify-content:center;gap:20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .nav-tab{background:none;border:none;color:var(--paper-dim);font-family:inherit;font-size:1.1rem;cursor:pointer;padding:8px 16px;min-height:44px;}
+  .nav-tab:hover{color:var(--gold-dim)}
+  .nav-tab.active{color:var(--gold);font-weight:bold;border-bottom:2px solid var(--gold);margin-bottom:-11px}
+
+  #controls-wrapper{position:sticky;top:0;background:var(--ink);z-index:5;padding:12px 0;border-bottom:1px solid var(--line)}
+  #controls{max-width:900px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
   #controls input,#controls select{background:var(--ink2);border:1px solid var(--line);color:var(--paper);
-    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit}
+    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit;min-height:44px;}
   #controls input{flex:1 1 240px}
   #controls select{flex:0 1 auto;max-width:220px}
   #controls input::placeholder{color:#6f7599}
+  .filter-chip{background:var(--ink2);border:1px solid var(--line);color:var(--paper-dim);
+               border-radius:20px;padding:8px 16px;font-size:.9rem;font-family:inherit;cursor:pointer;
+               transition:border-color .2s,color .2s,background .2s;min-height:44px;}
+  .filter-chip:hover{border-color:var(--gold-dim);color:var(--gold)}
+  .filter-chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .btn-bookmark{color:var(--paper-dim);margin-left:auto}
+  .btn-bookmark.active{color:var(--gold)}
   main{max-width:900px;margin:0 auto;padding:20px}
   .card{background:rgba(20,24,51,.75);border:1px solid var(--line);border-radius:12px;
         padding:16px 18px;margin:10px 0;cursor:pointer;transition:border-color .2s,transform .2s}
@@ -45,6 +59,28 @@
          border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
   #close:hover{border-color:var(--gold);color:var(--gold)}
   audio{width:100%;margin:16px 0 6px}
+  /* custom player */
+  #player-ui{display:flex;align-items:center;gap:12px;margin:16px 0 20px}
+  #btn-play{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--ink);color:var(--gold);
+            cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+  #btn-play:hover{border-color:var(--gold)}
+  #scrubber-container{flex:1;height:44px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+  #scrubber-track{width:100%;height:6px;background:var(--line);border-radius:3px;position:relative}
+  #scrubber-fill{height:100%;background:var(--gold);border-radius:3px;width:0%;position:absolute;top:0;left:0}
+  #scrubber-thumb{width:16px;height:16px;background:var(--gold);border-radius:50%;position:absolute;top:-5px;left:0%;
+                  transform:translateX(-50%);box-shadow:0 0 4px rgba(0,0,0,0.5);display:none}
+  #scrubber-container.loading #scrubber-track{background:repeating-linear-gradient(45deg,var(--line),var(--line) 10px,var(--ink2) 10px,var(--ink2) 20px);animation:loadbg 1s linear infinite}
+  @keyframes loadbg{0%{background-position:0 0}100%{background-position:28px 0}}
+  #time-readout{font-size:.85rem;color:var(--paper-dim);min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+  .action-btn{background:none;border:1px solid var(--line);color:var(--paper-dim);border-radius:22px;
+              min-height:44px;min-width:44px;cursor:pointer;font-family:inherit;font-size:14px;padding:0 12px;
+              display:inline-flex;align-items:center;justify-content:center;margin-left:auto}
+  .action-btn:hover{border-color:var(--gold);color:var(--gold)}
+  mark{background:rgba(216,181,107,.3);color:var(--gold);border-radius:2px;padding:0 2px}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);
+         padding:12px 24px;border-radius:24px;font-size:.95rem;font-weight:bold;opacity:0;pointer-events:none;
+         transition:opacity .3s;z-index:100}
+  #toast.show{opacity:1}
   #related h3{margin:18px 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
   .rel{padding:8px 0;border-top:1px solid #2a2a2e;cursor:pointer}
   .rel strong{font-weight:600}
@@ -60,23 +96,41 @@
   <h1>VOICES FROM THE ARCHIVE</h1>
   <p>Interpretive narrations drawn from the L/L Research channeling archive</p>
   <div id="count"></div>
+  <div id="nav-tabs">
+    <button id="tab-episodes" class="nav-tab active">Episodes</button>
+    <button id="tab-bookmarks" class="nav-tab">Bookmarks</button>
+  </div>
 </header>
-<div id="controls">
-  <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
-  <select id="fEntity"><option value="">All entities</option></select>
-  <select id="fSeason"><option value="">All seasons</option></select>
-  <select id="fTheme"><option value="">All themes</option></select>
+<div id="controls-wrapper">
+  <div id="controls">
+    <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
+    <button id="fBookmark" class="filter-chip" style="display:none">★ Bookmarks</button>
+    <select id="fEntity"><option value="">All entities</option></select>
+    <select id="fSeason"><option value="">All seasons</option></select>
+    <select id="fTheme"><option value="">All themes</option></select>
+  </div>
 </div>
 <main id="list"></main>
 <button id="more" style="display:none">Show more</button>
 <div id="empty" style="display:none">Nothing matches — try clearing a filter.</div>
 
+<div id="toast">Link copied</div>
 <div id="detail"><div id="sheet">
   <button id="close" aria-label="Close">✕</button>
   <div class="ep" id="dEp"></div>
   <h2 id="dTitle"></h2>
   <div class="meta" id="dMeta"></div>
-  <audio id="player" controls preload="none"></audio>
+  <audio id="player" preload="metadata" style="display:none"></audio>
+  <div id="player-ui">
+    <button id="btn-play">▶</button>
+    <div id="scrubber-container">
+      <div id="scrubber-track">
+        <div id="scrubber-fill"></div>
+        <div id="scrubber-thumb"></div>
+      </div>
+    </div>
+    <div id="time-readout">0:00 / 0:00</div>
+  </div>
   <div id="transcript"></div>
   <div id="sources"></div>
   <div id="related"></div>
@@ -90,6 +144,40 @@ const PAGE=40; let shown=0, filtered=[];
 const $=id=>document.getElementById(id);
 const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+let BOOKMARKS = [];
+try {
+  const b = localStorage.getItem("vfa-bookmarks");
+  if(b) BOOKMARKS = JSON.parse(b) || [];
+  if(!Array.isArray(BOOKMARKS)) BOOKMARKS = [];
+} catch(e) { BOOKMARKS = []; }
+
+window.toggleBookmark = (ev, id) => {
+  if(ev) ev.stopPropagation();
+  if(BOOKMARKS.includes(id)) {
+    BOOKMARKS = BOOKMARKS.filter(x => x !== id);
+  } else {
+    BOOKMARKS.push(id);
+  }
+  try { localStorage.setItem("vfa-bookmarks", JSON.stringify(BOOKMARKS)); } catch(e){}
+
+  if(ev && ev.target) ev.target.classList.toggle("active", BOOKMARKS.includes(id));
+
+  const cardBtns = document.querySelectorAll(`.card .btn-bookmark[data-id="${id}"]`);
+  cardBtns.forEach(b => b.classList.toggle("active", BOOKMARKS.includes(id)));
+  const detailBtn = document.querySelector(`#sheet .btn-bookmark[data-id="${id}"]`);
+  if(detailBtn) detailBtn.classList.toggle("active", BOOKMARKS.includes(id));
+
+  if($("fBookmark").classList.contains("active")) applyFilters();
+};
 
 function seasonLabel(e){return "Season "+e.season+(e.season_name?" · "+e.season_name:"");}
 
@@ -105,22 +193,53 @@ function initFilters(){
 
 function applyFilters(){
   const q=$("q").value.trim().toLowerCase(), fe=$("fEntity").value,
-        fs=$("fSeason").value, ft=$("fTheme").value;
-  filtered=EPS.filter(e=>
-    (!fe||e.entities.includes(fe))&&(!fs||e.season==fs)&&(!ft||e.theme===ft)&&
-    (!q||e.title.toLowerCase().includes(q)||e.transcript.toLowerCase().includes(q)));
+        fs=$("fSeason").value, ft=$("fTheme").value, onlyB=$("fBookmark").classList.contains("active");
+  filtered=EPS.filter(e=>{
+    if(fe&&!e.entities.includes(fe)) return false;
+    if(fs&&e.season!=fs) return false;
+    if(ft&&e.theme!==ft) return false;
+    if(onlyB&&!BOOKMARKS.includes(e.id)) return false;
+    if(q){
+      const allText = (e.title+" "+e.transcript+" "+e.theme+" "+e.entities.join(" ")).toLowerCase();
+      if(!allText.includes(q)) return false;
+    }
+    return true;
+  });
   shown=0;$("list").innerHTML="";renderMore();
   $("empty").style.display=filtered.length?"none":"block";
   $("count").textContent=filtered.length+" of "+EPS.length+" episodes";
 }
 
+window.shareEpisode = (ev, id) => {
+  if(ev) ev.stopPropagation();
+  const url = window.location.origin + window.location.pathname + "?episode=" + id;
+  const e = EPS.find(x => x.id === id);
+  if (navigator.share) {
+    navigator.share({ title: e.title, text: "Voices from the Archive: " + e.title, url: url }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      const t = $("toast");
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2000);
+    });
+  }
+};
+
 function card(e){
   const d=document.createElement("div");d.className="card";
+  const q=$("q").value.trim();
+  let hlTitle = esc(e.title);
+  if(q){
+    const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+")", "gi");
+    hlTitle = hlTitle.replace(re, "<mark>$1</mark>");
+  }
   d.innerHTML='<div class="ep">EPISODE '+String(e.n).padStart(2,"0")+" · "+esc(seasonLabel(e)).toUpperCase()+'</div>'
-    +"<h2>"+esc(e.title)+"</h2>"
+    +"<h2>"+hlTitle+"</h2>"
     +'<div class="meta">'+e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
     +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span></div>";
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>"
+    +'<button class="action-btn btn-bookmark '+(BOOKMARKS.includes(e.id)?"active":"")+'" data-id="'+e.id+'" onclick="toggleBookmark(event, \''+e.id+'\')">★</button>'
+    +'<button class="action-btn" style="margin-left:8px" onclick="shareEpisode(event, \''+e.id+'\')">Share</button></div>';
   d.onclick=()=>openDetail(e);
   return d;
 }
@@ -132,13 +251,50 @@ function renderMore(){
   $("more").style.display=shown<filtered.length?"block":"none";
 }
 
-function openDetail(e){
+let isDragging=false;
+function initPlayer(){
+  const p=$("player"), btn=$("btn-play"), sc=$("scrubber-container"), fill=$("scrubber-fill"), thumb=$("scrubber-thumb"), time=$("time-readout");
+  btn.onclick=()=>p.paused?p.play():p.pause();
+  p.onplay=()=>btn.textContent="⏸";
+  p.onpause=()=>btn.textContent="▶";
+  p.onloadstart=()=>{sc.classList.add("loading");thumb.style.display="none";fill.style.width="0%";time.textContent="0:00 / 0:00";btn.textContent="▶";}
+  p.onloadedmetadata=()=>{sc.classList.remove("loading");thumb.style.display="block";updateTime();}
+  p.ontimeupdate=()=>{if(!isDragging)updateProgress(p.currentTime/p.duration);updateTime();}
+  function updateTime(){
+    if(isNaN(p.duration)) return;
+    time.textContent=fmt(isDragging?previewTime:p.currentTime)+" / "+fmt(p.duration);
+  }
+  function updateProgress(frac){
+    if(isNaN(p.duration)) return;
+    const pcent=Math.max(0,Math.min(100,frac*100))+"%";
+    fill.style.width=pcent; thumb.style.left=pcent;
+  }
+  let previewTime=0;
+  function handlePointer(ev){
+    if(isNaN(p.duration)) return;
+    const rect=sc.getBoundingClientRect();
+    let frac=(ev.clientX-rect.left)/rect.width;
+    frac=Math.max(0,Math.min(1,frac));
+    previewTime=frac*p.duration;
+    updateProgress(frac);
+    updateTime();
+  }
+  sc.onpointerdown=ev=>{isDragging=true;sc.setPointerCapture(ev.pointerId);handlePointer(ev);};
+  sc.onpointermove=ev=>{if(isDragging)handlePointer(ev);};
+  sc.onpointerup=ev=>{if(isDragging){isDragging=false;handlePointer(ev);p.currentTime=previewTime;sc.releasePointerCapture(ev.pointerId);}};
+  sc.onpointercancel=ev=>{if(isDragging){isDragging=false;sc.releasePointerCapture(ev.pointerId);updateProgress(p.currentTime/p.duration);updateTime();}};
+}
+
+function openDetail(e, noLoad=false){
   $("dEp").textContent="EPISODE "+String(e.n).padStart(2,"0")+" · "+seasonLabel(e).toUpperCase();
   $("dTitle").textContent=e.title;
   $("dMeta").innerHTML=e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
     +'<span class="dot">·</span><span>'+esc(e.theme)+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>";
-  const p=$("player");p.src=e.audio;p.load();
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>"
+    +'<button class="action-btn btn-bookmark '+(BOOKMARKS.includes(e.id)?"active":"")+'" data-id="'+e.id+'" onclick="toggleBookmark(event, \''+e.id+'\')">★</button>'
+    +'<button class="action-btn" style="margin-left:8px" onclick="shareEpisode(event, \''+e.id+'\')">Share</button>';
+  const p=$("player");p.src=e.audio;
+  if(!noLoad) p.load();
   $("transcript").textContent=e.transcript;
   $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
     +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
@@ -152,12 +308,37 @@ function closeDetail(){$("detail").classList.remove("open");$("player").pause();
 
 $("close").onclick=closeDetail;
 $("detail").addEventListener("click",ev=>{if(ev.target.id==="detail")closeDetail();});
-document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
-["q","fEntity","fSeason","fTheme"].forEach(id=>$(id).addEventListener("input",applyFilters));
+document.addEventListener("keydown",ev=>{
+  if(ev.key==="Escape")closeDetail();
+  if(ev.key==="/" && ev.target.tagName!=="INPUT" && ev.target.tagName!=="TEXTAREA"){
+    ev.preventDefault(); $("q").focus();
+  }
+});
+["fEntity","fSeason","fTheme"].forEach(id=>$(id).addEventListener("input",applyFilters));
+$("q").addEventListener("input", debounce(applyFilters, 200));
+$("fBookmark").onclick=()=>{ $("fBookmark").classList.toggle("active"); applyFilters(); };
+
+$("tab-episodes").onclick=()=>{
+  $("tab-episodes").classList.add("active");
+  $("tab-bookmarks").classList.remove("active");
+  $("fBookmark").classList.remove("active");
+  applyFilters();
+};
+$("tab-bookmarks").onclick=()=>{
+  $("tab-bookmarks").classList.add("active");
+  $("tab-episodes").classList.remove("active");
+  $("fBookmark").classList.add("active");
+  applyFilters();
+};
 $("more").onclick=renderMore;
 
 fetch("episodes.json").then(r=>r.json()).then(data=>{
-  EPS=data;initFilters();applyFilters();
+  EPS=data;initFilters();applyFilters();initPlayer();
+  const deepId = new URLSearchParams(window.location.search).get('episode');
+  if(deepId){
+    const e = EPS.find(x => x.id === deepId);
+    if(e) openDetail(e, true);
+  }
 }).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
 </script>
 </body>
