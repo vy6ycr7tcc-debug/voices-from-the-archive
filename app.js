@@ -9,14 +9,30 @@
   /* Icons                                                                   */
   /* ---------------------------------------------------------------------- */
 
-  var ICON_STAR =
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.55 5.17 5.7.83-4.13 4.02.98 5.68L12 16.62l-5.1 2.68.98-5.68L3.75 9.6l5.7-.83z"/></svg>';
+  var ICON_PLAY =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z" fill="currentColor" stroke="none"/></svg>';
+  var ICON_PAUSE =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.4" y="5.2" width="2.8" height="13.6" rx="1.2" fill="currentColor" stroke="none"/><rect x="12.8" y="5.2" width="2.8" height="13.6" rx="1.2" fill="currentColor" stroke="none"/></svg>';
+  var ICON_BOOKMARK =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 5.6c0-.9.7-1.6 1.6-1.6h6.4c.9 0 1.6.7 1.6 1.6v14.6c0 .6-.7 1-1.2.6L12 17.6l-3.6 3.2c-.5.4-1.2 0-1.2-.6V5.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   var ICON_SHARE =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg>';
-  var ICON_BACK =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
-  var ICON_SEARCH =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>';
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.4v10.4"/><path d="M8.2 7 12 3.2 15.8 7"/><path d="M6.4 11.8v6.8c0 1.1.9 2 2 2h7.2c1.1 0 2-.9 2-2v-6.8"/></svg>';
+
+  /* Terrain motif for empty states: ridge above, still lake below */
+  var MOTIF_RIDGE =
+    '<svg viewBox="0 0 240 86" aria-hidden="true">' +
+    '<defs><linearGradient id="emptyLake" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#1b1a38"/><stop offset="1" stop-color="#0a0b1f"/>' +
+    '</linearGradient></defs>' +
+    '<circle cx="176" cy="18" r="5.5" fill="#ffe0bc" opacity="0.85"/>' +
+    '<path fill="#232249" d="M0 54 L18 40 L34 50 L58 28 L82 46 L110 32 L136 50 L162 34 L188 48 L214 36 L240 52 L240 58 L0 58 Z"/>' +
+    '<rect x="0" y="58" width="240" height="28" fill="url(#emptyLake)"/>' +
+    '<g opacity="0.22" transform="translate(0 116) scale(1 -1)">' +
+    '<path fill="#2b2a52" d="M0 54 L18 40 L34 50 L58 28 L82 46 L110 32 L136 50 L162 34 L188 48 L214 36 L240 52 L240 58 L0 58 Z"/>' +
+    '</g>' +
+    '<rect x="150" y="62" width="52" height="1.5" rx="0.75" fill="#e9c37d" opacity="0.52"/>' +
+    '<rect x="158" y="70" width="38" height="1.3" rx="0.65" fill="#b8d1ff" opacity="0.30"/>' +
+    '</svg>';
 
   /* ---------------------------------------------------------------------- */
   /* State                                                                   */
@@ -68,6 +84,8 @@
   var scrubFill = $('scrubFill');
   var scrubThumb = $('scrubThumb');
   var timeReadout = $('timeReadout');
+  var tCur = $('tCur');
+  var tDur = $('tDur');
 
   var miniEl = $('mini');
   var miniPlay = $('miniPlay');
@@ -75,6 +93,7 @@
   var miniTime = $('miniTime');
   var miniScrub = $('miniScrub');
   var miniFill = $('miniFill');
+  var miniThumb = $('miniThumb');
 
   var toastEl = $('toast');
 
@@ -230,9 +249,9 @@
 
     if (filtered.length === 0) {
       emptyEl.hidden = false;
-      emptyEl.textContent = tab === 'bookmarks'
-        ? 'No bookmarks yet \u2014 tap the star on any episode to save it here.'
-        : 'Nothing matches \u2014 try clearing a filter or search term.';
+      emptyEl.innerHTML = MOTIF_RIDGE + '<p>' + (tab === 'bookmarks'
+        ? 'No bookmarks yet \u2014 tap the bookmark on any episode to save it here.'
+        : 'Nothing matches \u2014 try clearing a filter or search term.') + '</p>';
     } else {
       emptyEl.hidden = true;
     }
@@ -267,7 +286,7 @@
       '<button class="icon-btn bookmark' + (isBookmarked(e.id) ? ' active' : '') +
         '" data-action="bookmark" data-id="' + esc(e.id) + '" aria-pressed="' +
         (isBookmarked(e.id) ? 'true' : 'false') + '" aria-label="Bookmark episode">' +
-        ICON_STAR + '</button>' +
+        ICON_BOOKMARK + '</button>' +
       '<button class="icon-btn" data-action="share" data-id="' + esc(e.id) +
         '" aria-label="Share episode">' + ICON_SHARE + '</button>';
 
@@ -304,14 +323,21 @@
     scrubFill.style.width = pct;
     scrubThumb.style.left = pct;
     miniFill.style.width = pct;
+    miniThumb.style.left = pct;
 
-    timeReadout.textContent = fmt(known ? cur : 0) + ' / ' + fmt(known ? d : 0);
+    tCur.textContent = fmt(known ? cur : 0);
+    tDur.textContent = fmt(known ? d : 0);
     miniTime.textContent = fmt(known ? cur : 0);
+
+    var pctRound = String(Math.round(frac * 100));
+    scrubEl.setAttribute('aria-valuenow', pctRound);
+    miniScrub.setAttribute('aria-valuenow', pctRound);
   }
 
   function setPlaying(playing) {
-    btnPlay.textContent = playing ? '\u23F8' : '\u25B6';
-    miniPlay.textContent = playing ? '\u23F8' : '\u25B6';
+    var icon = playing ? ICON_PAUSE : ICON_PLAY;
+    btnPlay.innerHTML = icon;
+    miniPlay.innerHTML = icon;
     btnPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     miniPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
   }
@@ -344,7 +370,7 @@
       previewFrac = fracFrom(ev);
       dragTarget = null;
       try { el.releasePointerCapture(ev.pointerId); } catch (err) {}
-      if (hasDuration()) audio.currentTime = previewFrac * audio.duration;
+      if (hasDuration()) seekTo(previewFrac * audio.duration);
       renderProgress();
     }
 
@@ -367,14 +393,71 @@
     }
   }
 
+  function seekTo(t) {
+    audio._wantTime = t;
+    audio.currentTime = t;
+  }
+
   function initPlayer() {
+    audio.addEventListener('seeked', function () { audio._wantTime = null; });
+
+    // Some static servers (e.g. python http.server) ignore HTTP Range requests,
+    // Chromium then reports nothing seekable and currentTime silently no-ops.
+    // Fall back to a fully-buffered blob URL so the scrubber always seeks.
+    function ensureSeekable() {
+      var src = audio.currentSrc;
+      if (!src || audio._blobSrc === src) return;
+      if (audio.seekable.length && audio.seekable.end(audio.seekable.length - 1) > 0) return;
+      var wasPlaying = !audio.paused && !audio.ended;
+      fetch(src).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.blob();
+      }).then(function (b) {
+        var url = URL.createObjectURL(b);
+        audio._blobSrc = url;
+        audio.src = url;
+        audio.load();
+        audio.addEventListener('loadedmetadata', function once() {
+          audio.removeEventListener('loadedmetadata', once);
+          var at = (audio._wantTime != null) ? audio._wantTime : (audio.currentTime || 0);
+          audio._wantTime = null;
+          try { audio.currentTime = at; } catch (err) {}
+          if (wasPlaying) {
+            var p = audio.play();
+            if (p && p.catch) p.catch(function () {});
+          }
+          renderProgress();
+        });
+      }).catch(function () {});
+    }
+
     btnPlay.addEventListener('click', togglePlay);
     miniPlay.addEventListener('click', togglePlay);
+
+    function skip(sec) {
+      if (!hasDuration()) return;
+      seekTo(Math.max(0,
+        Math.min(audio.duration, (audio.currentTime || 0) + sec)));
+      renderProgress();
+    }
+
+    $('btnSkipBack').addEventListener('click', function () { skip(-15); });
+    $('btnSkipFwd').addEventListener('click', function () { skip(15); });
+    $('miniBack').addEventListener('click', function () { skip(-15); });
+    $('miniFwd').addEventListener('click', function () { skip(15); });
+
+    $('miniClose').addEventListener('click', function () {
+      audio.pause();
+      hideMini();
+    });
 
     setupScrubber(scrubEl, 'detail');
     setupScrubber(miniScrub, 'mini');
 
-    audio.addEventListener('loadedmetadata', renderProgress);
+    audio.addEventListener('loadedmetadata', function () {
+      renderProgress();
+      ensureSeekable();
+    });
     audio.addEventListener('durationchange', renderProgress);
     audio.addEventListener('timeupdate', function () {
       if (!dragTarget) renderProgress();
@@ -394,7 +477,7 @@
   function showMini() {
     if (!current || !detailEl.hidden) return;
     miniEl.hidden = false;
-    document.body.style.paddingBottom = '84px';
+    document.body.style.paddingBottom = (miniEl.offsetHeight + 24) + 'px';
   }
 
   function hideMini() {
