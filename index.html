@@ -5,10 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A0B1F">
 <meta name="description" content="A browsable archive of interpretive narrations drawn from the L/L Research channeling archive.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Voices">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Voices from the Archive">
+<meta property="og:title" content="Voices from the Archive">
+<meta property="og:description" content="An interpretive journey through the L/L Research channeling archive — nearly two thousand sessions of strange and beautiful writing, read aloud in the quiet.">
+<meta property="og:image" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/og-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Voices from the Archive">
+<meta name="twitter:description" content="An interpretive journey through the L/L Research channeling archive — nearly two thousand sessions of strange and beautiful writing, read aloud in the quiet.">
+<meta name="twitter:image" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/og-share.jpg">
 <title>Voices from the Archive</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <canvas id="ambientCanvas"></canvas>
+</div>
 
 <header class="site-header">
   <div class="hero" aria-hidden="true">
@@ -179,5 +203,6 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="app.js"></script>
+<script src="ambient.js"></script>
 </body>
 </html>

@@ -12,13 +12,13 @@ const { chromium } = require('playwright');
   console.log("Page loaded");
 
   // Wait for initial render
-  await page.waitForSelector('.card');
+  await page.waitForSelector('.ep-row');
   console.log("Cards rendered");
 
   // Test search highlight
   await page.fill('#q', 'LL');
   await page.waitForTimeout(500); // Wait for debounce
-  const cards = await page.$$('.card');
+  const cards = await page.$$('.ep-row');
   console.log(`Found ${cards.length} cards for search 'LL'`);
   const highlight = await page.$('mark');
   console.log(`Search highlight mark found: ${highlight !== null}`);
@@ -26,39 +26,39 @@ const { chromium } = require('playwright');
   await page.waitForTimeout(500);
 
   // Test tabs
-  await page.click('#tab-bookmarks');
-  const bookmarkCards = await page.$$('.card');
+  await page.click('.tab[data-tab="bookmarks"]');
+  const bookmarkCards = await page.$$('.ep-row');
   console.log(`Found ${bookmarkCards.length} cards in bookmarks tab`); // Should be 0 initially
 
-  await page.click('#tab-episodes');
+  await page.click('.tab[data-tab="episodes"]');
 
   // Test bookmarking
-  const firstCardBtn = await page.$('.card .btn-bookmark');
+  const firstCardBtn = await page.$('.ep-row .icon-btn.bookmark');
   if (firstCardBtn) {
     await firstCardBtn.click();
     console.log("Clicked bookmark on first card");
   }
 
-  await page.click('#tab-bookmarks');
-  const newBookmarkCards = await page.$$('.card');
+  await page.click('.tab[data-tab="bookmarks"]');
+  const newBookmarkCards = await page.$$('.ep-row');
   console.log(`Found ${newBookmarkCards.length} cards in bookmarks tab after bookmarking`); // Should be 1
 
   // Test detail sheet opening
-  await page.click('.card');
-  await page.waitForSelector('#detail.open');
+  await page.click('.ep-row');
+  await page.waitForSelector('#detail:not([hidden])');
   console.log("Detail sheet opened");
 
   // Check touch target heights
-  const btnPlay = await page.$('#btn-play');
+  const btnPlay = await page.$('#btnPlay');
   const btnPlayBox = await btnPlay.boundingBox();
   console.log(`Play button height: ${btnPlayBox.height}px`);
 
-  const scrubber = await page.$('#scrubber-container');
+  const scrubber = await page.$('#scrub');
   const scrubberBox = await scrubber.boundingBox();
   console.log(`Scrubber height: ${scrubberBox.height}px`);
 
   // Share logic
-  const shareBtn = await page.$('#sheet .action-btn:last-child');
+  const shareBtn = await page.$('#detailShare');
   await shareBtn.click();
   console.log("Clicked share button");
   await page.waitForSelector('#toast.show');
