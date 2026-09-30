@@ -7,14 +7,14 @@ const { chromium } = require('playwright');
   const page = await context.newPage();
 
   await page.goto('http://localhost:8000/index.html');
-  await page.waitForSelector('.card');
+  await page.waitForSelector('.ep-row');
 
-  await page.click('.card');
-  await page.waitForSelector('#detail.open');
+  await page.click('.ep-row');
+  await page.waitForSelector('#detail:not([hidden])');
   console.log("Detail sheet opened");
 
   // Share logic
-  const shareBtn = await page.$('#sheet .action-btn:last-child');
+  const shareBtn = await page.$('#detailShare');
   await shareBtn.click();
   console.log("Clicked share button");
   await page.waitForSelector('#toast.show');

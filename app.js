@@ -50,6 +50,11 @@
 
   var BOOKMARK_KEY = 'vfa-bookmarks';
 
+  /* Live site root. Share links point at the static share page per episode
+     (episode/<id>/) which carries Open Graph tags for chat previews and
+     redirects humans into the player. */
+  var SITE_ROOT = 'https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/';
+
   /* ---------------------------------------------------------------------- */
   /* DOM refs                                                                */
   /* ---------------------------------------------------------------------- */
@@ -299,7 +304,11 @@
     var q = qInput.value.trim();
     var slice = filtered.slice(shown, shown + PAGE);
     var frag = document.createDocumentFragment();
-    slice.forEach(function (e) { frag.appendChild(buildRow(e, q)); });
+    slice.forEach(function (e, i) {
+      var row = buildRow(e, q);
+      row.style.setProperty('--rise-delay', Math.min(i * 55, 660) + 'ms');
+      frag.appendChild(row);
+    });
     listEl.appendChild(frag);
     shown += slice.length;
     moreWrap.hidden = shown >= filtered.length;
@@ -335,6 +344,9 @@
   }
 
   function setPlaying(playing) {
+    document.body.classList.toggle('audio-playing', playing);
+    btnPlay.classList.toggle('playing', playing);
+    miniPlay.classList.toggle('playing', playing);
     var icon = playing ? ICON_PAUSE : ICON_PLAY;
     btnPlay.innerHTML = icon;
     miniPlay.innerHTML = icon;
@@ -589,15 +601,7 @@
     var e = EPS.find(function (x) { return x.id === id; });
     if (!e) return;
 
-    var shareUrl;
-    try {
-      var url = new URL(location.href);
-      url.search = '?episode=' + encodeURIComponent(e.id);
-      url.hash = '';
-      shareUrl = url.toString();
-    } catch (err) {
-      shareUrl = '?episode=' + encodeURIComponent(e.id);
-    }
+    var shareUrl = SITE_ROOT + 'episode/' + encodeURIComponent(e.id) + '/';
 
     function copyFallback() {
       if (navigator.clipboard && navigator.clipboard.writeText) {
