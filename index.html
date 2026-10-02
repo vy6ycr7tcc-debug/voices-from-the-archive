@@ -75,9 +75,13 @@
 </div>
 
 <div class="wrap filter-row">
-  <select id="fTheme" aria-label="Filter by theme"><option value="">All themes</option></select>
+  <select id="fTheme" aria-label="Filter by topic"><option value="">All topics</option></select>
   <select id="fEntity" aria-label="Filter by entity"><option value="">All entities</option></select>
   <select id="fSeason" aria-label="Filter by season"><option value="">All seasons</option></select>
+  <button id="refresh" class="refresh-btn" type="button" title="Reload the episode catalog" aria-label="Refresh episode catalog">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5v6h-6"/></svg>
+    <span>Refresh</span>
+  </button>
 </div>
 
 <div class="wrap result-count" id="count"></div>

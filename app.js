@@ -132,6 +132,54 @@
     return 'Season ' + e.season + (e.season_name ? ' \u00b7 ' + e.season_name : '');
   }
 
+  /* Broad topics collapse the 59 fine-grained archive themes into a short list. */
+  var TOPIC_MAP = {
+    "Q'uo general Q&A": 'Q&A Circles', 'Latwii Q&A circle': 'Q&A Circles',
+    'Latwii & Hatonn Q&A': 'Q&A Circles', 'Latwii sessions II': 'Q&A Circles',
+    "Q'uo on faith & incarnation": 'Faith & the Journey',
+    "Q'uo on journey & catalyst": 'Faith & the Journey',
+    'Faith & the journey': 'Faith & the Journey', 'Foundations': 'Faith & the Journey',
+    'The prodigal son': 'Faith & the Journey', 'Parables: wealth & youth': 'Faith & the Journey',
+    "Q'uo on guidance & the world": 'Guidance for Daily Life',
+    'Catalyst & the game of life': 'Guidance for Daily Life',
+    'Service to others': 'Guidance for Daily Life', 'Teacher & student': 'Guidance for Daily Life',
+    'Solitude & the body': 'Guidance for Daily Life',
+    'Hatonn on channeling & existence': 'Channeling & Contact',
+    'Learning to channel (Hatonn)': 'Channeling & Contact',
+    'Channeling intensives': 'Channeling & Contact', 'Hatonn fragments': 'Channeling & Contact',
+    'Hatonn fragments II': 'Channeling & Contact', 'Laitos sessions': 'Channeling & Contact',
+    'Laitos sessions II': 'Channeling & Contact', 'Leema sessions': 'Channeling & Contact',
+    'Oxal sessions': 'Channeling & Contact', 'Yom on time/space': 'Channeling & Contact',
+    'Quanta channeling': 'Channeling & Contact',
+    'Ra on mind/body/spirit': 'The Ra Material', 'Ra on the adept': 'The Ra Material',
+    'Chakras & intelligent infinity': 'The Ra Material',
+    'Energy centers & rays': 'The Ra Material',
+    'The magical personality': 'The Ra Material',
+    'Fourth density & harvest': 'Cosmos & Harvest',
+    'Confederation & other planets': 'Cosmos & Harvest',
+    'Healing & the healer': 'Healing & the Body',
+    'Suffering, pain & joy': 'Healing & the Body',
+    'Aaron on fear & pain': 'Healing & the Body',
+    'Sexuality & polarity': 'Healing & the Body',
+    'Aaron & Barbara on ego & compassion': 'Heart & Compassion',
+    'Personality shell & incarnation': 'Heart & Compassion',
+    'Jesus & the Christ': 'Jesus & the Christ',
+    'Negative polarity & psychic greeting': 'Psychic Protection',
+    'Grove of Becoming': 'Groves', 'Grove of Devotion': 'Groves',
+    'Grove of Enough': 'Groves', 'Grove of Kindness': 'Groves',
+    'Grove of Knowing': 'Groves', 'Grove of Learning': 'Groves',
+    'Grove of Night and Sense': 'Groves', 'Grove of Other Selves': 'Groves',
+    'Grove of Practice': 'Groves', 'Grove of Release': 'Groves',
+    'Grove of Reverence': 'Groves', 'Grove of Solitude and Kin': 'Groves',
+    'Grove of Stillness': 'Groves', 'Grove of Time': 'Groves',
+    'Grove of Wonder': 'Groves', 'Grove of the Inner Child': 'Groves',
+    'Grove of the Living World': 'Groves', 'Grove of the Tender Heart': 'Groves'
+  };
+  var TOPIC_ORDER = ['Q&A Circles', 'Faith & the Journey', 'Guidance for Daily Life',
+    'Channeling & Contact', 'The Ra Material', 'Cosmos & Harvest', 'Healing & the Body',
+    'Heart & Compassion', 'Jesus & the Christ', 'Psychic Protection', 'Groves'];
+  function topicOf(e) { return TOPIC_MAP[e.theme] || e.theme || ''; }
+
   function episodeDate(e) {
     return (e.sources && e.sources[0] && e.sources[0].date) || '';
   }
@@ -197,14 +245,20 @@
   /* ---------------------------------------------------------------------- */
 
   function initFilters() {
-    var entities = {}, themes = {}, seasons = {};
+    var entities = {}, seasons = {};
     EPS.forEach(function (e) {
       (e.entities || []).forEach(function (x) { entities[x] = true; });
-      if (e.theme) themes[e.theme] = true;
       if (e.season != null) seasons[e.season] = e.season_name || '';
     });
 
-    Object.keys(themes).sort().forEach(function (t) {
+    fTheme.innerHTML = '<option value="">All topics</option>';
+    fEntity.innerHTML = '<option value="">All entities</option>';
+    fSeason.innerHTML = '<option value="">All seasons</option>';
+
+    var present = {};
+    EPS.forEach(function (e) { present[topicOf(e)] = true; });
+    TOPIC_ORDER.forEach(function (t) {
+      if (!present[t]) return;
       var o = document.createElement('option');
       o.value = t; o.textContent = t;
       fTheme.appendChild(o);
@@ -230,7 +284,7 @@
 
     filtered = EPS.filter(function (e) {
       if (tab === 'bookmarks' && !isBookmarked(e.id)) return false;
-      if (ft && e.theme !== ft) return false;
+      if (ft && topicOf(e) !== ft) return false;
       if (fe && (e.entities || []).indexOf(fe) === -1) return false;
       if (fs && String(e.season) !== fs) return false;
       if (q) {
@@ -280,7 +334,7 @@
       '<div class="ep-meta">' +
         '<span>' + esc(episodeDate(e)) + '</span>' +
         '<span class="sep">\u00b7</span>' +
-        '<span>' + esc(e.theme) + '</span>' +
+        '<span>' + esc(topicOf(e)) + '</span>' +
         '<span class="sep">\u00b7</span>' +
         '<span>' + fmt(e.duration_sec) + '</span>' +
       '</div>';
@@ -473,13 +527,43 @@
     audio.addEventListener('durationchange', renderProgress);
     audio.addEventListener('timeupdate', function () {
       if (!dragTarget) renderProgress();
+      if ('mediaSession' in navigator && hasDuration()) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: audio.duration,
+            playbackRate: audio.playbackRate || 1,
+            position: Math.min(audio.currentTime || 0, audio.duration)
+          });
+        } catch (err) {}
+      }
     });
     audio.addEventListener('play', function () { setPlaying(true); });
     audio.addEventListener('pause', function () { setPlaying(false); });
-    audio.addEventListener('ended', function () { setPlaying(false); renderProgress(); });
+    audio.addEventListener('ended', function () {
+      setPlaying(false); renderProgress();
+      if (!current || !filtered.length) return;
+      var i = -1;
+      for (var k = 0; k < filtered.length; k++) {
+        if (filtered[k].id === current.id) { i = k; break; }
+      }
+      if (i >= 0 && i + 1 < filtered.length) step(1, true);
+    });
     audio.addEventListener('error', function () {
       if (current) toast('Audio unavailable');
     });
+
+    /* Lock-screen / background transport controls. */
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.setActionHandler('play', function () {
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () {});
+        });
+        navigator.mediaSession.setActionHandler('pause', function () { audio.pause(); });
+        navigator.mediaSession.setActionHandler('previoustrack', function () { step(-1, true); });
+        navigator.mediaSession.setActionHandler('nexttrack', function () { step(1, true); });
+      } catch (err) {}
+    }
   }
 
   /* ---------------------------------------------------------------------- */
@@ -519,7 +603,7 @@
     dMeta.innerHTML =
       '<span>' + esc(episodeDate(e)) + '</span>' +
       '<span class="sep">\u00b7</span>' +
-      '<span>' + esc(e.theme) + '</span>' +
+      '<span>' + esc(topicOf(e)) + '</span>' +
       '<span class="sep">\u00b7</span>' +
       '<span>' + fmt(e.duration_sec) + '</span>' +
       ((e.entities && e.entities.length)
@@ -540,7 +624,9 @@
     });
     dSources.innerHTML = srcHtml;
 
-    var rel = EPS.filter(function (x) { return x.theme === e.theme && x.id !== e.id; }).slice(0, 4);
+    var rel = EPS.filter(function (x) {
+      return topicOf(x) === topicOf(e) && x.id !== e.id;
+    }).slice(0, 4);
     if (rel.length) {
       dRelated.innerHTML = '<h3>Related episodes</h3>' + rel.map(function (x) {
         return '<button class="rel" data-id="' + esc(x.id) + '">' +
@@ -558,6 +644,16 @@
       audio.load();
       setPlaying(false);
       renderProgress();
+    }
+
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: e.title,
+          artist: 'Voices from the Archive',
+          album: seasonLabel(e)
+        });
+      } catch (err) {}
     }
 
     detailEl.hidden = false;
@@ -591,6 +687,45 @@
         history.pushState({}, '', url.toString());
       } catch (err) {}
     }
+  }
+
+  /* Step through the current filtered list (autoplay + transport controls). */
+  function step(d, autoplay) {
+    if (!filtered.length || !current) return;
+    var i = -1;
+    for (var k = 0; k < filtered.length; k++) {
+      if (filtered[k].id === current.id) { i = k; break; }
+    }
+    if (i < 0) return;
+    var n = (i + d + filtered.length) % filtered.length;
+    openDetail(filtered[n].id);
+    if (autoplay) {
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+  }
+
+  function refreshCatalog() {
+    var btn = $('refresh');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add('spinning');
+    fetch('episodes.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        EPS = data;
+        initFilters();
+        applyFilters();
+        toast(EPS.length.toLocaleString() + ' episodes loaded');
+      })
+      .catch(function () { toast('Refresh failed \u2014 try again'); })
+      .then(function () {
+        btn.disabled = false;
+        btn.classList.remove('spinning');
+      });
   }
 
   /* ---------------------------------------------------------------------- */
@@ -662,6 +797,10 @@
     });
 
     moreBtn.addEventListener('click', renderMore);
+
+    // Refresh catalog
+    var refreshBtn = $('refresh');
+    if (refreshBtn) refreshBtn.addEventListener('click', refreshCatalog);
 
     // List delegation
     listEl.addEventListener('click', function (ev) {

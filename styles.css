@@ -304,6 +304,30 @@ a { color: var(--gold); }
   border-color: var(--gold-deep);
 }
 
+.refresh-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: var(--tap);
+  padding: 8px 14px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--moon-soft);
+  background-color: rgba(28, 26, 44, 0.55);
+  border: 1px solid var(--line, #2a2f55);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.refresh-btn svg { width: 15px; height: 15px; }
+.refresh-btn:hover:not(:disabled) { border-color: var(--gold-deep); color: var(--gold, #d8b56b); }
+.refresh-btn:disabled { opacity: 0.6; cursor: default; }
+.refresh-btn.spinning svg { animation: vfa-spin 0.9s linear infinite; }
+@keyframes vfa-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .refresh-btn.spinning svg { animation: none; }
+}
+
 /* --------------------------------------------------------------------------
    Result count
    -------------------------------------------------------------------------- */
