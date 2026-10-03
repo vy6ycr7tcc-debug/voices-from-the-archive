@@ -1,9 +1,0 @@
-{
-  "scripts": {
-    "test": "node test.js && node test2.js",
-    "gen:episodes": "node tools/gen-episode-pages.js"
-  },
-  "devDependencies": {
-    "playwright": "^1.63.0"
-  }
-}

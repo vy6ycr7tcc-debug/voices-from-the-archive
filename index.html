@@ -2,190 +2,261 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0A0B1F">
-<meta name="description" content="A browsable archive of interpretive narrations drawn from the L/L Research channeling archive.">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Voices">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Voices from the Archive">
-<meta property="og:title" content="Voices from the Archive">
-<meta property="og:description" content="An interpretive journey through the L/L Research channeling archive — nearly two thousand sessions of strange and beautiful writing, read aloud in the quiet.">
-<meta property="og:image" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/og-share.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Voices from the Archive">
-<meta name="twitter:description" content="An interpretive journey through the L/L Research channeling archive — nearly two thousand sessions of strange and beautiful writing, read aloud in the quiet.">
-<meta name="twitter:image" content="https://vy6ycr7tcc-debug.github.io/voices-from-the-archive/og-share.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Voices from the Archive</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{
+    --ink:#0d1021; --ink2:#141833; --gold:#d8b56b; --gold-dim:#9a7f4c;
+    --paper:#ece5d3; --paper-dim:#b9b09a; --line:#2a2f55;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 800px at 50% -10%,#1b2148 0%,var(--ink) 60%);
+       color:var(--paper);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+  header{max-width:900px;margin:0 auto;padding:48px 20px 8px;text-align:center}
+  header h1{font-weight:400;font-size:2rem;letter-spacing:.14em;color:var(--gold);margin:0 0 6px}
+  header p{color:var(--paper-dim);font-style:italic;margin:4px 0}
+  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em}
+  #controls{max-width:900px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  #controls input,#controls select,#controls button{background:var(--ink2);border:1px solid var(--line);color:var(--paper);
+    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit}
+  #controls input{flex:1 1 240px}
+  #controls select{flex:0 1 auto;max-width:220px}
+  #controls input::placeholder{color:#6f7599}
+  #controls button{cursor:pointer;letter-spacing:.04em}
+  #controls button:hover:not(:disabled){border-color:var(--gold-dim);color:var(--gold)}
+  #controls button:disabled{opacity:.6;cursor:default}
+  main{max-width:900px;margin:0 auto;padding:20px}
+  .card{background:rgba(20,24,51,.75);border:1px solid var(--line);border-radius:12px;
+        padding:16px 18px;margin:10px 0;cursor:pointer;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:var(--gold-dim);transform:translateY(-1px)}
+  .card .ep{color:var(--gold-dim);font-size:.78rem;letter-spacing:.18em}
+  .card h2{margin:6px 0 8px;font-weight:400;font-size:1.25rem}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;color:var(--paper-dim)}
+  .chip{border:1px solid var(--gold-dim);color:var(--gold);border-radius:20px;padding:2px 10px;font-size:.75rem;letter-spacing:.04em}
+  .dot{opacity:.5}
+  #more{display:block;margin:26px auto;padding:12px 34px;background:transparent;border:1px solid var(--gold-dim);
+        color:var(--gold);border-radius:24px;font-family:inherit;font-size:1rem;cursor:pointer;letter-spacing:.08em}
+  #more:hover{background:rgba(216,181,107,.08)}
+  /* detail */
+  #detail{position:fixed;inset:0;background:rgba(8,10,22,.92);display:none;overflow-y:auto;z-index:10}
+  #detail.open{display:block}
+  #sheet{max-width:760px;margin:4vh auto;background:var(--ink2);border:1px solid var(--line);
+         border-radius:14px;padding:28px 30px 40px}
+  #sheet .ep{color:var(--gold-dim);letter-spacing:.18em;font-size:.8rem}
+  #sheet h2{font-weight:400;font-size:1.7rem;margin:8px 0 4px;color:var(--gold)}
+  #close{float:right;background:none;border:1px solid var(--line);color:var(--paper-dim);
+         border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
+  #close:hover{border-color:var(--gold);color:var(--gold)}
+  audio{width:100%;margin:16px 0 6px}
+  #related h3{margin:18px 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+  .rel{padding:8px 0;border-top:1px solid #2a2a2e;cursor:pointer}
+  .rel strong{font-weight:600}
+  #transcript{white-space:pre-wrap;line-height:1.75;color:var(--paper);font-size:1.02rem}
+  #sources{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--paper-dim)}
+  #sources div{margin:4px 0}
+  #empty{text-align:center;color:var(--paper-dim);font-style:italic;margin:60px 0}
+  footer{max-width:900px;margin:0 auto;padding:30px 20px 60px;text-align:center;color:#5d6390;font-size:.8rem;font-style:italic}
+</style>
 </head>
 <body>
-
-<div class="ambient" aria-hidden="true">
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
-  <canvas id="ambientCanvas"></canvas>
-</div>
-
-<header class="site-header">
-  <div class="hero" aria-hidden="true">
-    <div class="hero-glow-back"></div>
-    <div class="hero-ring hero-ring-1"></div>
-    <div class="hero-ring hero-ring-2"></div>
-    <div class="hero-moon"></div>
-  </div>
-  <div class="wrap header-content">
-    <div class="title-lockup">
-      <div class="title-eyebrow">The Complete Collection</div>
-      <h1 class="site-title">Voices from the Archive</h1>
-      <p class="site-sub">Interpretive narrations drawn from the L/L Research channeling archive</p>
-    </div>
-  </div>
+<header>
+  <h1>VOICES FROM THE ARCHIVE</h1>
+  <p>Interpretive narrations drawn from the L/L Research channeling archive</p>
+  <div id="count"></div>
 </header>
-
-<div class="sticky-top">
-  <div class="wrap">
-    <nav class="tabs" aria-label="Sections">
-      <button class="tab active" data-tab="episodes" type="button">Episodes</button>
-      <button class="tab" data-tab="bookmarks" type="button">Bookmarks</button>
-    </nav>
-    <div class="search-row">
-      <div class="search-field">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
-        <input id="q" type="search" placeholder="Search titles, transcripts, themes…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Search episodes">
-        <button id="qClear" class="search-clear" type="button" aria-label="Clear search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7.2 7.1 Q12 11.6 16.8 16.9"/><path d="M16.8 7.1 Q12 11.6 7.2 16.9"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
+<div id="controls">
+  <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
+  <select id="fEntity"><option value="">All entities</option></select>
+  <select id="fSeason"><option value="">All seasons</option></select>
+  <select id="fTopic"><option value="">All topics</option></select>
+  <button id="refresh" title="Reload the episode catalog">⟳ Refresh</button>
 </div>
+<main id="list"></main>
+<button id="more" style="display:none">Show more</button>
+<div id="empty" style="display:none">Nothing matches — try clearing a filter.</div>
 
-<div class="wrap filter-row">
-  <select id="fTheme" aria-label="Filter by topic"><option value="">All topics</option></select>
-  <select id="fEntity" aria-label="Filter by entity"><option value="">All entities</option></select>
-  <select id="fSeason" aria-label="Filter by season"><option value="">All seasons</option></select>
-  <button id="refresh" class="refresh-btn" type="button" title="Reload the episode catalog" aria-label="Refresh episode catalog">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5v6h-6"/></svg>
-    <span>Refresh</span>
-  </button>
-</div>
+<div id="detail"><div id="sheet">
+  <button id="close" aria-label="Close">✕</button>
+  <div class="ep" id="dEp"></div>
+  <h2 id="dTitle"></h2>
+  <div class="meta" id="dMeta"></div>
+  <audio id="player" controls preload="none"></audio>
+  <div id="transcript"></div>
+  <div id="sources"></div>
+  <div id="related"></div>
+</div></div>
 
-<div class="wrap result-count" id="count"></div>
+<footer>Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</footer>
 
-<main class="wrap list" id="list"></main>
+<script>
+let EPS=[];
+const PAGE=40; let shown=0, filtered=[], currentId=null;
+const $=id=>document.getElementById(id);
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 
-<div class="wrap more-wrap" id="moreWrap" hidden>
-  <button id="more" type="button">Show more</button>
-</div>
+/* Broad topics collapse the 59 fine-grained archive themes into a short list. */
+const TOPIC_MAP={
+ "Q'uo general Q&A":"Q&A Circles","Latwii Q&A circle":"Q&A Circles",
+ "Latwii & Hatonn Q&A":"Q&A Circles","Latwii sessions II":"Q&A Circles",
+ "Q'uo on faith & incarnation":"Faith & the Journey","Q'uo on journey & catalyst":"Faith & the Journey",
+ "Faith & the journey":"Faith & the Journey","Foundations":"Faith & the Journey",
+ "The prodigal son":"Faith & the Journey","Parables: wealth & youth":"Faith & the Journey",
+ "Q'uo on guidance & the world":"Guidance for Daily Life","Catalyst & the game of life":"Guidance for Daily Life",
+ "Service to others":"Guidance for Daily Life","Teacher & student":"Guidance for Daily Life",
+ "Solitude & the body":"Guidance for Daily Life",
+ "Hatonn on channeling & existence":"Channeling & Contact","Learning to channel (Hatonn)":"Channeling & Contact",
+ "Channeling intensives":"Channeling & Contact","Hatonn fragments":"Channeling & Contact",
+ "Hatonn fragments II":"Channeling & Contact","Laitos sessions":"Channeling & Contact",
+ "Laitos sessions II":"Channeling & Contact","Leema sessions":"Channeling & Contact",
+ "Oxal sessions":"Channeling & Contact","Yom on time/space":"Channeling & Contact",
+ "Quanta channeling":"Channeling & Contact",
+ "Ra on mind/body/spirit":"The Ra Material","Ra on the adept":"The Ra Material",
+ "Chakras & intelligent infinity":"The Ra Material","Energy centers & rays":"The Ra Material",
+ "The magical personality":"The Ra Material",
+ "Fourth density & harvest":"Cosmos & Harvest","Confederation & other planets":"Cosmos & Harvest",
+ "Healing & the healer":"Healing & the Body","Suffering, pain & joy":"Healing & the Body",
+ "Aaron on fear & pain":"Healing & the Body","Sexuality & polarity":"Healing & the Body",
+ "Aaron & Barbara on ego & compassion":"Heart & Compassion",
+ "Personality shell & incarnation":"Heart & Compassion",
+ "Jesus & the Christ":"Jesus & the Christ",
+ "Negative polarity & psychic greeting":"Psychic Protection",
+ "Grove of Becoming":"Groves","Grove of Devotion":"Groves","Grove of Enough":"Groves",
+ "Grove of Kindness":"Groves","Grove of Knowing":"Groves","Grove of Learning":"Groves",
+ "Grove of Night and Sense":"Groves","Grove of Other Selves":"Groves",
+ "Grove of Practice":"Groves","Grove of Release":"Groves","Grove of Reverence":"Groves",
+ "Grove of Solitude and Kin":"Groves","Grove of Stillness":"Groves","Grove of Time":"Groves",
+ "Grove of Wonder":"Groves","Grove of the Inner Child":"Groves",
+ "Grove of the Living World":"Groves","Grove of the Tender Heart":"Groves"
+};
+const TOPIC_ORDER=["Q&A Circles","Faith & the Journey","Guidance for Daily Life",
+ "Channeling & Contact","The Ra Material","Cosmos & Harvest","Healing & the Body",
+ "Heart & Compassion","Jesus & the Christ","Psychic Protection","Groves"];
+const topicOf=e=>TOPIC_MAP[e.theme]||e.theme;
 
-<div class="wrap empty" id="empty" hidden></div>
+function seasonLabel(e){return "Season "+e.season+(e.season_name?" · "+e.season_name:"");}
 
-<footer class="site-footer">
-  <div class="wrap">
-    Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research
-  </div>
-</footer>
+function initFilters(){
+  $("fEntity").innerHTML='<option value="">All entities</option>';
+  $("fSeason").innerHTML='<option value="">All seasons</option>';
+  $("fTopic").innerHTML='<option value="">All topics</option>';
+  const ents=[...new Set(EPS.flatMap(e=>e.entities))].sort();
+  ents.forEach(x=>{const o=document.createElement("option");o.value=o.textContent=x;$("fEntity").appendChild(o);});
+  [...new Set(EPS.map(e=>e.season))].sort().forEach(s=>{
+    const o=document.createElement("option");o.value=s;
+    o.textContent=seasonLabel(EPS.find(e=>e.season===s));$("fSeason").appendChild(o);});
+  const present=new Set(EPS.map(topicOf));
+  TOPIC_ORDER.filter(t=>present.has(t)).forEach(t=>{
+    const o=document.createElement("option");o.value=o.textContent=t;$("fTopic").appendChild(o);});
+}
 
-<!-- Mini player -->
-<div class="mini" id="mini" hidden>
-  <div class="mini-inner">
-    <div class="mini-top">
-      <button class="mini-play" id="miniPlay" type="button" aria-label="Play">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z" fill="currentColor" stroke="none"/></svg>
-      </button>
-      <div class="mini-body">
-        <div class="mini-title-row">
-          <span class="mini-title" id="miniTitle" role="button" tabindex="0"></span>
-          <span class="mini-time" id="miniTime">0:00</span>
-        </div>
-      </div>
-      <button class="icon-btn mini-close" id="miniClose" type="button" aria-label="Close player">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7.2 7.1 Q12 11.6 16.8 16.9"/><path d="M16.8 7.1 Q12 11.6 7.2 16.9"/></svg>
-      </button>
-    </div>
-    <div class="mini-bottom">
-      <button class="icon-btn skip" id="miniBack" type="button" aria-label="Skip back 15 seconds">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7c0-.8-.9-1.3-1.6-.9l-8.6 5.3c-.7.4-.7 1.4 0 1.8l8.6 5.3c.7.4 1.6-.1 1.6-.9Z" fill="currentColor" stroke="none"/><path d="M6.4 6.2v11.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-      <div class="mini-scrub" id="miniScrub" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="mini-track"><div class="mini-fill" id="miniFill"></div><div class="mini-thumb" id="miniThumb"></div></div>
-      </div>
-      <button class="icon-btn skip" id="miniFwd" type="button" aria-label="Skip forward 15 seconds">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z" fill="currentColor" stroke="none"/><path d="M17.6 6.2v11.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
+function applyFilters(){
+  const q=$("q").value.trim().toLowerCase(), fe=$("fEntity").value,
+        fs=$("fSeason").value, ft=$("fTopic").value;
+  filtered=EPS.filter(e=>
+    (!fe||e.entities.includes(fe))&&(!fs||e.season==fs)&&(!ft||topicOf(e)===ft)&&
+    (!q||e.title.toLowerCase().includes(q)||e.transcript.toLowerCase().includes(q)));
+  shown=0;$("list").innerHTML="";renderMore();
+  $("empty").style.display=filtered.length?"none":"block";
+  $("count").textContent=filtered.length+" of "+EPS.length+" episodes";
+}
 
-<!-- Detail reading sheet -->
-<div class="detail" id="detail" hidden>
-  <div class="detail-bar">
-    <button class="back-btn" id="detailBack" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-      Back
-    </button>
-    <div class="detail-bar-actions">
-      <button class="icon-btn bookmark" id="detailBookmark" data-action="bookmark" type="button" aria-label="Bookmark episode" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 5.6c0-.9.7-1.6 1.6-1.6h6.4c.9 0 1.6.7 1.6 1.6v14.6c0 .6-.7 1-1.2.6L12 17.6l-3.6 3.2c-.5.4-1.2 0-1.2-.6V5.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-      </button>
-      <button class="icon-btn" id="detailShare" data-action="share" type="button" aria-label="Share episode">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.4v10.4"/><path d="M8.2 7 12 3.2 15.8 7"/><path d="M6.4 11.8v6.8c0 1.1.9 2 2 2h7.2c1.1 0 2-.9 2-2v-6.8"/></svg>
-      </button>
-    </div>
-  </div>
+async function refreshCatalog(){
+  const btn=$("refresh");btn.disabled=true;btn.textContent="⟳ Refreshing…";
+  try{
+    const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    EPS=await r.json();
+    initFilters();applyFilters();
+    btn.textContent="⟳ Refreshed ✓";
+  }catch(err){btn.textContent="⟳ Failed — retry";}
+  setTimeout(()=>{btn.textContent="⟳ Refresh";btn.disabled=false;},1600);
+}
 
-  <div class="detail-scroll" id="detailScroll">
-    <article class="sheet">
-      <div class="ep-kicker" id="dKicker"></div>
-      <h1 class="sheet-title" id="dTitle"></h1>
-      <div class="ep-meta" id="dMeta"></div>
+function card(e){
+  const d=document.createElement("div");d.className="card";
+  d.innerHTML='<div class="ep">EPISODE '+String(e.n).padStart(2,"0")+" · "+esc(seasonLabel(e)).toUpperCase()+'</div>'
+    +"<h2>"+esc(e.title)+"</h2>"
+    +'<div class="meta">'+e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
+    +'<span class="dot">·</span><span>'+esc(topicOf(e))+'</span>'
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span></div>";
+  d.onclick=()=>openDetail(e);
+  return d;
+}
 
-      <div class="player">
-        <div class="player-controls">
-          <button class="ctrl-btn" id="btnSkipBack" type="button" aria-label="Skip back 15 seconds">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7c0-.8-.9-1.3-1.6-.9l-8.6 5.3c-.7.4-.7 1.4 0 1.8l8.6 5.3c.7.4 1.6-.1 1.6-.9Z" fill="currentColor" stroke="none"/><path d="M6.4 6.2v11.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <button class="play-btn" id="btnPlay" type="button" aria-label="Play">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z" fill="currentColor" stroke="none"/></svg>
-          </button>
-          <button class="ctrl-btn" id="btnSkipFwd" type="button" aria-label="Skip forward 15 seconds">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z" fill="currentColor" stroke="none"/><path d="M17.6 6.2v11.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-        <div class="scrub" id="scrub" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="scrub-track">
-            <div class="scrub-fill" id="scrubFill"></div>
-            <div class="scrub-thumb" id="scrubThumb"></div>
-          </div>
-        </div>
-        <div class="player-time" id="timeReadout"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
-      </div>
+function renderMore(){
+  const slice=filtered.slice(shown,shown+PAGE);
+  slice.forEach(e=>$("list").appendChild(card(e)));
+  shown+=slice.length;
+  $("more").style.display=shown<filtered.length?"block":"none";
+}
 
-      <div class="transcript" id="dTranscript"></div>
-      <div class="sources" id="dSources"></div>
-      <div class="related" id="dRelated"></div>
-    </article>
-  </div>
-</div>
+/* Step through the current filtered list (used by autoplay and lock-screen controls). */
+function step(d,autoplay){
+  if(!filtered.length)return;
+  let i=filtered.findIndex(x=>x.id===currentId);
+  i=i<0?0:(i+d+filtered.length)%filtered.length;
+  openDetail(filtered[i]);
+  if(autoplay)$("player").play().catch(()=>{});
+}
 
-<audio id="audio" preload="metadata"></audio>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+function openDetail(e){
+  currentId=e.id;
+  $("dEp").textContent="EPISODE "+String(e.n).padStart(2,"0")+" · "+seasonLabel(e).toUpperCase();
+  $("dTitle").textContent=e.title;
+  $("dMeta").innerHTML=e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
+    +'<span class="dot">·</span><span>'+esc(topicOf(e))+'</span>'
+    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>";
+  const p=$("player");p.src=e.audio;p.load();
+  if("mediaSession" in navigator){
+    navigator.mediaSession.metadata=new MediaMetadata({
+      title:e.title,artist:"Voices from the Archive",album:seasonLabel(e)});
+  }
+  $("transcript").textContent=e.transcript;
+  $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
+    +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
+  const rel=EPS.filter(x=>topicOf(x)===topicOf(e)&&x.id!==e.id).slice(0,4);
+  $("related").innerHTML=rel.length?("<h3>Related episodes</h3>"+rel.map(x=>
+    '<div class="rel" data-id="'+x.id+'"><strong>'+esc(x.title)+"</strong> · "+esc(seasonLabel(x))+"</div>").join("")):"";
+  $("related").querySelectorAll(".rel").forEach(d=>d.onclick=ev=>{ev.stopPropagation();openDetail(EPS.find(x=>x.id===d.dataset.id));});
+  $("detail").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeDetail(){$("detail").classList.remove("open");$("player").pause();document.body.style.overflow="";}
 
-<script src="app.js"></script>
-<script src="ambient.js"></script>
+$("close").onclick=closeDetail;
+$("detail").addEventListener("click",ev=>{if(ev.target.id==="detail")closeDetail();});
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
+["q","fEntity","fSeason","fTopic"].forEach(id=>$(id).addEventListener("input",applyFilters));
+$("more").onclick=renderMore;
+$("refresh").onclick=refreshCatalog;
+
+/* Autoplay the next episode in the filtered list when one ends. */
+$("player").addEventListener("ended",()=>{
+  if(!$("detail").classList.contains("open"))return;
+  const i=filtered.findIndex(x=>x.id===currentId);
+  if(i>=0&&i+1<filtered.length)step(1,true);
+});
+
+/* Lock-screen / background playback: metadata + transport controls. */
+if("mediaSession" in navigator){
+  try{
+    navigator.mediaSession.setActionHandler("play",()=>$("player").play().catch(()=>{}));
+    navigator.mediaSession.setActionHandler("pause",()=>$("player").pause());
+    navigator.mediaSession.setActionHandler("previoustrack",()=>step(-1,true));
+    navigator.mediaSession.setActionHandler("nexttrack",()=>step(1,true));
+  }catch(err){}
+}
+$("player").addEventListener("timeupdate",()=>{
+  const p=$("player");
+  if("mediaSession" in navigator&&p.duration&&isFinite(p.duration)){
+    try{navigator.mediaSession.setPositionState({duration:p.duration,
+      playbackRate:p.playbackRate||1,position:Math.min(p.currentTime,p.duration)});}catch(err){}
+  }
+});
+
+fetch("episodes.json").then(r=>r.json()).then(data=>{
+  EPS=data;initFilters();applyFilters();
+}).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
+</script>
 </body>
 </html>
