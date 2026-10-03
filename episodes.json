@@ -5,7 +5,7 @@
   "title": "Hatonn / Latui / Oxal \u2014 January 12, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn",
    "Latui",
@@ -42,7 +42,7 @@
   "title": "Hatonn / Latui \u2014 January 15, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn",
    "Latui"
@@ -72,7 +72,7 @@
   "title": "Hatonn / Oxal \u2014 August 1, 1973",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Yom on time/space",
   "entities": [
    "Hatonn",
    "Oxal"
@@ -102,7 +102,7 @@
   "title": "Hatonn / Oxal \u2014 January 7, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn",
    "Oxal"
@@ -132,7 +132,7 @@
   "title": "Hatonn / Oxal \u2014 January 10, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn",
    "Oxal"
@@ -162,7 +162,7 @@
   "title": "Hatonn / Oxal \u2014 January 14, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn",
    "Oxal"
@@ -192,7 +192,7 @@
   "title": "Hatonn \u2014 March 1, 1972",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Hatonn on channeling & existence",
   "entities": [
    "Hatonn"
   ],
@@ -215,7 +215,7 @@
   "title": "Hatonn \u2014 December 18, 1973",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -238,7 +238,7 @@
   "title": "Hatonn \u2014 January 13, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -261,7 +261,7 @@
   "title": "Hatonn \u2014 January 16, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Service to others",
   "entities": [
    "Hatonn"
   ],
@@ -284,7 +284,7 @@
   "title": "Hatonn \u2014 January 17, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -307,7 +307,7 @@
   "title": "Hatonn \u2014 January 21, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -330,7 +330,7 @@
   "title": "Hatonn \u2014 January 21, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -353,7 +353,7 @@
   "title": "Hatonn \u2014 January 23, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Hatonn"
   ],
@@ -376,7 +376,7 @@
   "title": "Hatonn \u2014 January 25, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Hatonn fragments",
   "entities": [
    "Hatonn"
   ],
@@ -396,10 +396,194 @@
  {
   "id": "wfw016",
   "n": 16,
+  "title": "Hatonn \u2014 January 27, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "January 27, 1974",
+    "session_label": "sunday meditation",
+    "archive_ref": "wfw:Hatonn_1974-01-27_sunday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 155,
+  "audio": "audio/Hatonn_1974-01-27_sunday-meditation.mp3",
+  "transcript": "Word-for-word narration of the sunday meditation of January 27, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw017",
+  "n": 17,
+  "title": "Hatonn \u2014 February 1, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 1, 1974",
+    "session_label": "friday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-01_friday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 491,
+  "audio": "audio/Hatonn_1974-02-01_friday-meditation.mp3",
+  "transcript": "Word-for-word narration of the friday meditation of February 1, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw018",
+  "n": 18,
+  "title": "Hatonn \u2014 February 2, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 2, 1974",
+    "session_label": "saturday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-02_saturday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 457,
+  "audio": "audio/Hatonn_1974-02-02_saturday-meditation.mp3",
+  "transcript": "Word-for-word narration of the saturday meditation of February 2, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw019",
+  "n": 19,
+  "title": "Hatonn \u2014 February 3, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 3, 1974",
+    "session_label": "sunday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-03_sunday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 334,
+  "audio": "audio/Hatonn_1974-02-03_sunday-meditation.mp3",
+  "transcript": "Word-for-word narration of the sunday meditation of February 3, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw020",
+  "n": 20,
+  "title": "Hatonn \u2014 February 4, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 4, 1974",
+    "session_label": "monday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-04_monday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 377,
+  "audio": "audio/Hatonn_1974-02-04_monday-meditation.mp3",
+  "transcript": "Word-for-word narration of the monday meditation of February 4, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw021",
+  "n": 21,
+  "title": "Hatonn \u2014 February 9, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 9, 1974",
+    "session_label": "saturday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-09_saturday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 739,
+  "audio": "audio/Hatonn_1974-02-09_saturday-meditation.mp3",
+  "transcript": "Word-for-word narration of the saturday meditation of February 9, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw022",
+  "n": 22,
+  "title": "Hatonn \u2014 February 10, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 10, 1974",
+    "session_label": "sunday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-10_sunday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 101,
+  "audio": "audio/Hatonn_1974-02-10_sunday-meditation.mp3",
+  "transcript": "Word-for-word narration of the sunday meditation of February 10, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw023",
+  "n": 23,
   "title": "Hatonn \u2014 February 11, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Learning to channel (Hatonn)",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 11, 1974",
+    "session_label": "first meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-11_first-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 477,
+  "audio": "audio/Hatonn_1974-02-11_first-meditation.mp3",
+  "transcript": "Word-for-word narration of the first meditation of February 11, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw024",
+  "n": 24,
+  "title": "Hatonn \u2014 February 11, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Learning to channel (Hatonn)",
   "entities": [
    "Hatonn"
   ],
@@ -417,12 +601,134 @@
   "transcript": "Word-for-word narration of the second meditation of February 11, 1974, channeled by Hatonn."
  },
  {
-  "id": "wfw017",
-  "n": 17,
+  "id": "wfw025",
+  "n": 25,
+  "title": "Hatonn \u2014 February 13, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Service to others",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 13, 1974",
+    "session_label": "wednesday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-13_wednesday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 711,
+  "audio": "audio/Hatonn_1974-02-13_wednesday-meditation.mp3",
+  "transcript": "Word-for-word narration of the wednesday meditation of February 13, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw026",
+  "n": 26,
+  "title": "Hatonn \u2014 February 15, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Hatonn on channeling & existence",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 15, 1974",
+    "session_label": "friday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-15_friday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 166,
+  "audio": "audio/Hatonn_1974-02-15_friday-meditation.mp3",
+  "transcript": "Word-for-word narration of the friday meditation of February 15, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw027",
+  "n": 27,
+  "title": "Hatonn \u2014 February 18, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Hatonn fragments",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 18, 1974",
+    "session_label": "first meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-18_first-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 1326,
+  "audio": "audio/Hatonn_1974-02-18_first-meditation.mp3",
+  "transcript": "Word-for-word narration of the first meditation of February 18, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw028",
+  "n": 28,
+  "title": "Hatonn \u2014 February 21, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Hatonn",
+    "date": "February 21, 1974",
+    "session_label": "thursday meditation",
+    "archive_ref": "wfw:Hatonn_1974-02-21_thursday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 279,
+  "audio": "audio/Hatonn_1974-02-21_thursday-meditation.mp3",
+  "transcript": "Word-for-word narration of the thursday meditation of February 21, 1974, channeled by Hatonn."
+ },
+ {
+  "id": "wfw029",
+  "n": 29,
+  "title": "Laitos / Hatonn \u2014 January 26, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Laitos",
+   "Hatonn"
+  ],
+  "sources": [
+   {
+    "entity": "Laitos",
+    "date": "January 26, 1974",
+    "session_label": "saturday meditation",
+    "archive_ref": "wfw:Laitos-Hatonn_1974-01-26_saturday-meditation.mp3"
+   },
+   {
+    "entity": "Hatonn",
+    "date": "January 26, 1974",
+    "session_label": "saturday meditation",
+    "archive_ref": "wfw:Laitos-Hatonn_1974-01-26_saturday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 824,
+  "audio": "audio/Laitos-Hatonn_1974-01-26_saturday-meditation.mp3",
+  "transcript": "Word-for-word narration of the saturday meditation of January 26, 1974, channeled by Laitos / Hatonn."
+ },
+ {
+  "id": "wfw030",
+  "n": 30,
   "title": "Laitos / Oxal / Hatonn \u2014 January 8, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Confederation & other planets",
   "entities": [
    "Laitos",
    "Oxal",
@@ -454,12 +760,49 @@
   "transcript": "Word-for-word narration of the tuesday meditation of January 8, 1974, channeled by Laitos / Oxal / Hatonn."
  },
  {
-  "id": "wfw018",
-  "n": 18,
+  "id": "wfw031",
+  "n": 31,
+  "title": "Laitos / Oxal / Philip \u2014 January 4, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Confederation & other planets",
+  "entities": [
+   "Laitos",
+   "Oxal",
+   "Philip"
+  ],
+  "sources": [
+   {
+    "entity": "Laitos",
+    "date": "January 4, 1974",
+    "session_label": "friday meditation",
+    "archive_ref": "wfw:Laitos-Oxal-Philip_1974-01-04_friday-meditation.mp3"
+   },
+   {
+    "entity": "Oxal",
+    "date": "January 4, 1974",
+    "session_label": "friday meditation",
+    "archive_ref": "wfw:Laitos-Oxal-Philip_1974-01-04_friday-meditation.mp3"
+   },
+   {
+    "entity": "Philip",
+    "date": "January 4, 1974",
+    "session_label": "friday meditation",
+    "archive_ref": "wfw:Laitos-Oxal-Philip_1974-01-04_friday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 404,
+  "audio": "audio/Laitos-Oxal-Philip_1974-01-04_friday-meditation.mp3",
+  "transcript": "Word-for-word narration of the friday meditation of January 4, 1974, channeled by Laitos / Oxal / Philip."
+ },
+ {
+  "id": "wfw032",
+  "n": 32,
   "title": "Oxal / Yom \u2014 January 6, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Oxal sessions",
   "entities": [
    "Oxal",
    "Yom"
@@ -484,12 +827,12 @@
   "transcript": "Word-for-word narration of the sunday meditation of January 6, 1974, channeled by Oxal / Yom."
  },
  {
-  "id": "wfw019",
-  "n": 19,
+  "id": "wfw033",
+  "n": 33,
   "title": "Unknown \u2014 January 25, 1974",
   "season": 1,
   "season_name": "Word for Word",
-  "theme": "Word for Word",
+  "theme": "Uncategorized",
   "entities": [
    "Unknown"
   ],
@@ -505,5 +848,28 @@
   "duration_sec": 167,
   "audio": "audio/Unknown_1974-01-25_friday-meditation.mp3",
   "transcript": "Word-for-word narration of the friday meditation of January 25, 1974, channeled by Unknown."
+ },
+ {
+  "id": "wfw034",
+  "n": 34,
+  "title": "Unknown \u2014 February 4, 1974",
+  "season": 1,
+  "season_name": "Word for Word",
+  "theme": "Uncategorized",
+  "entities": [
+   "Unknown"
+  ],
+  "sources": [
+   {
+    "entity": "Unknown",
+    "date": "February 4, 1974",
+    "session_label": "monday meditation",
+    "archive_ref": "wfw:Unknown_1974-02-04_monday-meditation.mp3"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 96,
+  "audio": "audio/Unknown_1974-02-04_monday-meditation.mp3",
+  "transcript": "Word-for-word narration of the monday meditation of February 4, 1974, channeled by Unknown."
  }
 ]
