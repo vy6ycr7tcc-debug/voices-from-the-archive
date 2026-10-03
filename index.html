@@ -81,6 +81,10 @@
   <h2 id="dTitle"></h2>
   <div class="meta" id="dMeta"></div>
   <audio id="player" controls preload="none"></audio>
+  <div id="pnav" style="display:flex;gap:10px;justify-content:center;margin:8px 0 4px">
+    <button id="prevEp" aria-label="Previous episode" style="padding:8px 18px">⏮ Prev</button>
+    <button id="nextEp" aria-label="Next episode" style="padding:8px 18px">Next ⏭</button>
+  </div>
   <div id="transcript"></div>
   <div id="sources"></div>
   <div id="related"></div>
@@ -191,12 +195,19 @@ function renderMore(){
   $("more").style.display=shown<filtered.length?"block":"none";
 }
 
-/* Step through the current filtered list (used by autoplay and lock-screen controls). */
+/* Step within the current episode's topic group (prev/next + autoplay). */
+function topicGroup(){
+  const cur=EPS.find(x=>x.id===currentId);
+  if(!cur)return filtered.length?filtered:EPS;
+  const g=EPS.filter(x=>topicOf(x)===topicOf(cur));
+  return g.length?g:(filtered.length?filtered:EPS);
+}
 function step(d,autoplay){
-  if(!filtered.length)return;
-  let i=filtered.findIndex(x=>x.id===currentId);
-  i=i<0?0:(i+d+filtered.length)%filtered.length;
-  openDetail(filtered[i]);
+  const g=topicGroup();
+  if(!g.length)return;
+  let i=g.findIndex(x=>x.id===currentId);
+  i=i<0?0:(i+d+g.length)%g.length;
+  openDetail(g[i]);
   if(autoplay)$("player").play().catch(()=>{});
 }
 
@@ -230,11 +241,12 @@ document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
 $("more").onclick=renderMore;
 $("refresh").onclick=refreshCatalog;
 
-/* Autoplay the next episode in the filtered list when one ends. */
+/* Autoplay the next episode in the topic group when one ends. */
 $("player").addEventListener("ended",()=>{
   if(!$("detail").classList.contains("open"))return;
-  const i=filtered.findIndex(x=>x.id===currentId);
-  if(i>=0&&i+1<filtered.length)step(1,true);
+  const g=topicGroup();
+  const i=g.findIndex(x=>x.id===currentId);
+  if(i>=0&&i+1<g.length)step(1,true);
 });
 
 /* Lock-screen / background playback: metadata + transport controls. */
@@ -254,6 +266,8 @@ $("player").addEventListener("timeupdate",()=>{
   }
 });
 
+$("prevEp").addEventListener("click",()=>step(-1,true));
+$("nextEp").addEventListener("click",()=>step(1,true));
 fetch("episodes.json").then(r=>r.json()).then(data=>{
   EPS=data;initFilters();applyFilters();
 }).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
