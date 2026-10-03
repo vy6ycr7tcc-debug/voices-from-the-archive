@@ -541,12 +541,19 @@
     audio.addEventListener('pause', function () { setPlaying(false); });
     audio.addEventListener('ended', function () {
       setPlaying(false); renderProgress();
-      if (!current || !filtered.length) return;
+      if (!current) return;
+      // Stay within the current episode's topic group, not just the filter list.
+      var group = EPS.filter(function (x) { return topicOf(x) === topicOf(current); });
+      if (!group.length) return;
       var i = -1;
-      for (var k = 0; k < filtered.length; k++) {
-        if (filtered[k].id === current.id) { i = k; break; }
+      for (var k = 0; k < group.length; k++) {
+        if (group[k].id === current.id) { i = k; break; }
       }
-      if (i >= 0 && i + 1 < filtered.length) step(1, true);
+      if (i >= 0 && i + 1 < group.length) {
+        openDetail(group[i + 1].id);
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () {});
+      }
     });
     audio.addEventListener('error', function () {
       if (current) toast('Audio unavailable');
