@@ -165,19 +165,19 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .sheet-inner{max-width:760px;margin:0 auto;background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;
   animation:rise .38s cubic-bezier(.2,.9,.3,1)}
 @keyframes rise{from{transform:translateY(34px);opacity:0}to{transform:none;opacity:1}}
-.detail-art{height:230px;position:relative}
+.detail-art{height:118px;position:relative}
 .detail-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line-soft);
   background:rgba(7,11,22,.6);color:var(--ink);cursor:pointer;backdrop-filter:blur(6px);transition:.2s;z-index:2;
   display:flex;align-items:center;justify-content:center}
 .detail-close:hover{border-color:var(--gold);color:var(--gold)}
 .detail-close svg.ic{width:1em;height:1em}
-.detail-body{padding:34px 38px}
+.detail-body{padding:22px 22px 28px}
 .detail-kicker{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.detail-body h2{font-family:var(--serif);font-size:2.1rem;font-weight:500;line-height:1.2;margin-bottom:14px}
-.detail-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--ink-dim);font-size:.84rem;margin-bottom:24px}
+.detail-body h2{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.25;margin-bottom:10px}
+.detail-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--ink-dim);font-size:.8rem;margin-bottom:16px}
 .dot{opacity:.4}
 /* custom player */
-.player{background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:16px;padding:20px;margin-bottom:22px}
+.player{background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:16px;padding:16px;margin-bottom:18px}
 .p-row{display:flex;align-items:center;gap:14px}
 .p-btn{width:46px;height:46px;flex:none;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);
   cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
@@ -189,8 +189,14 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .p-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .p-controls{display:flex;align-items:center;justify-content:center;gap:20px}
 .p-btn.sm{width:44px;height:44px;font-size:.72rem;letter-spacing:.03em;font-weight:500}
-.viz{width:100%;height:46px;display:block;margin-bottom:14px;border-radius:8px;background:rgba(255,255,255,.02)}
-.p-utils{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.viz{display:none;width:100%;height:44px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,.02)}
+.viz.live{display:block}
+.detail-toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.shareicon{width:36px;height:36px;flex:none;border-radius:50%;border:1px solid var(--line-soft);background:transparent;
+  color:var(--ink-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.shareicon:hover{border-color:var(--gold);color:var(--gold)}
+.shareicon svg.ic{width:.95em;height:.95em}
+.p-utils{display:flex;gap:8px;justify-content:center;margin-top:12px}
 .utilbtn{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;
   padding:7px 18px;font-size:.74rem;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:.2s;min-width:76px}
 .utilbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
@@ -204,7 +210,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   padding:11px;font-size:.8rem;letter-spacing:.1em;cursor:pointer;transition:.2s;font-family:var(--sans);text-transform:uppercase;
   display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .p-nav button:hover{border-color:var(--gold-dim);color:var(--gold)}
-.transcript{margin-top:6px}
+.transcript{margin-top:2px}
 .transcript h4{font-family:var(--serif);font-size:1.15rem;font-weight:500;margin-bottom:12px;color:var(--ink)}
 .transcript .tbody{max-height:320px;overflow-y:auto;font-size:.88rem;color:var(--ink-dim);line-height:1.75;
   padding:18px 20px;background:rgba(255,255,255,.025);border:1px solid var(--line-soft);border-radius:12px;white-space:pre-wrap}
@@ -505,6 +511,7 @@ function drawViz(){
 }
 function startViz(){
   if(!analyser||REDUCED||vizRAF||!vizCanvas||!document.contains(vizCanvas))return;
+  vizCanvas.classList.add('live');
   if(AC.state==='suspended')AC.resume().catch(()=>{});
   const loop=(t)=>{
     if(audio.paused||audio.ended||!document.contains(vizCanvas)){vizRAF=0;drawVizIdle();return;}
@@ -513,7 +520,7 @@ function startViz(){
   };
   vizRAF=requestAnimationFrame(loop);
 }
-function stopViz(){if(vizRAF){cancelAnimationFrame(vizRAF);vizRAF=0;}drawVizIdle();}
+function stopViz(){if(vizRAF){cancelAnimationFrame(vizRAF);vizRAF=0;}if(vizCanvas)vizCanvas.classList.remove('live');}
 function cycleSpeed(){
   speedIx=(speedIx+1)%SPEEDS.length;audio.playbackRate=SPEEDS[speedIx];
   document.querySelectorAll('.speedbtn').forEach(b=>b.textContent=SPEEDS[speedIx]+'x');
@@ -673,8 +680,8 @@ function openDetail(id){
     '<div class="detail-art" style="'+artFor(e)+'">'+ORB_SVG
     +'<button class="detail-close" id="dClose" aria-label="Close">'+I.close+'</button></div>'
     +'<div class="detail-body">'
-    +'<div class="detail-kicker">Episode '+String(e.n).padStart(2,"0")+' · '+esc(seasonLabel(e))+(isPlayed(e.id)?' · <span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
-    +'<div style="margin-bottom:16px"><button class="sharebtn" id="dShare"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3.5v11"/><path d="M8.5 6.5L12 3l3.5 3.5"/><path d="M6 11.5V18a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 18v-6.5"/></svg> Share episode</button></div>'
+    +'<div class="detail-toprow"><div class="detail-kicker" style="margin:0">Episode '+String(e.n).padStart(2,"0")+' · '+esc(seasonLabel(e))+(isPlayed(e.id)?' · <span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
+    +'<button class="shareicon" id="dShare" aria-label="Share episode"><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V5"/><path d="M8.5 8.5L12 5l3.5 3.5"/><path d="M6 12v7a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-7"/></svg></button></div>'
     +'<h2>'+esc(e.title)+'</h2>'
     +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
     +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
@@ -713,7 +720,7 @@ function openDetail(id){
   $("dSpeed").onclick=cycleSpeed; $("dSpeed").textContent=SPEEDS[speedIx]+'x';
   $("dSleep").onclick=cycleSleep;
   const sl=SLEEPS[sleepIx]; $("dSleep").textContent=sl?sl+' min':'Sleep'; $("dSleep").classList.toggle('on',!!sl);
-  vizCanvas=$("dViz"); vizCtx=vizCanvas.getContext('2d'); sizeViz(); drawVizIdle();
+  vizCanvas=$("dViz"); vizCtx=vizCanvas.getContext('2d'); sizeViz(); vizCanvas.classList.remove('live');
   if(!audio.paused&&!audio.ended){ensureAudioGraph();startViz();}
   $("dShare").onclick=()=>shareEpisode(e);
   try{history.replaceState(null,"","?ep="+e.id);}catch(err){}
