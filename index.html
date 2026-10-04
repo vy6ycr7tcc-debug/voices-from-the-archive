@@ -476,17 +476,23 @@ const ORB_SVG='<svg class="orb" viewBox="0 0 200 200" preserveAspectRatio="xMidY
 const audio=new Audio(); audio.preload="none";
 let detailOpen=false;
 
-function topicGroup(){
+/* Next/Prev follow the list on screen (your sort & filters). Fallback: same topic, same sort. */
+function stepList(){
+  if(filtered.some(x=>x.id===currentId)&&filtered.length) return filtered.slice();
   const cur=EPS.find(x=>x.id===currentId);
-  if(!cur) return filtered.length?filtered:EPS;
-  const g=EPS.filter(x=>themeOf(x)===themeOf(cur));
-  return g.length?g:(filtered.length?filtered:EPS);
+  const g=cur?EPS.filter(x=>themeOf(x)===themeOf(cur)):EPS.slice();
+  const S={new:(a,b)=>epDate(b)-epDate(a),old:(a,b)=>epDate(a)-epDate(b),
+           long:(a,b)=>b.duration_sec-a.duration_sec,short:(a,b)=>a.duration_sec-b.duration_sec};
+  g.sort(S[sortMode]||S.new);
+  return g.length?g:EPS.slice();
 }
-function step(d,autoplay){
-  const g=topicGroup(); if(!g.length)return;
-  let i=g.findIndex(x=>x.id===currentId);
-  i=i<0?0:(i+d+g.length)%g.length;
-  loadEpisode(g[i],autoplay);
+function step(d,autoplay,quiet){
+  const g=stepList(); if(!g.length)return;
+  const i=g.findIndex(x=>x.id===currentId);
+  if(i<0){loadEpisode(g[d>0?0:g.length-1],autoplay);return;}
+  const n=i+d;
+  if(n<0||n>=g.length){syncChrome();if(!quiet)toast(d>0?"End of the list":"Start of the list");return;}
+  loadEpisode(g[n],autoplay);
 }
 function loadEpisode(e,autoplay){
   currentId=e.id;
@@ -604,7 +610,7 @@ function artworkURL(){
   return ART_URL;
 }
 function prefetchNext(){
-  const g=topicGroup(),i=g.findIndex(x=>x.id===currentId),nx=g[i+1];
+  const g=stepList(),i=g.findIndex(x=>x.id===currentId),nx=g[i+1];
   document.querySelectorAll('link[data-pref]').forEach(l=>l.remove());
   if(nx&&i>=0){const l=document.createElement('link');l.rel='prefetch';l.as='audio';
     l.href=nx.audio;l.dataset.pref='1';document.head.appendChild(l);}
@@ -617,8 +623,7 @@ audio.addEventListener("ended",()=>{
   stopViz();
   if(currentId){try{const p=getProg();delete p[currentId];localStorage.setItem("wfw_prog",JSON.stringify(p));}catch(e){}
     markPlayed(currentId);renderAll();}
-  const g=topicGroup(), i=g.findIndex(x=>x.id===currentId);
-  if(i>=0&&i+1<g.length) step(1,true); else syncChrome();
+  step(1,true,true);
 });
 let lastSave=0;
 audio.addEventListener("timeupdate",()=>{
