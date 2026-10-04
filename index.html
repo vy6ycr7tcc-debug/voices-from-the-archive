@@ -566,6 +566,8 @@ audio.addEventListener("ended",()=>{
 });
 let lastSave=0;
 audio.addEventListener("timeupdate",()=>{
+  if(MUS.on&&MUS.ctx&&MUS.ctx.state==="suspended"&&!audio.paused)
+    MUS.ctx.resume().then(()=>{if(MUS.on&&!audio.paused)bedIn();}).catch(()=>{});
   const d=audio.duration;
   if(currentId&&d&&isFinite(d)&&Date.now()-lastSave>5000){lastSave=Date.now();saveProg(currentId,audio.currentTime,d);renderContinue();}
   
@@ -608,7 +610,7 @@ function musicEnsure(){
     try{
       const C = MUS.ctx = new (window.AudioContext||window.webkitAudioContext)();
       MUS.master = C.createGain(); MUS.master.gain.value=0.0001;
-      MUS.bedGain = C.createGain(); MUS.bedGain.gain.value=0.3;
+      MUS.bedGain = C.createGain(); MUS.bedGain.gain.value=0.12;
       MUS.bedGain.connect(MUS.master); MUS.master.connect(C.destination);
       const r = await fetch('./audio/water-bed.mp3');
       const dec = await C.decodeAudioData(await r.arrayBuffer());
@@ -629,16 +631,14 @@ function bedIn(){
     }
     const n=C.currentTime;
     MUS.master.gain.cancelScheduledValues(n);
-    MUS.master.gain.setValueAtTime(Math.max(0.0001,MUS.master.gain.value),n);
-    MUS.master.gain.exponentialRampToValueAtTime(1,n+3);
+    MUS.master.gain.setTargetAtTime(1,n,1.4);
   });
 }
 function bedOut(){
   if(!MUS.ctx)return;
   const n=MUS.ctx.currentTime;
   MUS.master.gain.cancelScheduledValues(n);
-  MUS.master.gain.setValueAtTime(Math.max(0.0001,MUS.master.gain.value),n);
-  MUS.master.gain.exponentialRampToValueAtTime(0.0001,n+2.5);
+  MUS.master.gain.setTargetAtTime(0.0001,n,0.7);
 }
 function musicToggle(){
   MUS.on=!MUS.on;
