@@ -93,6 +93,13 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .topic-card:hover{transform:translateY(-3px);border-color:rgba(201,169,106,.45);box-shadow:0 16px 40px rgba(0,0,0,.45)}
 .topic-card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 16px 40px rgba(0,0,0,.45)}
 .topic-art{height:86px;position:relative;overflow:hidden}
+.topic-dl{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.22);
+  background:rgba(10,10,18,.55);backdrop-filter:blur(6px);color:#e8e4da;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.62rem;font-weight:600;letter-spacing:.02em;transition:.2s;z-index:2}
+.topic-dl:hover{border-color:var(--gold);color:var(--gold-bright)}
+.topic-dl.done{border-color:var(--gold);color:var(--gold-bright)}
+.topic-dl.busy{border-color:var(--gold);color:var(--gold-bright);pointer-events:none}
+.topic-dl .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .topic-art .orb{position:absolute;inset:-30%;width:160%;height:160%;opacity:.55}
 .topic-body{padding:13px 14px 14px}
 .topic-name{font-family:var(--serif);font-size:1.02rem;font-weight:500;margin-bottom:4px;line-height:1.25}
@@ -440,25 +447,60 @@ function toggleDownload(id){
   const e=epById(id); if(!e||dlProg[id]!=null) return;
   if(dlDone.has(id)) removeDownload(e); else downloadEpisode(e);
 }
+async function fetchAndCache(e){
+  const r=await fetch(absAudio(e));
+  if(!r.ok) throw new Error('http '+r.status);
+  const total=parseInt(r.headers.get('content-length')||'0',10);
+  const rd=r.body.getReader(), chunks=[]; let got=0;
+  for(;;){
+    const {done,value}=await rd.read(); if(done)break;
+    chunks.push(value); got+=value.length;
+    if(total>0){dlProg[e.id]=got/total;paintDl(e.id);paintTopicsDl();}
+  }
+  const c=await caches.open(AUDIO_CACHE);
+  await c.put(absAudio(e),new Response(new Blob(chunks,{type:'audio/mpeg'}),
+    {headers:{'Content-Type':'audio/mpeg'}}));
+}
 async function downloadEpisode(e){
   dlProg[e.id]=0; paintDl(e.id);
   try{
-    const r=await fetch(absAudio(e));
-    if(!r.ok) throw new Error('http '+r.status);
-    const total=parseInt(r.headers.get('content-length')||'0',10);
-    const rd=r.body.getReader(), chunks=[]; let got=0;
-    for(;;){
-      const {done,value}=await rd.read(); if(done)break;
-      chunks.push(value); got+=value.length;
-      if(total>0){dlProg[e.id]=got/total;paintDl(e.id);}
-    }
-    const c=await caches.open(AUDIO_CACHE);
-    await c.put(absAudio(e),new Response(new Blob(chunks,{type:'audio/mpeg'}),
-      {headers:{'Content-Type':'audio/mpeg'}}));
+    await fetchAndCache(e);
     delete dlProg[e.id]; dlDone.add(e.id);
     toast('Saved for offline listening');
   }catch(err){ delete dlProg[e.id]; toast('Download failed \u2014 try again'); }
-  paintDl(e.id); applyFilters();
+  paintDl(e.id); paintTopicsDl(); applyFilters();
+}
+function topicState(t){
+  const eps=EPS.filter(e=>themeOf(e)===t);
+  const done=eps.filter(e=>dlDone.has(e.id)).length;
+  const busy=eps.some(e=>dlProg[e.id]!=null);
+  return {total:eps.length,done,busy};
+}
+function topicDlIcon(t){
+  const st=topicState(t);
+  if(st.busy) return '<span>'+st.done+'/'+st.total+'</span>';
+  if(st.done===st.total&&st.total>0) return '<svg class="ic" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11"/></svg>';
+  return '<svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7.5 11.5L12 16l4.5-4.5"/><path d="M5 19.5h14"/></svg>';
+}
+function paintTopicsDl(){
+  document.querySelectorAll('[data-tdl]').forEach(b=>{
+    const t=b.dataset.tdl, st=topicState(t);
+    b.classList.toggle('done',st.done===st.total&&st.total>0&&!st.busy);
+    b.classList.toggle('busy',st.busy);
+    b.innerHTML=topicDlIcon(t);
+  });
+}
+async function downloadTopic(t){
+  const missing=EPS.filter(e=>themeOf(e)===t&&!dlDone.has(e.id)&&dlProg[e.id]==null);
+  if(!missing.length){ toast('All sessions in this topic are saved for offline'); return; }
+  for(const e of missing){
+    dlProg[e.id]=0; paintDl(e.id); paintTopicsDl();
+    try{ await fetchAndCache(e); delete dlProg[e.id]; dlDone.add(e.id); }
+    catch(err){ delete dlProg[e.id]; toast('Download failed \u2014 try again'); break; }
+    paintDl(e.id); paintTopicsDl();
+  }
+  paintTopicsDl(); applyFilters();
+  toast('Topic saved for offline listening');
 }
 async function removeDownload(e){
   try{const c=await caches.open(AUDIO_CACHE);await c.delete(absAudio(e));}catch(err){}
@@ -783,18 +825,25 @@ function renderTopics(){
   let h='';
   TOPIC_ORDER.filter(t=>byT[t]).forEach(t=>{
     const eps=byT[t], mins=Math.round(eps.reduce((a,e)=>a+e.duration_sec,0)/60);
-    h+='<button class="topic-card'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'">'
-      +'<div class="topic-art" style="'+topicArt(t)+'">'+ORB_SVG+'</div>'
+    const st=topicState(t);
+    h+='<div class="topic-card'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'" role="button" tabindex="0">'
+      +'<div class="topic-art" style="'+topicArt(t)+'">'+ORB_SVG
+      +'<button class="topic-dl'+(st.busy?" busy":"")+(st.done===st.total&&st.total>0?" done":"")+'" data-tdl="'+esc(t)+'" aria-label="Download all sessions in '+esc(t)+' for offline listening">'+topicDlIcon(t)+'</button></div>'
       +'<div class="topic-body"><div class="topic-name">'+esc(t)+'</div>'
       +'<div class="topic-ess">'+esc(TOPIC_ESS[t]||"")+'</div>'
       +'<div class="topic-count">'+eps.length+' session'+(eps.length>1?"s":"")+' \u00b7 '+mins+' min</div>'
-      +'</div></button>';
+      +'</div></div>';
   });
   $("topics").innerHTML=h;
-  $("topics").querySelectorAll(".topic-card").forEach(c=>c.onclick=()=>{
-    activeTheme=(activeTheme===c.dataset.t)?"All":c.dataset.t;
-    applyFilters();
-    document.querySelector("#allHead").scrollIntoView({behavior:"smooth",block:"start"});
+  $("topics").querySelectorAll(".topic-card").forEach(c=>{
+    const toggle=()=>{activeTheme=(activeTheme===c.dataset.t)?"All":c.dataset.t;
+      applyFilters();
+      document.querySelector("#allHead").scrollIntoView({behavior:"smooth",block:"start"});};
+    c.onclick=toggle;
+    c.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();toggle();}};
+  });
+  $("topics").querySelectorAll(".topic-dl").forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation(); downloadTopic(b.dataset.tdl);
   });
 }
 function applyFilters(){
