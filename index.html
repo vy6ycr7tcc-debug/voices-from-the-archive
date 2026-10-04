@@ -54,24 +54,6 @@ nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-con
 .iconbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
 .iconbtn svg.ic{width:1em;height:1em}
 
-/* ---------- hero ---------- */
-.hero{position:relative;text-align:center;padding:96px 24px 64px;overflow:hidden}
-.hero-eyebrow{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
-.hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.6rem,7vw,4.6rem);line-height:1.08;letter-spacing:.01em}
-.hero h1 .thin{font-style:italic;font-weight:400;color:var(--gold-bright)}
-.hero-sub{max-width:620px;margin:26px auto 0;color:var(--ink-dim);font-size:1.02rem;font-weight:300}
-.hero-stats{display:flex;gap:38px;justify-content:center;margin-top:36px;flex-wrap:wrap}
-.hstat{text-align:center}
-.hstat b{display:block;font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--gold-bright)}
-.hstat span{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint)}
-.hero-cta{margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.btn{border-radius:999px;padding:13px 32px;font-size:.9rem;letter-spacing:.06em;cursor:pointer;font-family:var(--sans);transition:.25s;border:1px solid transparent;
-  display:inline-flex;align-items:center;gap:10px}
-.btn-gold{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#1a1408;font-weight:600;border:none}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(201,169,106,.35)}
-.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink-dim)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
-
 /* ---------- section shell ---------- */
 section{max-width:1180px;margin:0 auto;padding:0 24px}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:56px 0 22px}
@@ -231,7 +213,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .p-btn.main svg.solid{width:22px;height:22px;fill:#1a1408;stroke:none}
 .p-time{font-size:.74rem;color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
 .p-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.p-controls{display:flex;align-items:center;justify-content:center;gap:20px}
+.p-controls{display:flex;align-items:center;justify-content:center;gap:14px}
 .p-btn.sm{width:44px;height:44px;font-size:.72rem;letter-spacing:.03em;font-weight:500}
 .viz{display:none;width:100%;height:44px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,.02)}
 .viz.live{display:block}
@@ -240,9 +222,9 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   color:var(--ink-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
 .shareicon:hover{border-color:var(--gold);color:var(--gold)}
 .shareicon svg.ic{width:.95em;height:.95em}
-.p-utils{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.p-utils{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
 .utilbtn{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;
-  padding:7px 18px;font-size:.74rem;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:.2s;min-width:76px}
+  padding:7px 14px;font-size:.74rem;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:.2s;min-width:70px}
 .utilbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
 .utilbtn.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,169,106,.12)}
 .p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative}
@@ -321,7 +303,6 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   .feat-art{min-height:190px}
   .feat-body{padding:26px}
   .detail-body{padding:24px 22px}
-  .hero{padding:64px 18px 44px}
   .searchbox{width:130px}.searchbox:focus{width:160px}
   nav{padding:12px 16px}
 }
@@ -338,20 +319,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   </div>
 </nav>
 
-<header class="hero">
-  <div class="hero-eyebrow">The L/L Research Sessions · 1972–1974</div>
-  <h1>Every word, <span class="thin">exactly as spoken.</span></h1>
-  <p class="hero-sub">Word-for-word AI narrations of the early Confederation channelings — Hatonn, Latwii, Oxal and friends, in full. No summaries. No edits. Just the archive, given voice.</p>
-  <div class="hero-stats">
-    <div class="hstat"><b id="stEps">–</b><span>Episodes</span></div>
-    <div class="hstat"><b id="stHrs">–</b><span>Hours of audio</span></div>
-    <div class="hstat"><b id="stEnt">–</b><span>Entities</span></div>
-  </div>
-  <div class="hero-cta">
-    <button class="btn btn-gold" id="ctaPlay"><svg class="ic" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M8 5.5v13l11-6.5z"/></svg> Start listening</button>
-    <button class="btn btn-ghost" id="ctaBrowse">Browse the archive</button>
-  </div>
-</header>
+
 
 <section id="browse">
   <div class="sec-head"><h2>Find <em>a session</em></h2><span class="count" id="countLine"></span></div>
@@ -905,11 +873,6 @@ function renderFeatured(){
     +'<div class="feat-play"><span class="playring">'+I.play+'</span><span>Play episode</span></div></div>';
   $("featured").onclick=()=>{openDetail(e.id);};
 }
-function renderStats(){
-  $("stEps").textContent=EPS.length;
-  $("stHrs").textContent=fmtH(EPS.reduce((a,e)=>a+(e.duration_sec||0),0));
-  $("stEnt").textContent=new Set(EPS.flatMap(e=>e.entities||[])).size;
-}
 function renderAll(){renderTopics();renderEntSel();renderGrid();renderFeatured();renderContinue();}
 
 /* ============ detail modal ============ */
@@ -1013,11 +976,10 @@ $("q").addEventListener("input",()=>{$("qClear").classList.toggle("show",!!$("q"
     const e=pool[Math.floor(Math.random()*pool.length)];
     loadEpisode(e,true); toast("Shuffled: "+e.title);
   };
-$("ctaPlay").onclick=()=>{const e=EPS[EPS.length-1];if(e)openDetail(e.id);};
-$("ctaBrowse").onclick=()=>$("browse").scrollIntoView({behavior:"smooth"});
+
 $("refresh").onclick=async()=>{
   const b=$("refresh");b.innerHTML="…";
-  try{const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});EPS=await r.json();renderStats();applyFilters();b.innerHTML=I.check;}
+  try{const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});EPS=await r.json();applyFilters();b.innerHTML=I.check;}
   catch(e){b.innerHTML="✕";}
   setTimeout(()=>{b.innerHTML='<svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';},1500);
 };
@@ -1039,7 +1001,7 @@ $("refresh").onclick=async()=>{
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{
   navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});});}
 /* boot */
-fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;renderStats();applyFilters();refreshDownloads();
+fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;applyFilters();refreshDownloads();
   const epId=new URLSearchParams(location.search).get("ep");
   if(epId&&EPS.some(x=>x.id===epId))openDetail(epId);})
 .catch(()=>{$("empty").style.display="block";$("empty").querySelector("h3").textContent="Could not load the archive.";});
