@@ -553,8 +553,12 @@ function prefetchNext(){
   if(nx&&i>=0){const l=document.createElement('link');l.rel='prefetch';l.as='audio';
     l.href=nx.audio;l.dataset.pref='1';document.head.appendChild(l);}
 }
-audio.addEventListener("play",()=>{paintPlayState();ensureAudioGraph();startViz();});
-audio.addEventListener("pause",()=>{paintPlayState();stopViz();
+audio.addEventListener("play",()=>{paintPlayState();ensureAudioGraph();startViz();
+  if(MUS.on){musicInit();if(MUS.ctx.state==='suspended')MUS.ctx.resume().catch(()=>{});
+    if(!MUS.timer){MUS.chordIx=0;const cyc=()=>{if(!MUS.on)return;
+      musicChord(CHORDS[MUS.chordIx%CHORDS.length],22);MUS.chordIx++;MUS.timer=setTimeout(cyc,19000);};cyc();}
+    musicFade(MUS.vol,3);}});
+audio.addEventListener("pause",()=>{paintPlayState();stopViz();musicFade(0.0001,2);
   if(currentId&&audio.duration&&isFinite(audio.duration))saveProg(currentId,audio.currentTime,audio.duration);});
 audio.addEventListener("ended",()=>{
   stopViz();
@@ -582,6 +586,73 @@ function seekFromTrack(ev){
   const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
   if(audio.duration&&isFinite(audio.duration)) audio.currentTime=f*audio.duration;
 }
+
+/* ============ generative ambient bed ============ */
+const MUS = {on:false, ctx:null, master:null, bus:null, timer:null, chordIx:0, vol:0.15};
+try{MUS.on = localStorage.getItem('wfw_music')==='1';}catch(e){}
+const CHORDS = [
+  [130.81,164.81,196.00,246.94],  /* Cmaj7 */
+  [110.00,130.81,164.81,196.00],  /* Am7 */
+  [87.31,130.81,174.61,220.00],   /* Fmaj7 */
+  [98.00,146.83,196.00,246.94],   /* G */
+];
+function musicInit(){
+  if(MUS.ctx)return;
+  const C = MUS.ctx = new (window.AudioContext||window.webkitAudioContext)();
+  MUS.master = C.createGain(); MUS.master.gain.value = 0;
+  const lp = C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=850; lp.Q.value=0.4;
+  const dly = C.createDelay(2); dly.delayTime.value=0.42;
+  const fb = C.createGain(); fb.gain.value=0.32;
+  const dlp = C.createBiquadFilter(); dlp.type='lowpass'; dlp.frequency.value=1100;
+  MUS.master.connect(lp); lp.connect(C.destination);
+  lp.connect(dly); dly.connect(dlp); dlp.connect(fb); fb.connect(dly); dly.connect(C.destination);
+  MUS.bus = C.createGain(); MUS.bus.connect(MUS.master);
+}
+function musicChord(freqs, dur){
+  const C=MUS.ctx, t=C.currentTime+0.1;
+  freqs.forEach((f)=>{
+    const o=C.createOscillator(); o.type='sine'; o.frequency.value=f;
+    o.detune.value=Math.random()*6-3;
+    const g=C.createGain();
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.05,t+6);
+    g.gain.setValueAtTime(0.05,t+dur-6);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur+2);
+    o.connect(g); g.connect(MUS.bus); o.start(t); o.stop(t+dur+3);
+    const o2=C.createOscillator(); o2.type='triangle'; o2.frequency.value=f*2;
+    const g2=C.createGain();
+    g2.gain.setValueAtTime(0.0001,t);
+    g2.gain.exponentialRampToValueAtTime(0.012,t+8);
+    g2.gain.exponentialRampToValueAtTime(0.0001,t+dur+2);
+    o2.connect(g2); g2.connect(MUS.bus); o2.start(t+1); o2.stop(t+dur+3);
+  });
+}
+function musicFade(to, secs){
+  if(!MUS.ctx)return;
+  const n=MUS.ctx.currentTime;
+  MUS.master.gain.cancelScheduledValues(n);
+  MUS.master.gain.setValueAtTime(Math.max(0.0001,MUS.master.gain.value),n);
+  MUS.master.gain.exponentialRampToValueAtTime(Math.max(0.0001,to),n+secs);
+}
+function musicStart(){
+  musicInit();
+  const C=MUS.ctx; if(C.state==='suspended')C.resume().catch(()=>{});
+  MUS.on=true;
+  musicFade(MUS.vol,3);
+  const cyc=()=>{ if(!MUS.on)return;
+    musicChord(CHORDS[MUS.chordIx%CHORDS.length],22); MUS.chordIx++;
+    MUS.timer=setTimeout(cyc,19000); };
+  if(!MUS.timer)cyc();
+  document.querySelectorAll('.musicbtn').forEach(b=>b.classList.add('on'));
+  try{localStorage.setItem('wfw_music','1');}catch(e){}
+}
+function musicStop(){
+  MUS.on=false; if(MUS.timer){clearTimeout(MUS.timer);MUS.timer=null;}
+  musicFade(0.0001,2.5);
+  document.querySelectorAll('.musicbtn').forEach(b=>b.classList.remove('on'));
+  try{localStorage.setItem('wfw_music','0');}catch(e){}
+}
+function musicToggle(){ MUS.on?musicStop():musicStart(); }
 
 /* ============ rendering ============ */
 function topics(){
@@ -698,6 +769,7 @@ function openDetail(id){
     +'<button class="p-btn sm" id="dFwd" aria-label="Forward 30 seconds">+30</button>'
     +'</div>'
     +'<div class="p-utils"><button class="utilbtn speedbtn" id="dSpeed">1x</button>'
+    +'<button class="utilbtn musicbtn" id="dMusic"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v11"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg> Music</button>'
     +'<button class="utilbtn sleepbtn" id="dSleep">Sleep</button></div>'
     +'</div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
@@ -719,6 +791,8 @@ function openDetail(id){
   $("dFwd").onclick=()=>{try{audio.currentTime=Math.min(audio.duration||1e9,audio.currentTime+30);}catch(err){}};
   $("dSpeed").onclick=cycleSpeed; $("dSpeed").textContent=SPEEDS[speedIx]+'x';
   $("dSleep").onclick=cycleSleep;
+  $("dMusic").onclick=musicToggle;
+  if(MUS.on)$("dMusic").classList.add('on');
   const sl=SLEEPS[sleepIx]; $("dSleep").textContent=sl?sl+' min':'Sleep'; $("dSleep").classList.toggle('on',!!sl);
   vizCanvas=$("dViz"); vizCtx=vizCanvas.getContext('2d'); sizeViz(); vizCanvas.classList.remove('live');
   if(!audio.paused&&!audio.ended){ensureAudioGraph();startViz();}
