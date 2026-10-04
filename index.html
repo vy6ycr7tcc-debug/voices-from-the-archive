@@ -104,12 +104,20 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .fchip .ic{width:14px;height:14px}
 .fchip:hover{border-color:var(--gold-dim);color:var(--ink)}
 .fchip.on{background:linear-gradient(135deg,rgba(201,169,106,.22),rgba(201,169,106,.1));border-color:var(--gold);color:var(--gold-bright)}
-/* ---------- topic pills ---------- */
-.pills{display:flex;gap:10px;flex-wrap:nowrap;overflow-x:auto;margin-bottom:8px;padding-bottom:6px;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch;
-  -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
-.pills::-webkit-scrollbar{display:none}
-.pills .pill{flex:none}
+/* ---------- topics ---------- */
+.topics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 8px}
+.topic-card{position:relative;text-align:left;background:var(--card);border:1px solid var(--line-soft);
+  border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;font-family:var(--sans);padding:0;color:var(--ink)}
+.topic-card:hover{transform:translateY(-3px);border-color:rgba(201,169,106,.45);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.topic-card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 16px 40px rgba(0,0,0,.45)}
+.topic-art{height:86px;position:relative;overflow:hidden}
+.topic-art .orb{position:absolute;inset:-30%;width:160%;height:160%;opacity:.55}
+.topic-body{padding:13px 14px 14px}
+.topic-name{font-family:var(--serif);font-size:1.02rem;font-weight:500;margin-bottom:4px;line-height:1.25}
+.topic-ess{font-size:.74rem;color:var(--ink-dim);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;
+  -webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:3.3em}
+.topic-count{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.topic-card.on .topic-count{color:var(--gold-bright)}
 .pill{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);color:var(--ink-dim);
   border-radius:999px;padding:9px 18px;font-size:.82rem;cursor:pointer;transition:.22s;font-family:var(--sans);letter-spacing:.02em}
 .pill small{opacity:.6;margin-left:6px;font-size:.72rem}
@@ -356,7 +364,8 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
       <button class="fchip" id="shuffleBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M3 7h4l10 10h4"/><path d="M17 13l4 4-4 4"/><path d="M3 17h4l2.5-2.5"/><path d="M13.5 9.5L17 7h4"/><path d="M17 3l4 4-4 4"/></svg>Surprise me</button>
     </div>
   </div>
-  <div class="pills" id="pills"></div>
+  <div class="sec-head" style="margin-top:24px"><h2>Explore <em>by topic</em></h2></div>
+  <div class="topics" id="topics"></div>
 
   <div class="sec-head"><h2>Latest <em>session</em></h2></div>
   <div class="featured" id="featured"></div>
@@ -366,7 +375,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
     <div class="cont-row" id="contRow"></div>
   </div>
 
-  <div class="sec-head"><h2>All <em>episodes</em></h2><span class="count" id="gridCount"></span></div>
+  <div class="sec-head" id="allHead"><h2>All <em>episodes</em></h2><span class="count" id="gridCount"></span></div>
   <div class="rows" id="grid"></div>
   <div class="empty" id="empty" style="display:none"><h3>Nothing in this corner of the archive.</h3><p>Try a different search or theme.</p></div>
 </section>
@@ -707,12 +716,43 @@ function renderEntSel(){
   names.forEach(n=>{h+='<option value="'+esc(n)+'"'+(activeEntity===n?" selected":"")+'>'+esc(n)+' ('+m[n]+')</option>';});
   $("entSel").innerHTML=h;
 }
-function renderPills(){
-  const ts=topics();
-  let h='<button class="pill'+(activeTheme==="All"?" on":"")+'" data-t="All">All<small>'+EPS.length+'</small></button>';
-  ts.forEach(([t,c])=>{h+='<button class="pill'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'">'+esc(t)+'<small>'+c+'</small></button>';});
-  $("pills").innerHTML=h;
-  $("pills").querySelectorAll(".pill").forEach(p=>p.onclick=()=>{activeTheme=p.dataset.t;applyFilters();});
+const TOPIC_ESS={
+ "Meditation & stillness":"The daily practice \u2014 where the deepest contact happens.",
+ "Oneness & reality":"No separation: time, light, and the single place.",
+ "Love":"What the word really means, and why it is difficult.",
+ "Service":"Why they came, and what they can and cannot do.",
+ "Contact & the craft":"Ships overhead, promised landings, and how contact works.",
+ "Learning to channel":"Conditioning, instruments, and how to receive.",
+ "The turning of the age":"Planetary transition \u2014 and what is coming.",
+ "The human condition":"Maturity, suffering, and why things are as they are."};
+const TOPIC_HUE={"Meditation & stillness":232,"Oneness & reality":268,"Love":332,"Service":45,
+ "Contact & the craft":196,"Learning to channel":172,"The turning of the age":22,"The human condition":214};
+const TOPIC_ORDER=["Meditation & stillness","Oneness & reality","Love","Service",
+ "Contact & the craft","Learning to channel","The turning of the age","The human condition"];
+function topicArt(t){
+  const h1=TOPIC_HUE[t]??222, h2=(h1+44)%360;
+  return "background:radial-gradient(120% 90% at 18% 8%, hsla("+h1+",62%,42%,.85), transparent 55%),"+
+    "radial-gradient(110% 100% at 85% 90%, hsla("+h2+",58%,30%,.9), transparent 55%),"+
+    "linear-gradient(160deg, hsl("+h1+",45%,13%), hsl("+h2+",48%,7%));";
+}
+function renderTopics(){
+  const byT={}; EPS.forEach(e=>{const t=themeOf(e);(byT[t]=byT[t]||[]).push(e);});
+  let h='';
+  TOPIC_ORDER.filter(t=>byT[t]).forEach(t=>{
+    const eps=byT[t], mins=Math.round(eps.reduce((a,e)=>a+e.duration_sec,0)/60);
+    h+='<button class="topic-card'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'">'
+      +'<div class="topic-art" style="'+topicArt(t)+'">'+ORB_SVG+'</div>'
+      +'<div class="topic-body"><div class="topic-name">'+esc(t)+'</div>'
+      +'<div class="topic-ess">'+esc(TOPIC_ESS[t]||"")+'</div>'
+      +'<div class="topic-count">'+eps.length+' session'+(eps.length>1?"s":"")+' \u00b7 '+mins+' min</div>'
+      +'</div></button>';
+  });
+  $("topics").innerHTML=h;
+  $("topics").querySelectorAll(".topic-card").forEach(c=>c.onclick=()=>{
+    activeTheme=(activeTheme===c.dataset.t)?"All":c.dataset.t;
+    applyFilters();
+    document.querySelector("#allHead").scrollIntoView({behavior:"smooth",block:"start"});
+  });
 }
 function applyFilters(){
   const q=$("q").value.trim().toLowerCase();
@@ -792,7 +832,7 @@ function renderStats(){
   $("stHrs").textContent=fmtH(EPS.reduce((a,e)=>a+(e.duration_sec||0),0));
   $("stEnt").textContent=new Set(EPS.flatMap(e=>e.entities||[])).size;
 }
-function renderAll(){renderPills();renderEntSel();renderGrid();renderFeatured();renderContinue();}
+function renderAll(){renderTopics();renderEntSel();renderGrid();renderFeatured();renderContinue();}
 
 /* ============ detail modal ============ */
 function openDetail(id){
