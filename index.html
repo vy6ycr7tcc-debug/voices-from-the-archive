@@ -2,275 +2,539 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Voices from the Archive</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voices from the Archive — Word-for-word narrations from the L/L Research sessions</title>
+<meta name="description" content="AI-voiced, word-for-word narrations of the L/L Research channeling archive, 1972–1974. Hatonn, Latwii, Oxal and the Confederation, exactly as spoken.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#0d1021; --ink2:#141833; --gold:#d8b56b; --gold-dim:#9a7f4c;
-    --paper:#ece5d3; --paper-dim:#b9b09a; --line:#2a2f55;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1200px 800px at 50% -10%,#1b2148 0%,var(--ink) 60%);
-       color:var(--paper);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
-  header{max-width:900px;margin:0 auto;padding:48px 20px 8px;text-align:center}
-  header h1{font-weight:400;font-size:2rem;letter-spacing:.14em;color:var(--gold);margin:0 0 6px}
-  header p{color:var(--paper-dim);font-style:italic;margin:4px 0}
-  #count{color:var(--gold-dim);font-size:.85rem;letter-spacing:.1em}
-  #controls{max-width:900px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  #controls input,#controls select,#controls button{background:var(--ink2);border:1px solid var(--line);color:var(--paper);
-    border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:inherit}
-  #controls input{flex:1 1 240px}
-  #controls select{flex:0 1 auto;max-width:220px}
-  #controls input::placeholder{color:#6f7599}
-  #controls button{cursor:pointer;letter-spacing:.04em}
-  #controls button:hover:not(:disabled){border-color:var(--gold-dim);color:var(--gold)}
-  #controls button:disabled{opacity:.6;cursor:default}
-  main{max-width:900px;margin:0 auto;padding:20px}
-  .card{background:rgba(20,24,51,.75);border:1px solid var(--line);border-radius:12px;
-        padding:16px 18px;margin:10px 0;cursor:pointer;transition:border-color .2s,transform .2s}
-  .card:hover{border-color:var(--gold-dim);transform:translateY(-1px)}
-  .card .ep{color:var(--gold-dim);font-size:.78rem;letter-spacing:.18em}
-  .card h2{margin:6px 0 8px;font-weight:400;font-size:1.25rem}
-  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;color:var(--paper-dim)}
-  .chip{border:1px solid var(--gold-dim);color:var(--gold);border-radius:20px;padding:2px 10px;font-size:.75rem;letter-spacing:.04em}
-  .dot{opacity:.5}
-  #more{display:block;margin:26px auto;padding:12px 34px;background:transparent;border:1px solid var(--gold-dim);
-        color:var(--gold);border-radius:24px;font-family:inherit;font-size:1rem;cursor:pointer;letter-spacing:.08em}
-  #more:hover{background:rgba(216,181,107,.08)}
-  /* detail */
-  #detail{position:fixed;inset:0;background:rgba(8,10,22,.92);display:none;overflow-y:auto;z-index:10}
-  #detail.open{display:block}
-  #sheet{max-width:760px;margin:4vh auto;background:var(--ink2);border:1px solid var(--line);
-         border-radius:14px;padding:28px 30px 40px}
-  #sheet .ep{color:var(--gold-dim);letter-spacing:.18em;font-size:.8rem}
-  #sheet h2{font-weight:400;font-size:1.7rem;margin:8px 0 4px;color:var(--gold)}
-  #close{float:right;background:none;border:1px solid var(--line);color:var(--paper-dim);
-         border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem}
-  #close:hover{border-color:var(--gold);color:var(--gold)}
-  audio{width:100%;margin:16px 0 6px}
-  #related h3{margin:18px 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
-  .rel{padding:8px 0;border-top:1px solid #2a2a2e;cursor:pointer}
-  .rel strong{font-weight:600}
-  #transcript{white-space:pre-wrap;line-height:1.75;color:var(--paper);font-size:1.02rem}
-  #sources{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--paper-dim)}
-  #sources div{margin:4px 0}
-  #empty{text-align:center;color:var(--paper-dim);font-style:italic;margin:60px 0}
-  footer{max-width:900px;margin:0 auto;padding:30px 20px 60px;text-align:center;color:#5d6390;font-size:.8rem;font-style:italic}
+:root{
+  --bg:#070b16; --bg2:#0b1020; --bg3:#101731;
+  --ink:#f0ead9; --ink-dim:#a7aecb; --ink-faint:#6b7194;
+  --gold:#c9a96a; --gold-bright:#e8c876; --gold-dim:#8a6f3e;
+  --line:rgba(201,169,106,.16); --line-soft:rgba(167,174,203,.12);
+  --card:rgba(16,23,49,.72);
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(201,169,106,.32)}
+a{color:inherit}
+svg.ic{width:1.05em;height:1.05em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.18em}
+
+/* ---------- backdrop ---------- */
+.cosmos{position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(1200px 700px at 12% -6%, rgba(64,72,140,.34), transparent 60%),
+  radial-gradient(1000px 620px at 88% 4%, rgba(150,110,60,.16), transparent 60%),
+  radial-gradient(900px 900px at 50% 110%, rgba(30,36,80,.5), transparent 60%),
+  var(--bg)}
+.stars{position:fixed;inset:0;z-index:-1;opacity:.5;pointer-events:none}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:rgba(7,11,22,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft)}
+.brand{font-family:var(--serif);font-size:1.35rem;letter-spacing:.06em;color:var(--ink)}
+.brand em{color:var(--gold);font-style:normal}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.searchbox{background:rgba(255,255,255,.05);border:1px solid var(--line-soft);border-radius:999px;
+  padding:8px 16px;color:var(--ink);font-family:var(--sans);font-size:.85rem;width:210px;outline:none;transition:.25s}
+.searchbox:focus{border-color:var(--gold-dim);width:250px;background:rgba(255,255,255,.08)}
+.searchbox::placeholder{color:var(--ink-faint)}
+.iconbtn{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;
+  padding:8px 13px;font-size:.82rem;cursor:pointer;transition:.25s;font-family:var(--sans);
+  display:inline-flex;align-items:center;gap:6px}
+.iconbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.iconbtn svg.ic{width:1em;height:1em}
+
+/* ---------- hero ---------- */
+.hero{position:relative;text-align:center;padding:96px 24px 64px;overflow:hidden}
+.hero-eyebrow{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+.hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.6rem,7vw,4.6rem);line-height:1.08;letter-spacing:.01em}
+.hero h1 .thin{font-style:italic;font-weight:400;color:var(--gold-bright)}
+.hero-sub{max-width:620px;margin:26px auto 0;color:var(--ink-dim);font-size:1.02rem;font-weight:300}
+.hero-stats{display:flex;gap:38px;justify-content:center;margin-top:36px;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat b{display:block;font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--gold-bright)}
+.hstat span{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint)}
+.hero-cta{margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{border-radius:999px;padding:13px 32px;font-size:.9rem;letter-spacing:.06em;cursor:pointer;font-family:var(--sans);transition:.25s;border:1px solid transparent;
+  display:inline-flex;align-items:center;gap:10px}
+.btn-gold{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#1a1408;font-weight:600;border:none}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(201,169,106,.35)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink-dim)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- section shell ---------- */
+section{max-width:1180px;margin:0 auto;padding:0 24px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:56px 0 22px}
+.sec-head h2{font-family:var(--serif);font-size:1.9rem;font-weight:500;letter-spacing:.02em}
+.sec-head h2 em{color:var(--gold);font-style:italic}
+.sec-head .count{font-size:.78rem;color:var(--ink-faint);letter-spacing:.14em;text-transform:uppercase}
+
+/* ---------- topic pills ---------- */
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.pill{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);color:var(--ink-dim);
+  border-radius:999px;padding:9px 18px;font-size:.82rem;cursor:pointer;transition:.22s;font-family:var(--sans);letter-spacing:.02em}
+.pill small{opacity:.6;margin-left:6px;font-size:.72rem}
+.pill:hover{border-color:var(--gold-dim);color:var(--ink)}
+.pill.on{background:linear-gradient(135deg,rgba(201,169,106,.22),rgba(201,169,106,.1));border-color:var(--gold);color:var(--gold-bright)}
+
+/* ---------- featured ---------- */
+.featured{display:grid;grid-template-columns:340px 1fr;gap:0;margin:26px 0 8px;border-radius:20px;overflow:hidden;
+  background:var(--card);border:1px solid var(--line);cursor:pointer;transition:.3s;position:relative}
+.featured:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(201,169,106,.25)}
+.feat-art{position:relative;min-height:300px}
+.feat-body{padding:38px 40px;display:flex;flex-direction:column;justify-content:center}
+.feat-kicker{font-size:.7rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.feat-body h3{font-family:var(--serif);font-size:2rem;font-weight:500;line-height:1.2;margin-bottom:12px}
+.feat-meta{color:var(--ink-dim);font-size:.86rem;margin-bottom:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.feat-play{display:inline-flex;align-items:center;gap:12px;margin-top:6px}
+.playring{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+  display:flex;align-items:center;justify-content:center;transition:.25s;flex:none}
+.playring svg{width:22px;height:22px;fill:#1a1408;margin-left:2px}
+.featured:hover .playring{transform:scale(1.08);box-shadow:0 8px 26px rgba(201,169,106,.45)}
+.feat-play span{font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim)}
+
+/* ---------- episode grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin:24px 0 20px}
+.card{background:var(--card);border:1px solid var(--line-soft);border-radius:16px;overflow:hidden;cursor:pointer;transition:.28s;position:relative}
+.card:hover{transform:translateY(-4px);border-color:rgba(201,169,106,.4);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.card-art{height:170px;position:relative;overflow:hidden}
+.card-art .orb{position:absolute;inset:0}
+.card-num{position:absolute;top:12px;left:14px;font-size:.68rem;letter-spacing:.3em;color:rgba(240,234,217,.85);
+  text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.played-badge{position:absolute;top:10px;right:12px;background:rgba(7,11,22,.72);backdrop-filter:blur(6px);
+  border:1px solid var(--gold-dim);color:var(--gold-bright);font-size:.66rem;letter-spacing:.2em;
+  padding:5px 11px;border-radius:999px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
+.card-listen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:.28s;
+  background:rgba(7,11,22,.35);backdrop-filter:blur(2px)}
+.card:hover .card-listen{opacity:1}
+.card-listen .playring{width:52px;height:52px}
+.card-listen .playring svg{width:20px;height:20px}
+.card-body{padding:18px 20px 20px}
+.card-kicker{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.card-body h3{font-family:var(--serif);font-size:1.22rem;font-weight:500;line-height:1.3;margin-bottom:10px}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:.7rem;color:var(--ink-dim);border:1px solid var(--line-soft);border-radius:999px;padding:3px 10px;letter-spacing:.03em}
+.card-foot{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:var(--ink-faint)}
+.card-foot .dur{display:inline-flex;align-items:center;gap:6px}
+
+/* ---------- about strip ---------- */
+.about{margin:70px 0 30px;padding:46px 44px;border-radius:20px;background:linear-gradient(135deg,rgba(201,169,106,.07),rgba(64,72,140,.1));
+  border:1px solid var(--line);text-align:center}
+.about h2{font-family:var(--serif);font-size:1.7rem;font-weight:500;margin-bottom:14px}
+.about h2 em{color:var(--gold);font-style:italic}
+.about p{color:var(--ink-dim);max-width:640px;margin:0 auto;font-size:.95rem}
+
+footer{text-align:center;padding:44px 24px 120px;color:var(--ink-faint);font-size:.78rem;letter-spacing:.04em}
+footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px;opacity:.6}
+
+/* ---------- detail modal ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none}
+.modal.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(4,6,12,.78);backdrop-filter:blur(8px)}
+.sheet{position:absolute;inset:0;overflow-y:auto;padding:34px 18px 140px}
+.sheet-inner{max-width:760px;margin:0 auto;background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+  animation:rise .38s cubic-bezier(.2,.9,.3,1)}
+@keyframes rise{from{transform:translateY(34px);opacity:0}to{transform:none;opacity:1}}
+.detail-art{height:230px;position:relative}
+.detail-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line-soft);
+  background:rgba(7,11,22,.6);color:var(--ink);cursor:pointer;backdrop-filter:blur(6px);transition:.2s;z-index:2;
+  display:flex;align-items:center;justify-content:center}
+.detail-close:hover{border-color:var(--gold);color:var(--gold)}
+.detail-close svg.ic{width:1em;height:1em}
+.detail-body{padding:34px 38px}
+.detail-kicker{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.detail-body h2{font-family:var(--serif);font-size:2.1rem;font-weight:500;line-height:1.2;margin-bottom:14px}
+.detail-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--ink-dim);font-size:.84rem;margin-bottom:24px}
+.dot{opacity:.4}
+/* custom player */
+.player{background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:16px;padding:20px;margin-bottom:22px}
+.p-row{display:flex;align-items:center;gap:14px}
+.p-btn{width:46px;height:46px;flex:none;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.p-btn:hover{border-color:var(--gold);color:var(--gold)}
+.p-btn svg.ic{width:1.1em;height:1.1em}
+.p-btn.main{width:60px;height:60px;background:linear-gradient(135deg,var(--gold-bright),var(--gold));border:none}
+.p-btn.main svg.solid{width:22px;height:22px;fill:#1a1408;stroke:none}
+.p-time{font-size:.74rem;color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative}
+.p-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%}
+.p-knob{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--gold-bright);
+  transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5);left:0%}
+.p-nav{display:flex;gap:10px;margin-top:14px}
+.p-nav button{flex:1;background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:12px;
+  padding:11px;font-size:.8rem;letter-spacing:.1em;cursor:pointer;transition:.2s;font-family:var(--sans);text-transform:uppercase;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.p-nav button:hover{border-color:var(--gold-dim);color:var(--gold)}
+.transcript{margin-top:6px}
+.transcript h4{font-family:var(--serif);font-size:1.15rem;font-weight:500;margin-bottom:12px;color:var(--ink)}
+.transcript .tbody{max-height:320px;overflow-y:auto;font-size:.88rem;color:var(--ink-dim);line-height:1.75;
+  padding:18px 20px;background:rgba(255,255,255,.025);border:1px solid var(--line-soft);border-radius:12px;white-space:pre-wrap}
+.sources{margin-top:22px;font-size:.8rem;color:var(--ink-faint)}
+.sources div{margin-top:6px}
+.disclaimer{margin-top:14px;font-style:italic;font-size:.78rem;color:var(--ink-faint)}
+.related{margin-top:28px}
+.related h4{font-family:var(--serif);font-size:1.15rem;font-weight:500;margin-bottom:14px}
+.rel{display:flex;gap:14px;align-items:center;padding:12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent}
+.rel:hover{background:rgba(255,255,255,.04);border-color:var(--line-soft)}
+.rel-art{width:52px;height:52px;border-radius:10px;flex:none;position:relative;overflow:hidden}
+.rel-info{flex:1;min-width:0}
+.rel-info b{display:block;font-family:var(--serif);font-weight:500;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rel-info span{font-size:.74rem;color:var(--ink-faint)}
+
+/* ---------- sticky mini player ---------- */
+.minibar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;
+  background:rgba(10,14,28,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.minibar.show{display:block;animation:slideup .3s ease}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:none}}
+.mini-inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
+.mini-art{width:46px;height:46px;border-radius:10px;flex:none;overflow:hidden;position:relative}
+.mini-info{flex:1;min-width:0}
+.mini-info b{display:block;font-family:var(--serif);font-weight:500;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-info span{font-size:.72rem;color:var(--ink-faint)}
+.mini-btns{display:flex;align-items:center;gap:8px}
+.mini-btns .p-btn{width:38px;height:38px}
+.mini-btns .p-btn.main{width:46px;height:46px}
+.mini-btns .p-btn.main svg.solid{width:18px;height:18px}
+.mini-open{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;
+  padding:8px 16px;font-size:.76rem;cursor:pointer;letter-spacing:.06em;transition:.2s}
+.mini-open:hover{border-color:var(--gold);color:var(--gold)}
+
+.empty{text-align:center;padding:70px 20px;color:var(--ink-faint)}
+.empty h3{font-family:var(--serif);font-size:1.5rem;color:var(--ink-dim);margin-bottom:8px}
+
+@media(max-width:760px){
+  .featured{grid-template-columns:1fr}
+  .feat-art{min-height:190px}
+  .feat-body{padding:26px}
+  .detail-body{padding:24px 22px}
+  .hero{padding:64px 18px 44px}
+  .searchbox{width:130px}.searchbox:focus{width:160px}
+  nav{padding:12px 16px}
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>VOICES FROM THE ARCHIVE</h1>
-  <p>Interpretive narrations drawn from the L/L Research channeling archive</p>
-  <div id="count"></div>
-</header>
-<div id="controls">
-  <input id="q" type="search" placeholder="Search titles and transcripts…" autocomplete="off">
-  <select id="fEntity"><option value="">All entities</option></select>
-  <select id="fSeason"><option value="">All seasons</option></select>
-  <select id="fTopic"><option value="">All topics</option></select>
-  <button id="refresh" title="Reload the episode catalog">⟳ Refresh</button>
-</div>
-<main id="list"></main>
-<button id="more" style="display:none">Show more</button>
-<div id="empty" style="display:none">Nothing matches — try clearing a filter.</div>
+<canvas class="stars" id="stars"></canvas>
+<div class="cosmos"></div>
 
-<div id="detail"><div id="sheet">
-  <button id="close" aria-label="Close">✕</button>
-  <div class="ep" id="dEp"></div>
-  <h2 id="dTitle"></h2>
-  <div class="meta" id="dMeta"></div>
-  <audio id="player" controls preload="none"></audio>
-  <div id="pnav" style="display:flex;gap:10px;justify-content:center;margin:8px 0 4px">
-    <button id="prevEp" aria-label="Previous episode" style="padding:8px 18px">⏮ Prev</button>
-    <button id="nextEp" aria-label="Next episode" style="padding:8px 18px">Next ⏭</button>
+<nav>
+  <div class="brand">Voices <em>from the</em> Archive</div>
+  <div class="nav-actions">
+    <input class="searchbox" id="q" type="search" placeholder="Search sessions…" autocomplete="off">
+    <button class="iconbtn" id="refresh" title="Reload the episode catalog"><svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>
   </div>
-  <div id="transcript"></div>
-  <div id="sources"></div>
-  <div id="related"></div>
+</nav>
+
+<header class="hero">
+  <div class="hero-eyebrow">The L/L Research Sessions · 1972–1974</div>
+  <h1>Every word, <span class="thin">exactly as spoken.</span></h1>
+  <p class="hero-sub">Word-for-word AI narrations of the early Confederation channelings — Hatonn, Latwii, Oxal and friends, in full. No summaries. No edits. Just the archive, given voice.</p>
+  <div class="hero-stats">
+    <div class="hstat"><b id="stEps">–</b><span>Episodes</span></div>
+    <div class="hstat"><b id="stHrs">–</b><span>Hours of audio</span></div>
+    <div class="hstat"><b id="stEnt">–</b><span>Entities</span></div>
+  </div>
+  <div class="hero-cta">
+    <button class="btn btn-gold" id="ctaPlay"><svg class="ic" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M8 5.5v13l11-6.5z"/></svg> Start listening</button>
+    <button class="btn btn-ghost" id="ctaBrowse">Browse the archive</button>
+  </div>
+</header>
+
+<section id="browse">
+  <div class="sec-head"><h2>Browse <em>by theme</em></h2><span class="count" id="countLine"></span></div>
+  <div class="pills" id="pills"></div>
+
+  <div class="sec-head"><h2>Latest <em>session</em></h2></div>
+  <div class="featured" id="featured"></div>
+
+  <div class="sec-head"><h2>All <em>episodes</em></h2><span class="count" id="gridCount"></span></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none"><h3>Nothing in this corner of the archive.</h3><p>Try a different search or theme.</p></div>
+</section>
+
+<section>
+  <div class="about">
+    <h2>What <em>this is</em></h2>
+    <p>These narrations read the L/L Research transcripts word for word — every "my friends," every date, every session reference intact. An interpretive voicing of a spiritual archive, not affiliated with or endorsed by L/L Research.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="rule"></div>
+  Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research
+</footer>
+
+<!-- detail modal -->
+<div class="modal" id="modal"><div class="scrim" id="scrim"></div>
+  <div class="sheet"><div class="sheet-inner" id="sheetInner"></div></div>
+</div>
+
+<!-- sticky mini player -->
+<div class="minibar" id="minibar"><div class="mini-inner">
+  <div class="mini-art" id="miniArt"></div>
+  <div class="mini-info"><b id="miniTitle">–</b><span id="miniSub">–</span></div>
+  <div class="mini-btns">
+    <button class="p-btn" id="mPrev" aria-label="Previous episode"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M19 5v14L9 12z" style="fill:currentColor;stroke:none"/></svg></button>
+    <button class="p-btn main" id="mPlay" aria-label="Play or pause"></button>
+    <button class="p-btn" id="mNext" aria-label="Next episode"><svg class="ic" viewBox="0 0 24 24"><path d="M18 5v14"/><path d="M5 5v14l10-7z" style="fill:currentColor;stroke:none"/></svg></button>
+  </div>
+  <button class="mini-open" id="mOpen">Details</button>
 </div></div>
 
-<footer>Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</footer>
-
 <script>
-let EPS=[];
-const PAGE=40; let shown=0, filtered=[], currentId=null;
-const $=id=>document.getElementById(id);
-const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
-const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
-
-/* Broad topics collapse the 59 fine-grained archive themes into a short list. */
-const TOPIC_MAP={
- "Q'uo general Q&A":"Q&A Circles","Latwii Q&A circle":"Q&A Circles",
- "Latwii & Hatonn Q&A":"Q&A Circles","Latwii sessions II":"Q&A Circles",
- "Q'uo on faith & incarnation":"Faith & the Journey","Q'uo on journey & catalyst":"Faith & the Journey",
- "Faith & the journey":"Faith & the Journey","Foundations":"Faith & the Journey",
- "The prodigal son":"Faith & the Journey","Parables: wealth & youth":"Faith & the Journey",
- "Q'uo on guidance & the world":"Guidance for Daily Life","Catalyst & the game of life":"Guidance for Daily Life",
- "Service to others":"Guidance for Daily Life","Teacher & student":"Guidance for Daily Life",
- "Solitude & the body":"Guidance for Daily Life",
- "Hatonn on channeling & existence":"Channeling & Contact","Learning to channel (Hatonn)":"Channeling & Contact",
- "Channeling intensives":"Channeling & Contact","Hatonn fragments":"Channeling & Contact",
- "Hatonn fragments II":"Channeling & Contact","Laitos sessions":"Channeling & Contact",
- "Laitos sessions II":"Channeling & Contact","Leema sessions":"Channeling & Contact",
- "Oxal sessions":"Channeling & Contact","Yom on time/space":"Channeling & Contact",
- "Quanta channeling":"Channeling & Contact",
- "Ra on mind/body/spirit":"The Ra Material","Ra on the adept":"The Ra Material",
- "Chakras & intelligent infinity":"The Ra Material","Energy centers & rays":"The Ra Material",
- "The magical personality":"The Ra Material",
- "Fourth density & harvest":"Cosmos & Harvest","Confederation & other planets":"Cosmos & Harvest",
- "Healing & the healer":"Healing & the Body","Suffering, pain & joy":"Healing & the Body",
- "Aaron on fear & pain":"Healing & the Body","Sexuality & polarity":"Healing & the Body",
- "Aaron & Barbara on ego & compassion":"Heart & Compassion",
- "Personality shell & incarnation":"Heart & Compassion",
- "Jesus & the Christ":"Jesus & the Christ",
- "Negative polarity & psychic greeting":"Psychic Protection",
- "Grove of Becoming":"Groves","Grove of Devotion":"Groves","Grove of Enough":"Groves",
- "Grove of Kindness":"Groves","Grove of Knowing":"Groves","Grove of Learning":"Groves",
- "Grove of Night and Sense":"Groves","Grove of Other Selves":"Groves",
- "Grove of Practice":"Groves","Grove of Release":"Groves","Grove of Reverence":"Groves",
- "Grove of Solitude and Kin":"Groves","Grove of Stillness":"Groves","Grove of Time":"Groves",
- "Grove of Wonder":"Groves","Grove of the Inner Child":"Groves",
- "Grove of the Living World":"Groves","Grove of the Tender Heart":"Groves"
+/* ============ icons (SVG, no emoji) ============ */
+const I = {
+  play:  '<svg class="solid" viewBox="0 0 24 24"><path d="M8.6 6.7c0-.8.9-1.3 1.6-.9l8.6 5.3c.7.4.7 1.4 0 1.8l-8.6 5.3c-.7.4-1.6-.1-1.6-.9Z"/></svg>',
+  pause: '<svg class="solid" viewBox="0 0 24 24"><rect x="7.4" y="5" width="3.4" height="14" rx="1.4"/><rect x="13.2" y="5" width="3.4" height="14" rx="1.4"/></svg>',
+  prev:  '<svg class="ic" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M19 5v14L9 12z" style="fill:currentColor;stroke:none"/></svg>',
+  next:  '<svg class="ic" viewBox="0 0 24 24"><path d="M18 5v14"/><path d="M5 5v14l10-7z" style="fill:currentColor;stroke:none"/></svg>',
+  close: '<svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  check: '<svg class="ic" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11"/></svg>',
+  clock: '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>'
 };
-const TOPIC_ORDER=["Q&A Circles","Faith & the Journey","Guidance for Daily Life",
- "Channeling & Contact","The Ra Material","Cosmos & Harvest","Healing & the Body",
- "Heart & Compassion","Jesus & the Christ","Psychic Protection","Groves"];
-const topicOf=e=>TOPIC_MAP[e.theme]||e.theme;
 
-function seasonLabel(e){return "Season "+e.season+(e.season_name?" · "+e.season_name:"");}
+/* ============ data ============ */
+let EPS=[], filtered=[], currentId=null, activeTheme="All";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=s=>{s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");};
+const fmtH=s=>{const h=s/3600;return (h%1?h.toFixed(1):Math.round(h));};
+const themeOf=e=>e.theme||"Uncategorized";
+const seasonLabel=e=>e.season_name||("Season "+(e.season||1));
 
-function initFilters(){
-  $("fEntity").innerHTML='<option value="">All entities</option>';
-  $("fSeason").innerHTML='<option value="">All seasons</option>';
-  $("fTopic").innerHTML='<option value="">All topics</option>';
-  const ents=[...new Set(EPS.flatMap(e=>e.entities))].sort();
-  ents.forEach(x=>{const o=document.createElement("option");o.value=o.textContent=x;$("fEntity").appendChild(o);});
-  [...new Set(EPS.map(e=>e.season))].sort().forEach(s=>{
-    const o=document.createElement("option");o.value=s;
-    o.textContent=seasonLabel(EPS.find(e=>e.season===s));$("fSeason").appendChild(o);});
-  const present=new Set(EPS.map(topicOf));
-  TOPIC_ORDER.filter(t=>present.has(t)).forEach(t=>{
-    const o=document.createElement("option");o.value=o.textContent=t;$("fTopic").appendChild(o);});
+/* played tracking */
+const getPlayed=()=>{try{return JSON.parse(localStorage.getItem("wfw_played")||"[]");}catch(e){return[];}};
+const isPlayed=id=>getPlayed().includes(id);
+const markPlayed=id=>{const p=getPlayed();if(!p.includes(id)){p.push(id);try{localStorage.setItem("wfw_played",JSON.stringify(p));}catch(e){}}};
+
+/* ============ generative artwork ============ */
+const HUES={Hatonn:222,Latwii:265,Latui:265,Oxal:190};
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}return h;}
+function artFor(e){
+  const ent=(e.entities&&e.entities[0])||"Hatonn";
+  const base=HUES[ent.replace(/\s/g,"")]??222;
+  const h1=(base+hash(e.id)%36+360)%360, h2=(h1+44)%360;
+  return "background:"+
+    "radial-gradient(120% 90% at 18% 8%, hsla("+h1+",62%,42%,.85), transparent 55%),"+
+    "radial-gradient(110% 100% at 85% 90%, hsla("+h2+",58%,30%,.9), transparent 55%),"+
+    "radial-gradient(70% 60% at 60% 30%, hsla("+((h1+180)%360)+",50%,60%,.28), transparent 60%),"+
+    "linear-gradient(160deg, hsl("+h1+",45%,13%), hsl("+h2+",48%,7%));";
 }
+const ORB_SVG='<svg class="orb" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:.5">'
+  +'<g fill="none" stroke="rgba(240,234,217,.28)" stroke-width="1">'
+  +'<circle cx="100" cy="100" r="34"/><circle cx="100" cy="100" r="58" opacity=".6"/><circle cx="100" cy="100" r="84" opacity=".35"/>'
+  +'<circle cx="100" cy="100" r="5" fill="rgba(232,200,118,.9)" stroke="none"/></g></svg>';
 
-function applyFilters(){
-  const q=$("q").value.trim().toLowerCase(), fe=$("fEntity").value,
-        fs=$("fSeason").value, ft=$("fTopic").value;
-  filtered=EPS.filter(e=>
-    (!fe||e.entities.includes(fe))&&(!fs||e.season==fs)&&(!ft||topicOf(e)===ft)&&
-    (!q||e.title.toLowerCase().includes(q)||e.transcript.toLowerCase().includes(q)));
-  shown=0;$("list").innerHTML="";renderMore();
-  $("empty").style.display=filtered.length?"none":"block";
-  $("count").textContent=filtered.length+" of "+EPS.length+" episodes";
-}
+/* ============ audio engine ============ */
+const audio=new Audio(); audio.preload="none";
+let detailOpen=false;
 
-async function refreshCatalog(){
-  const btn=$("refresh");btn.disabled=true;btn.textContent="⟳ Refreshing…";
-  try{
-    const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    EPS=await r.json();
-    initFilters();applyFilters();
-    btn.textContent="⟳ Refreshed ✓";
-  }catch(err){btn.textContent="⟳ Failed — retry";}
-  setTimeout(()=>{btn.textContent="⟳ Refresh";btn.disabled=false;},1600);
-}
-
-function card(e){
-  const d=document.createElement("div");d.className="card";
-  d.innerHTML='<div class="ep">EPISODE '+String(e.n).padStart(2,"0")+" · "+esc(seasonLabel(e)).toUpperCase()+'</div>'
-    +"<h2>"+esc(e.title)+"</h2>"
-    +'<div class="meta">'+e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
-    +'<span class="dot">·</span><span>'+esc(topicOf(e))+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span></div>";
-  d.onclick=()=>openDetail(e);
-  return d;
-}
-
-function renderMore(){
-  const slice=filtered.slice(shown,shown+PAGE);
-  slice.forEach(e=>$("list").appendChild(card(e)));
-  shown+=slice.length;
-  $("more").style.display=shown<filtered.length?"block":"none";
-}
-
-/* Step within the current episode's topic group (prev/next + autoplay). */
 function topicGroup(){
   const cur=EPS.find(x=>x.id===currentId);
-  if(!cur)return filtered.length?filtered:EPS;
-  const g=EPS.filter(x=>topicOf(x)===topicOf(cur));
+  if(!cur) return filtered.length?filtered:EPS;
+  const g=EPS.filter(x=>themeOf(x)===themeOf(cur));
   return g.length?g:(filtered.length?filtered:EPS);
 }
 function step(d,autoplay){
-  const g=topicGroup();
-  if(!g.length)return;
+  const g=topicGroup(); if(!g.length)return;
   let i=g.findIndex(x=>x.id===currentId);
   i=i<0?0:(i+d+g.length)%g.length;
-  openDetail(g[i]);
-  if(autoplay)$("player").play().catch(()=>{});
+  loadEpisode(g[i],autoplay);
 }
-
-function openDetail(e){
+function loadEpisode(e,autoplay){
   currentId=e.id;
-  $("dEp").textContent="EPISODE "+String(e.n).padStart(2,"0")+" · "+seasonLabel(e).toUpperCase();
-  $("dTitle").textContent=e.title;
-  $("dMeta").innerHTML=e.entities.map(x=>'<span class="chip">'+esc(x)+"</span>").join("")
-    +'<span class="dot">·</span><span>'+esc(topicOf(e))+'</span>'
-    +'<span class="dot">·</span><span>'+fmt(e.duration_sec)+"</span>";
-  const p=$("player");p.src=e.audio;p.load();
+  audio.src=e.audio; audio.load();
+  if(autoplay) audio.play().catch(()=>{});
+  syncChrome();
+}
+function syncChrome(){
+  const e=EPS.find(x=>x.id===currentId); if(!e)return;
+  $("minibar").classList.add("show");
+  $("miniArt").style.cssText=artFor(e); $("miniArt").innerHTML=ORB_SVG;
+  $("miniTitle").textContent=e.title;
+  $("miniSub").textContent=seasonLabel(e)+" · "+fmt(e.duration_sec)+(isPlayed(e.id)?" · Played":"");
   if("mediaSession" in navigator){
-    navigator.mediaSession.metadata=new MediaMetadata({
-      title:e.title,artist:"Voices from the Archive",album:seasonLabel(e)});
+    try{
+      navigator.mediaSession.metadata=new MediaMetadata({title:e.title,artist:"Voices from the Archive",album:seasonLabel(e)});
+      navigator.mediaSession.setActionHandler("play",()=>audio.play().catch(()=>{}));
+      navigator.mediaSession.setActionHandler("pause",()=>audio.pause());
+      navigator.mediaSession.setActionHandler("previoustrack",()=>step(-1,true));
+      navigator.mediaSession.setActionHandler("nexttrack",()=>step(1,true));
+    }catch(err){}
   }
-  $("transcript").textContent=e.transcript;
-  $("sources").innerHTML="<em>An interpretive narration — not a verbatim channeling.</em>"
-    +e.sources.map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("");
-  const rel=EPS.filter(x=>topicOf(x)===topicOf(e)&&x.id!==e.id).slice(0,4);
-  $("related").innerHTML=rel.length?("<h3>Related episodes</h3>"+rel.map(x=>
-    '<div class="rel" data-id="'+x.id+'"><strong>'+esc(x.title)+"</strong> · "+esc(seasonLabel(x))+"</div>").join("")):"";
-  $("related").querySelectorAll(".rel").forEach(d=>d.onclick=ev=>{ev.stopPropagation();openDetail(EPS.find(x=>x.id===d.dataset.id));});
-  $("detail").classList.add("open");document.body.style.overflow="hidden";
 }
-function closeDetail(){$("detail").classList.remove("open");$("player").pause();document.body.style.overflow="";}
+function paintPlayState(){
+  const playing=!audio.paused&&!audio.ended;
+  $("mPlay").innerHTML=playing?I.pause:I.play;
+  const dp=$("dPlay"); if(dp) dp.innerHTML=playing?I.pause:I.play;
+  if("mediaSession" in navigator){try{navigator.mediaSession.playbackState=playing?"playing":"paused";}catch(e){}}
+}
+audio.addEventListener("play",paintPlayState);
+audio.addEventListener("pause",paintPlayState);
+audio.addEventListener("ended",()=>{
+  if(currentId){markPlayed(currentId);renderAll();}
+  const g=topicGroup(), i=g.findIndex(x=>x.id===currentId);
+  if(i>=0&&i+1<g.length) step(1,true); else syncChrome();
+});
+audio.addEventListener("timeupdate",()=>{
+  const d=audio.duration;
+  if(d&&isFinite(d)){
+    const f=audio.currentTime/d*100;
+    document.querySelectorAll(".p-fill").forEach(el=>el.style.width=f+"%");
+    document.querySelectorAll(".p-knob").forEach(el=>el.style.left=f+"%");
+    document.querySelectorAll(".p-cur").forEach(el=>el.textContent=fmt(audio.currentTime));
+    if("mediaSession" in navigator){try{navigator.mediaSession.setPositionState({duration:d,playbackRate:audio.playbackRate||1,position:Math.min(audio.currentTime,d)});}catch(e){}}
+  }
+});
+function seekFromTrack(ev){
+  const t=ev.currentTarget, r=t.getBoundingClientRect();
+  const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
+  if(audio.duration&&isFinite(audio.duration)) audio.currentTime=f*audio.duration;
+}
 
-$("close").onclick=closeDetail;
-$("detail").addEventListener("click",ev=>{if(ev.target.id==="detail")closeDetail();});
+/* ============ rendering ============ */
+function topics(){
+  const m={}; EPS.forEach(e=>{const t=themeOf(e);m[t]=(m[t]||0)+1;});
+  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+function renderPills(){
+  const ts=topics();
+  let h='<button class="pill'+(activeTheme==="All"?" on":"")+'" data-t="All">All<small>'+EPS.length+'</small></button>';
+  ts.forEach(([t,c])=>{h+='<button class="pill'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'">'+esc(t)+'<small>'+c+'</small></button>';});
+  $("pills").innerHTML=h;
+  $("pills").querySelectorAll(".pill").forEach(p=>p.onclick=()=>{activeTheme=p.dataset.t;applyFilters();});
+}
+function applyFilters(){
+  const q=$("q").value.trim().toLowerCase();
+  filtered=EPS.filter(e=>{
+    if(activeTheme!=="All"&&themeOf(e)!==activeTheme) return false;
+    if(q){
+      const hay=(e.title+" "+(e.entities||[]).join(" ")+" "+(e.transcript||"").slice(0,4000)).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  renderPills(); renderGrid();
+  $("countLine").textContent=filtered.length+" of "+EPS.length+" episodes";
+}
+function cardHTML(e){
+  const played=isPlayed(e.id);
+  return '<div class="card" data-id="'+e.id+'">'
+    +'<div class="card-art" style="'+artFor(e)+'">'+ORB_SVG
+    +'<span class="card-num">EP '+String(e.n).padStart(2,"0")+'</span>'
+    +(played?'<span class="played-badge">'+I.check+' Played</span>':"")
+    +'<div class="card-listen"><span class="playring">'+I.play+'</span></div></div>'
+    +'<div class="card-body"><div class="card-kicker">'+esc(themeOf(e))+'</div>'
+    +'<h3>'+esc(e.title)+'</h3>'
+    +'<div class="card-tags">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")+'</div>'
+    +'<div class="card-foot"><span>'+esc(seasonLabel(e))+'</span><span class="dur">'+I.clock+' '+fmt(e.duration_sec)+'</span></div>'
+    +'</div></div>';
+}
+function renderGrid(){
+  $("grid").innerHTML=filtered.map(cardHTML).join("");
+  $("empty").style.display=filtered.length?"none":"block";
+  $("gridCount").textContent=filtered.length+" episodes";
+  $("grid").querySelectorAll(".card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+}
+function renderFeatured(){
+  const e=EPS[EPS.length-1]; if(!e)return;
+  $("featured").innerHTML='<div class="feat-art" style="'+artFor(e)+'">'+ORB_SVG+'</div>'
+    +'<div class="feat-body"><div class="feat-kicker">Latest session</div>'
+    +'<h3>'+esc(e.title)+'</h3>'
+    +'<div class="feat-meta"><span>'+esc(seasonLabel(e))+'</span><span class="dot">·</span><span>'+esc(themeOf(e))+'</span><span class="dot">·</span><span>'+fmt(e.duration_sec)+'</span>'
+    +(isPlayed(e.id)?'<span class="dot">·</span><span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
+    +'<div class="feat-play"><span class="playring">'+I.play+'</span><span>Play episode</span></div></div>';
+  $("featured").onclick=()=>{openDetail(e.id);};
+}
+function renderStats(){
+  $("stEps").textContent=EPS.length;
+  $("stHrs").textContent=fmtH(EPS.reduce((a,e)=>a+(e.duration_sec||0),0));
+  $("stEnt").textContent=new Set(EPS.flatMap(e=>e.entities||[])).size;
+}
+function renderAll(){renderPills();renderGrid();renderFeatured();}
+
+/* ============ detail modal ============ */
+function openDetail(id){
+  const e=EPS.find(x=>x.id===id); if(!e)return;
+  detailOpen=true;
+  if(currentId!==id) loadEpisode(e,false);
+  const rel=EPS.filter(x=>themeOf(x)===themeOf(e)&&x.id!==e.id).slice(0,4);
+  $("sheetInner").innerHTML=
+    '<div class="detail-art" style="'+artFor(e)+'">'+ORB_SVG
+    +'<button class="detail-close" id="dClose" aria-label="Close">'+I.close+'</button></div>'
+    +'<div class="detail-body">'
+    +'<div class="detail-kicker">Episode '+String(e.n).padStart(2,"0")+' · '+esc(seasonLabel(e))+(isPlayed(e.id)?' · <span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
+    +'<h2>'+esc(e.title)+'</h2>'
+    +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
+    +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
+    +'<div class="player"><div class="p-row">'
+    +'<button class="p-btn" id="dPrev" aria-label="Previous episode">'+I.prev+'</button>'
+    +'<button class="p-btn main" id="dPlay" aria-label="Play or pause"></button>'
+    +'<button class="p-btn" id="dNext" aria-label="Next episode">'+I.next+'</button>'
+    +'<div class="p-track" id="dTrack"><div class="p-fill"></div><div class="p-knob"></div></div>'
+    +'</div><div class="p-row" style="margin-top:10px;justify-content:space-between">'
+    +'<span class="p-time"><span class="p-cur">0:00</span> / '+fmt(e.duration_sec)+'</span>'
+    +'<div class="p-nav" style="margin:0"><button id="dPrevB">'+I.prev+' Prev</button><button id="dNextB">Next '+I.next+'</button></div>'
+    +'</div></div>'
+    +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
+    +'<div class="sources"><em>An interpretive narration — not a verbatim channeling.</em>'
+    +(e.sources||[]).map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("")+'</div>'
+    +'<div class="disclaimer">Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</div>'
+    +(rel.length?'<div class="related"><h4>Related episodes</h4>'+rel.map(r=>
+      '<div class="rel" data-id="'+r.id+'"><div class="rel-art" style="'+artFor(r)+'">'+ORB_SVG+'</div>'
+      +'<div class="rel-info"><b>'+esc(r.title)+'</b><span>'+esc(seasonLabel(r))+' · '+fmt(r.duration_sec)+'</span></div></div>').join("")+'</div>':"")
+    +'</div>';
+  $("modal").classList.add("open"); document.body.style.overflow="hidden";
+  $("dClose").onclick=closeDetail;
+  $("dPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
+  $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
+  $("dPrevB").onclick=()=>step(-1,true); $("dNextB").onclick=()=>step(1,true);
+  $("dTrack").onclick=seekFromTrack;
+  $("sheetInner").querySelectorAll(".rel").forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
+  paintPlayState(); syncChrome();
+}
+/* closing the detail keeps audio playing — the mini player takes over */
+function closeDetail(){detailOpen=false;$("modal").classList.remove("open");document.body.style.overflow="";}
+$("scrim").onclick=closeDetail;
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
-["q","fEntity","fSeason","fTopic"].forEach(id=>$(id).addEventListener("input",applyFilters));
-$("more").onclick=renderMore;
-$("refresh").onclick=refreshCatalog;
 
-/* Autoplay the next episode in the topic group when one ends. */
-$("player").addEventListener("ended",()=>{
-  if(!$("detail").classList.contains("open"))return;
-  const g=topicGroup();
-  const i=g.findIndex(x=>x.id===currentId);
-  if(i>=0&&i+1<g.length)step(1,true);
-});
+/* ============ chrome wiring ============ */
+$("mPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
+$("mPrev").onclick=()=>step(-1,true);
+$("mNext").onclick=()=>step(1,true);
+$("mOpen").onclick=()=>{if(currentId)openDetail(currentId);};
+$("q").addEventListener("input",applyFilters);
+$("ctaPlay").onclick=()=>{const e=EPS[EPS.length-1];if(e)openDetail(e.id);};
+$("ctaBrowse").onclick=()=>$("browse").scrollIntoView({behavior:"smooth"});
+$("refresh").onclick=async()=>{
+  const b=$("refresh");b.innerHTML="…";
+  try{const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});EPS=await r.json();renderStats();applyFilters();b.innerHTML=I.check;}
+  catch(e){b.innerHTML="✕";}
+  setTimeout(()=>{b.innerHTML='<svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';},1500);
+};
 
-/* Lock-screen / background playback: metadata + transport controls. */
-if("mediaSession" in navigator){
-  try{
-    navigator.mediaSession.setActionHandler("play",()=>$("player").play().catch(()=>{}));
-    navigator.mediaSession.setActionHandler("pause",()=>$("player").pause());
-    navigator.mediaSession.setActionHandler("previoustrack",()=>step(-1,true));
-    navigator.mediaSession.setActionHandler("nexttrack",()=>step(1,true));
-  }catch(err){}
-}
-$("player").addEventListener("timeupdate",()=>{
-  const p=$("player");
-  if("mediaSession" in navigator&&p.duration&&isFinite(p.duration)){
-    try{navigator.mediaSession.setPositionState({duration:p.duration,
-      playbackRate:p.playbackRate||1,position:Math.min(p.currentTime,p.duration)});}catch(err){}
-  }
-});
+/* starfield */
+(function(){
+  const c=$("stars"),x=c.getContext("2d");let W,H;
+  function size(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  size();addEventListener("resize",size);
+  const n=140,s=[];for(let i=0;i<n;i++)s.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.3,t:Math.random()*6.28});
+  (function draw(){
+    x.clearRect(0,0,W,H);
+    s.forEach(p=>{p.t+=.008;const a=.25+.35*Math.abs(Math.sin(p.t));
+      x.fillStyle="rgba(220,228,255,"+a.toFixed(2)+")";x.beginPath();x.arc(p.x*W,p.y*H,p.r,0,6.28);x.fill();});
+    requestAnimationFrame(draw);
+  })();
+})();
 
-$("prevEp").addEventListener("click",()=>step(-1,true));
-$("nextEp").addEventListener("click",()=>step(1,true));
-fetch("episodes.json").then(r=>r.json()).then(data=>{
-  EPS=data;initFilters();applyFilters();
-}).catch(()=>{$("empty").style.display="block";$("empty").textContent="Could not load episodes.json";});
+/* boot */
+fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;renderStats();applyFilters();})
+.catch(()=>{$("empty").style.display="block";$("empty").querySelector("h3").textContent="Could not load the archive.";});
 </script>
 </body>
 </html>
