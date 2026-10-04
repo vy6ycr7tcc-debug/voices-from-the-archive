@@ -161,6 +161,8 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .p-btn.main{width:60px;height:60px;background:linear-gradient(135deg,var(--gold-bright),var(--gold));border:none}
 .p-btn.main svg.solid{width:22px;height:22px;fill:#1a1408;stroke:none}
 .p-time{font-size:.74rem;color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.p-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.p-controls{display:flex;align-items:center;justify-content:center;gap:20px}
 .p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative}
 .p-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%}
 .p-knob{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--gold-bright);
@@ -538,14 +540,14 @@ function openDetail(id){
     +'<h2>'+esc(e.title)+'</h2>'
     +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
     +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
-    +'<div class="player"><div class="p-row">'
+    +'<div class="player">'
+    +'<div class="p-top"><span class="p-time p-cur">0:00</span>'
+    +'<div class="p-track" id="dTrack"><div class="p-fill"></div><div class="p-knob"></div></div>'
+    +'<span class="p-time">'+fmt(e.duration_sec)+'</span></div>'
+    +'<div class="p-controls">'
     +'<button class="p-btn" id="dPrev" aria-label="Previous episode">'+I.prev+'</button>'
     +'<button class="p-btn main" id="dPlay" aria-label="Play or pause"></button>'
     +'<button class="p-btn" id="dNext" aria-label="Next episode">'+I.next+'</button>'
-    +'<div class="p-track" id="dTrack"><div class="p-fill"></div><div class="p-knob"></div></div>'
-    +'</div><div class="p-row" style="margin-top:10px;justify-content:space-between">'
-    +'<span class="p-time"><span class="p-cur">0:00</span> / '+fmt(e.duration_sec)+'</span>'
-    +'<div class="p-nav" style="margin:0"><button id="dPrevB">'+I.prev+' Prev</button><button id="dNextB">Next '+I.next+'</button></div>'
     +'</div></div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
     +'<div class="sources"><em>An interpretive narration — not a verbatim channeling.</em>'
@@ -559,7 +561,6 @@ function openDetail(id){
   $("dClose").onclick=closeDetail;
   $("dPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
   $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
-  $("dPrevB").onclick=()=>step(-1,true); $("dNextB").onclick=()=>step(1,true);
   $("dTrack").onclick=seekFromTrack;
   $("dShare").onclick=()=>shareEpisode(e);
   try{history.replaceState(null,"","?ep="+e.id);}catch(err){}
