@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Voices from the Archive — Word-for-word narrations from the L/L Research sessions</title>
 <meta name="description" content="AI-voiced, word-for-word narrations of the L/L Research channeling archive, 1972–1974. Hatonn, Latwii, Oxal and the Confederation, exactly as spoken.">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#070b16">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -99,7 +104,27 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .feat-play span{font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim)}
 
 /* ---------- episode grid ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin:24px 0 20px}
+.rows{display:flex;flex-direction:column;gap:4px;margin:20px 0 24px}
+.row{display:flex;gap:15px;align-items:flex-start;padding:13px 12px;border-radius:14px;cursor:pointer;
+  transition:background .2s,border-color .2s;border:1px solid transparent}
+.row:hover{background:rgba(255,255,255,.035);border-color:var(--line-soft)}
+.row-art{width:62px;height:62px;border-radius:12px;flex:none;position:relative;overflow:hidden}
+.row-art .orb{position:absolute;inset:0}
+.row-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;background:rgba(7,11,22,.4)}
+.row:hover .row-play{opacity:1}
+.row-play svg{width:20px;height:20px;fill:var(--gold-bright)}
+.row-body{flex:1;min-width:0}
+.row-kicker{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;
+  display:flex;align-items:center;gap:8px}
+.row-kicker .played-inline{color:var(--gold-bright);letter-spacing:.14em;display:inline-flex;align-items:center;gap:4px}
+.row-body h3{font-family:var(--serif);font-size:1.06rem;font-weight:500;line-height:1.3;margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sum{font-size:.8rem;color:var(--ink-dim);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}
+.row-meta{display:flex;gap:10px;align-items:center;font-size:.7rem;color:var(--ink-faint);flex-wrap:wrap}
+.row-meta .dur{display:inline-flex;align-items:center;gap:5px}
+.row-prog{height:3px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
+.row-prog div{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
 .card{background:var(--card);border:1px solid var(--line-soft);border-radius:16px;overflow:hidden;cursor:pointer;transition:.28s;position:relative}
 .card:hover{transform:translateY(-4px);border-color:rgba(201,169,106,.4);box-shadow:0 18px 44px rgba(0,0,0,.45)}
 .card-art{height:170px;position:relative;overflow:hidden}
@@ -163,6 +188,13 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .p-time{font-size:.74rem;color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
 .p-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .p-controls{display:flex;align-items:center;justify-content:center;gap:20px}
+.p-btn.sm{width:44px;height:44px;font-size:.72rem;letter-spacing:.03em;font-weight:500}
+.viz{width:100%;height:46px;display:block;margin-bottom:14px;border-radius:8px;background:rgba(255,255,255,.02)}
+.p-utils{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.utilbtn{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;
+  padding:7px 18px;font-size:.74rem;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:.2s;min-width:76px}
+.utilbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.utilbtn.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,169,106,.12)}
 .p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative}
 .p-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%}
 .p-knob{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--gold-bright);
@@ -197,7 +229,8 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .mini-art{width:46px;height:46px;border-radius:10px;flex:none;overflow:hidden;position:relative}
 .mini-info{flex:1;min-width:0}
 .mini-info b{display:block;font-family:var(--serif);font-weight:500;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-info span{font-size:.72rem;color:var(--ink-faint)}
+.mini-info span{display:block;font-size:.72rem;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:560px){.mini-open{display:none}.mini-info{cursor:pointer}}
 .mini-btns{display:flex;align-items:center;gap:8px}
 .mini-btns .p-btn{width:38px;height:38px}
 .mini-btns .p-btn.main{width:46px;height:46px}
@@ -278,7 +311,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   </div>
 
   <div class="sec-head"><h2>All <em>episodes</em></h2><span class="count" id="gridCount"></span></div>
-  <div class="grid" id="grid"></div>
+  <div class="rows" id="grid"></div>
   <div class="empty" id="empty" style="display:none"><h3>Nothing in this corner of the archive.</h3><p>Try a different search or theme.</p></div>
 </section>
 
@@ -394,7 +427,7 @@ function loadEpisode(e,autoplay){
   if(pr&&pr.s>15){const apply=()=>{try{if(audio.duration&&pr.s<audio.duration*.97)audio.currentTime=pr.s;}catch(err){}};
     audio.addEventListener("loadedmetadata",apply,{once:true});}
   if(autoplay) audio.play().catch(()=>{});
-  syncChrome();
+  syncChrome(); prefetchNext();
 }
 function syncChrome(){
   const e=EPS.find(x=>x.id===currentId); if(!e)return;
@@ -404,7 +437,9 @@ function syncChrome(){
   $("miniSub").textContent=seasonLabel(e)+" · "+fmt(e.duration_sec)+(isPlayed(e.id)?" · Played":"");
   if("mediaSession" in navigator){
     try{
-      navigator.mediaSession.metadata=new MediaMetadata({title:e.title,artist:"Voices from the Archive",album:seasonLabel(e)});
+      const au=artworkURL();
+      navigator.mediaSession.metadata=new MediaMetadata({title:e.title,artist:"Voices from the Archive",album:seasonLabel(e),
+        artwork:au?[{src:au,sizes:"512x512",type:"image/png"}]:[]});
       navigator.mediaSession.setActionHandler("play",()=>audio.play().catch(()=>{}));
       navigator.mediaSession.setActionHandler("pause",()=>audio.pause());
       navigator.mediaSession.setActionHandler("previoustrack",()=>step(-1,true));
@@ -418,10 +453,98 @@ function paintPlayState(){
   const dp=$("dPlay"); if(dp) dp.innerHTML=playing?I.pause:I.play;
   if("mediaSession" in navigator){try{navigator.mediaSession.playbackState=playing?"playing":"paused";}catch(e){}}
 }
-audio.addEventListener("play",paintPlayState);
-audio.addEventListener("pause",()=>{paintPlayState();
+/* ---- advanced audio: visualizer, speed, sleep, prefetch ---- */
+const SPEEDS=[1,1.25,1.5,1.75,2,0.75]; let speedIx=0;
+const SLEEPS=[0,15,30,60,120]; let sleepIx=0, sleepTO=null;
+const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let AC=null, analyser=null, vizData=null, vizRAF=0, vizCanvas=null, vizCtx=null, vizLast=0;
+function ensureAudioGraph(){
+  if(AC||REDUCED)return;
+  try{
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    const node=AC.createMediaElementSource(audio);
+    analyser=AC.createAnalyser(); analyser.fftSize=256; analyser.smoothingTimeConstant=.82;
+    node.connect(analyser); analyser.connect(AC.destination);
+    vizData=new Uint8Array(analyser.frequencyBinCount);
+  }catch(err){AC=null;analyser=null;}
+}
+function sizeViz(){
+  if(!vizCanvas)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  vizCanvas.width=Math.max(50,vizCanvas.clientWidth*dpr); vizCanvas.height=46*dpr;
+}
+function drawVizIdle(){
+  if(!vizCtx||!vizCanvas)return;
+  vizCtx.clearRect(0,0,vizCanvas.width,vizCanvas.height);
+  vizCtx.fillStyle='rgba(201,169,106,.22)';
+  vizCtx.fillRect(0,vizCanvas.height-2,vizCanvas.width,2);
+}
+function drawViz(){
+  if(!vizCtx||!analyser||!vizCanvas)return;
+  analyser.getByteFrequencyData(vizData);
+  const w=vizCanvas.width,h=vizCanvas.height;
+  vizCtx.clearRect(0,0,w,h);
+  const n=48,bw=w/n,top=h*.92;
+  const g=vizCtx.createLinearGradient(0,h,0,0);
+  g.addColorStop(0,'rgba(138,111,62,.85)');g.addColorStop(1,'rgba(232,200,118,.95)');
+  vizCtx.fillStyle=g;
+  for(let i=0;i<n;i++){
+    const bin=Math.min(vizData.length-1,Math.floor(Math.pow(i/n,1.6)*vizData.length*.72));
+    const v=vizData[bin]/255, bh=Math.max(2,v*top), x=i*bw;
+    const r=Math.min(3,(bw-3)/2);
+    vizCtx.beginPath();
+    if(vizCtx.roundRect)vizCtx.roundRect(x+1.5,h-bh,bw-3,bh,r);else vizCtx.rect(x+1.5,h-bh,bw-3,bh);
+    vizCtx.fill();
+  }
+}
+function startViz(){
+  if(!analyser||REDUCED||vizRAF||!vizCanvas||!document.contains(vizCanvas))return;
+  if(AC.state==='suspended')AC.resume().catch(()=>{});
+  const loop=(t)=>{
+    if(audio.paused||audio.ended||!document.contains(vizCanvas)){vizRAF=0;drawVizIdle();return;}
+    if(t-vizLast>33){vizLast=t;drawViz();}
+    vizRAF=requestAnimationFrame(loop);
+  };
+  vizRAF=requestAnimationFrame(loop);
+}
+function stopViz(){if(vizRAF){cancelAnimationFrame(vizRAF);vizRAF=0;}drawVizIdle();}
+function cycleSpeed(){
+  speedIx=(speedIx+1)%SPEEDS.length;audio.playbackRate=SPEEDS[speedIx];
+  document.querySelectorAll('.speedbtn').forEach(b=>b.textContent=SPEEDS[speedIx]+'x');
+}
+function cycleSleep(){
+  sleepIx=(sleepIx+1)%SLEEPS.length;
+  if(sleepTO){clearTimeout(sleepTO);sleepTO=null;}
+  const m=SLEEPS[sleepIx];
+  document.querySelectorAll('.sleepbtn').forEach(b=>{b.textContent=m?m+' min':'Sleep';b.classList.toggle('on',!!m);});
+  if(m){toast('Sleep timer: '+m+' min');sleepTO=setTimeout(()=>{audio.pause();sleepIx=0;
+    document.querySelectorAll('.sleepbtn').forEach(b=>{b.textContent='Sleep';b.classList.remove('on');});
+    toast('Sleep timer ended');},m*60000);}
+}
+let ART_URL=null;
+function artworkURL(){
+  if(ART_URL)return ART_URL;
+  try{
+    const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d');
+    x.fillStyle='#070b16';x.fillRect(0,0,512,512);
+    x.strokeStyle='rgba(201,169,106,.8)';x.lineWidth=3;
+    [92,148,208].forEach(r=>{x.beginPath();x.arc(256,256,r,0,6.2832);x.stroke();});
+    x.fillStyle='#e8c876';x.beginPath();x.arc(256,256,14,0,6.2832);x.fill();
+    ART_URL=c.toDataURL('image/png');
+  }catch(e){ART_URL=null;}
+  return ART_URL;
+}
+function prefetchNext(){
+  const g=topicGroup(),i=g.findIndex(x=>x.id===currentId),nx=g[i+1];
+  document.querySelectorAll('link[data-pref]').forEach(l=>l.remove());
+  if(nx&&i>=0){const l=document.createElement('link');l.rel='prefetch';l.as='audio';
+    l.href=nx.audio;l.dataset.pref='1';document.head.appendChild(l);}
+}
+audio.addEventListener("play",()=>{paintPlayState();ensureAudioGraph();startViz();});
+audio.addEventListener("pause",()=>{paintPlayState();stopViz();
   if(currentId&&audio.duration&&isFinite(audio.duration))saveProg(currentId,audio.currentTime,audio.duration);});
 audio.addEventListener("ended",()=>{
+  stopViz();
   if(currentId){try{const p=getProg();delete p[currentId];localStorage.setItem("wfw_prog",JSON.stringify(p));}catch(e){}
     markPlayed(currentId);renderAll();}
   const g=topicGroup(), i=g.findIndex(x=>x.id===currentId);
@@ -474,25 +597,30 @@ function applyFilters(){
 function progFrac(e){const pr=progFor(e.id);if(!pr||!e.duration_sec)return 0;
   if(isPlayed(e.id))return 1;return Math.min(.99,pr.s/e.duration_sec);}
 function progBarHTML(e){const f=progFrac(e);return f>0?'<div class="card-prog"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>':"";}
+function summHTML(e){
+  return e.summary?'<div class="row-sum">'+esc(e.summary)+'</div>':"";
+}
+function rowProgHTML(e){const f=progFrac(e);return f>0?'<div class="row-prog"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>':"";}
 function cardHTML(e){
   const played=isPlayed(e.id);
-  return '<div class="card" data-id="'+e.id+'">'
-    +'<div class="card-art" style="'+artFor(e)+'">'+ORB_SVG
-    +'<span class="card-num">EP '+String(e.n).padStart(2,"0")+'</span>'
-    +(played?'<span class="played-badge">'+I.check+' Played</span>':"")
-    +'<div class="card-listen"><span class="playring">'+I.play+'</span></div>'
-    +progBarHTML(e)+'</div>'
-    +'<div class="card-body"><div class="card-kicker">'+esc(themeOf(e))+'</div>'
+  return '<div class="row" data-id="'+e.id+'">'
+    +'<div class="row-art" style="'+artFor(e)+'">'+ORB_SVG
+    +'<div class="row-play">'+I.play+'</div></div>'
+    +'<div class="row-body">'
+    +'<div class="row-kicker"><span>'+esc(themeOf(e))+' · EP '+String(e.n).padStart(2,"0")+'</span>'
+    +(played?'<span class="played-inline">'+I.check+' Played</span>':"")+'</div>'
     +'<h3>'+esc(e.title)+'</h3>'
-    +'<div class="card-tags">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")+'</div>'
-    +'<div class="card-foot"><span>'+esc(seasonLabel(e))+'</span><span class="dur">'+I.clock+' '+fmt(e.duration_sec)+'</span></div>'
+    +summHTML(e)
+    +'<div class="row-meta"><span>'+esc((e.entities||[]).join(" · "))+'</span>'
+    +'<span class="dur">'+I.clock+' '+fmt(e.duration_sec)+'</span></div>'
+    +rowProgHTML(e)
     +'</div></div>';
 }
 function renderGrid(){
   $("grid").innerHTML=filtered.map(cardHTML).join("");
   $("empty").style.display=filtered.length?"none":"block";
   $("gridCount").textContent=filtered.length+" episodes";
-  $("grid").querySelectorAll(".card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+  $("grid").querySelectorAll(".row").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
 }
 function renderContinue(){
   const p=getProg();
@@ -504,7 +632,9 @@ function renderContinue(){
   $("contRow").innerHTML=items.map(({e,v})=>{
     const f=Math.min(.99,v.s/(e.duration_sec||1)), left=Math.max(0,(e.duration_sec||0)-v.s);
     return '<div class="cont-card" data-id="'+e.id+'"><div class="cont-art" style="'+artFor(e)+'">'+ORB_SVG+'</div>'
-      +'<div class="cont-body"><b>'+esc(e.title)+'</b><div class="cont-bar"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>'
+      +'<div class="cont-body"><b>'+esc(e.title)+'</b>'
+      +(e.summary?'<div class="row-sum" style="-webkit-line-clamp:1;margin-bottom:6px">'+esc(e.summary)+'</div>':"")
+      +'<div class="cont-bar"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>'
       +'<span>Resume at '+fmt(v.s)+' · '+fmt(left)+' left</span></div></div>';}).join("");
   $("contRow").querySelectorAll(".cont-card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
 }
@@ -513,6 +643,7 @@ function renderFeatured(){
   $("featured").innerHTML='<div class="feat-art" style="'+artFor(e)+'">'+ORB_SVG+'</div>'
     +'<div class="feat-body"><div class="feat-kicker">Latest session</div>'
     +'<h3>'+esc(e.title)+'</h3>'
+    +(e.summary?'<p style="color:var(--ink-dim);font-size:.92rem;margin-bottom:16px;max-width:52ch">'+esc(e.summary)+'</p>':"")
     +'<div class="feat-meta"><span>'+esc(seasonLabel(e))+'</span><span class="dot">·</span><span>'+esc(themeOf(e))+'</span><span class="dot">·</span><span>'+fmt(e.duration_sec)+'</span>'
     +(isPlayed(e.id)?'<span class="dot">·</span><span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
     +'<div class="feat-play"><span class="playring">'+I.play+'</span><span>Play episode</span></div></div>';
@@ -541,27 +672,42 @@ function openDetail(id){
     +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
     +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
     +'<div class="player">'
+    +'<canvas class="viz" id="dViz"></canvas>'
     +'<div class="p-top"><span class="p-time p-cur">0:00</span>'
     +'<div class="p-track" id="dTrack"><div class="p-fill"></div><div class="p-knob"></div></div>'
     +'<span class="p-time">'+fmt(e.duration_sec)+'</span></div>'
     +'<div class="p-controls">'
+    +'<button class="p-btn sm" id="dBack" aria-label="Back 15 seconds">-15</button>'
     +'<button class="p-btn" id="dPrev" aria-label="Previous episode">'+I.prev+'</button>'
     +'<button class="p-btn main" id="dPlay" aria-label="Play or pause"></button>'
     +'<button class="p-btn" id="dNext" aria-label="Next episode">'+I.next+'</button>'
-    +'</div></div>'
+    +'<button class="p-btn sm" id="dFwd" aria-label="Forward 30 seconds">+30</button>'
+    +'</div>'
+    +'<div class="p-utils"><button class="utilbtn speedbtn" id="dSpeed">1x</button>'
+    +'<button class="utilbtn sleepbtn" id="dSleep">Sleep</button></div>'
+    +'</div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
     +'<div class="sources"><em>An interpretive narration — not a verbatim channeling.</em>'
     +(e.sources||[]).map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("")+'</div>'
     +'<div class="disclaimer">Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</div>'
     +(rel.length?'<div class="related"><h4>Related episodes</h4>'+rel.map(r=>
       '<div class="rel" data-id="'+r.id+'"><div class="rel-art" style="'+artFor(r)+'">'+ORB_SVG+'</div>'
-      +'<div class="rel-info"><b>'+esc(r.title)+'</b><span>'+esc(seasonLabel(r))+' · '+fmt(r.duration_sec)+'</span></div></div>').join("")+'</div>':"")
+      +'<div class="rel-info"><b>'+esc(r.title)+'</b>'
+      +(r.summary?'<span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">'+esc(r.summary)+'</span>':"")
+      +'<span>'+esc(seasonLabel(r))+' · '+fmt(r.duration_sec)+'</span></div></div>').join("")+'</div>':"")
     +'</div>';
   $("modal").classList.add("open"); document.body.style.overflow="hidden";
   $("dClose").onclick=closeDetail;
   $("dPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
   $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
   $("dTrack").onclick=seekFromTrack;
+  $("dBack").onclick=()=>{audio.currentTime=Math.max(0,audio.currentTime-15);};
+  $("dFwd").onclick=()=>{try{audio.currentTime=Math.min(audio.duration||1e9,audio.currentTime+30);}catch(err){}};
+  $("dSpeed").onclick=cycleSpeed; $("dSpeed").textContent=SPEEDS[speedIx]+'x';
+  $("dSleep").onclick=cycleSleep;
+  const sl=SLEEPS[sleepIx]; $("dSleep").textContent=sl?sl+' min':'Sleep'; $("dSleep").classList.toggle('on',!!sl);
+  vizCanvas=$("dViz"); vizCtx=vizCanvas.getContext('2d'); sizeViz(); drawVizIdle();
+  if(!audio.paused&&!audio.ended){ensureAudioGraph();startViz();}
   $("dShare").onclick=()=>shareEpisode(e);
   try{history.replaceState(null,"","?ep="+e.id);}catch(err){}
   $("sheetInner").querySelectorAll(".rel").forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
@@ -578,6 +724,7 @@ $("mPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
 $("mPrev").onclick=()=>step(-1,true);
 $("mNext").onclick=()=>step(1,true);
 $("mOpen").onclick=()=>{if(currentId)openDetail(currentId);};
+$("miniArt").parentElement.querySelector(".mini-info").onclick=()=>{if(currentId)openDetail(currentId);};
 $("q").addEventListener("input",applyFilters);
 $("ctaPlay").onclick=()=>{const e=EPS[EPS.length-1];if(e)openDetail(e.id);};
 $("ctaBrowse").onclick=()=>$("browse").scrollIntoView({behavior:"smooth"});
@@ -602,6 +749,8 @@ $("refresh").onclick=async()=>{
   })();
 })();
 
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});});}
 /* boot */
 fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;renderStats();applyFilters();
   const epId=new URLSearchParams(location.search).get("ep");
