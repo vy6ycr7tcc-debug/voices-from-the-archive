@@ -204,6 +204,24 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   padding:8px 16px;font-size:.76rem;cursor:pointer;letter-spacing:.06em;transition:.2s}
 .mini-open:hover{border-color:var(--gold);color:var(--gold)}
 
+.card-prog{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(0,0,0,.45)}
+.card-prog div{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%}
+.cont-row{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:thin}
+.cont-card{flex:0 0 250px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.25s}
+.cont-card:hover{transform:translateY(-3px);border-color:rgba(201,169,106,.45)}
+.cont-art{height:96px;position:relative}
+.cont-body{padding:12px 14px 14px}
+.cont-body b{display:block;font-family:var(--serif);font-weight:500;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.cont-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:6px}
+.cont-bar div{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
+.cont-body span{font-size:.72rem;color:var(--ink-faint)}
+.sharebtn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);
+  border-radius:999px;padding:9px 18px;font-size:.78rem;letter-spacing:.08em;cursor:pointer;transition:.2s;font-family:var(--sans);text-transform:uppercase}
+.sharebtn:hover{border-color:var(--gold);color:var(--gold)}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:rgba(10,14,28,.95);
+  border:1px solid var(--gold-dim);color:var(--gold-bright);padding:12px 24px;border-radius:999px;font-size:.84rem;
+  opacity:0;pointer-events:none;transition:.3s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:70px 20px;color:var(--ink-faint)}
 .empty h3{font-family:var(--serif);font-size:1.5rem;color:var(--ink-dim);margin-bottom:8px}
 
@@ -252,6 +270,11 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   <div class="sec-head"><h2>Latest <em>session</em></h2></div>
   <div class="featured" id="featured"></div>
 
+  <div id="contWrap" style="display:none">
+    <div class="sec-head"><h2>Continue <em>listening</em></h2><span class="count">pick up where you left off</span></div>
+    <div class="cont-row" id="contRow"></div>
+  </div>
+
   <div class="sec-head"><h2>All <em>episodes</em></h2><span class="count" id="gridCount"></span></div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" style="display:none"><h3>Nothing in this corner of the archive.</h3><p>Try a different search or theme.</p></div>
@@ -298,6 +321,15 @@ const I = {
   clock: '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>'
 };
 
+/* ============ sharing ============ */
+function epURL(id){return location.origin+location.pathname+"?ep="+id;}
+async function shareEpisode(e){
+  const url=epURL(e.id), title="Voices from the Archive — "+e.title;
+  if(navigator.share){try{await navigator.share({title,url});return;}catch(err){if(err&&err.name==="AbortError")return;}}
+  try{await navigator.clipboard.writeText(url);toast("Link copied to clipboard");}
+  catch(err){window.prompt("Copy this link:",url);}
+}
+
 /* ============ data ============ */
 let EPS=[], filtered=[], currentId=null, activeTheme="All";
 const $=id=>document.getElementById(id);
@@ -311,6 +343,13 @@ const seasonLabel=e=>e.season_name||("Season "+(e.season||1));
 const getPlayed=()=>{try{return JSON.parse(localStorage.getItem("wfw_played")||"[]");}catch(e){return[];}};
 const isPlayed=id=>getPlayed().includes(id);
 const markPlayed=id=>{const p=getPlayed();if(!p.includes(id)){p.push(id);try{localStorage.setItem("wfw_played",JSON.stringify(p));}catch(e){}}};
+/* per-episode playback position: {id:{s:seconds,t:timestamp}} */
+const getProg=()=>{try{return JSON.parse(localStorage.getItem("wfw_prog")||"{}");}catch(e){return{};}};
+const saveProg=(id,sec,dur)=>{try{const p=getProg();
+  if(sec>15&&(dur&&sec<dur*.97)){p[id]={s:Math.floor(sec),t:Date.now()};}else{delete p[id];}
+  localStorage.setItem("wfw_prog",JSON.stringify(p));}catch(e){}};
+const progFor=id=>getProg()[id]||null;
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200);}
 
 /* ============ generative artwork ============ */
 const HUES={Hatonn:222,Latwii:265,Latui:265,Oxal:190};
@@ -349,6 +388,9 @@ function step(d,autoplay){
 function loadEpisode(e,autoplay){
   currentId=e.id;
   audio.src=e.audio; audio.load();
+  const pr=progFor(e.id);
+  if(pr&&pr.s>15){const apply=()=>{try{if(audio.duration&&pr.s<audio.duration*.97)audio.currentTime=pr.s;}catch(err){}};
+    audio.addEventListener("loadedmetadata",apply,{once:true});}
   if(autoplay) audio.play().catch(()=>{});
   syncChrome();
 }
@@ -375,14 +417,19 @@ function paintPlayState(){
   if("mediaSession" in navigator){try{navigator.mediaSession.playbackState=playing?"playing":"paused";}catch(e){}}
 }
 audio.addEventListener("play",paintPlayState);
-audio.addEventListener("pause",paintPlayState);
+audio.addEventListener("pause",()=>{paintPlayState();
+  if(currentId&&audio.duration&&isFinite(audio.duration))saveProg(currentId,audio.currentTime,audio.duration);});
 audio.addEventListener("ended",()=>{
-  if(currentId){markPlayed(currentId);renderAll();}
+  if(currentId){try{const p=getProg();delete p[currentId];localStorage.setItem("wfw_prog",JSON.stringify(p));}catch(e){}
+    markPlayed(currentId);renderAll();}
   const g=topicGroup(), i=g.findIndex(x=>x.id===currentId);
   if(i>=0&&i+1<g.length) step(1,true); else syncChrome();
 });
+let lastSave=0;
 audio.addEventListener("timeupdate",()=>{
   const d=audio.duration;
+  if(currentId&&d&&isFinite(d)&&Date.now()-lastSave>5000){lastSave=Date.now();saveProg(currentId,audio.currentTime,d);renderContinue();}
+  
   if(d&&isFinite(d)){
     const f=audio.currentTime/d*100;
     document.querySelectorAll(".p-fill").forEach(el=>el.style.width=f+"%");
@@ -422,13 +469,17 @@ function applyFilters(){
   renderPills(); renderGrid();
   $("countLine").textContent=filtered.length+" of "+EPS.length+" episodes";
 }
+function progFrac(e){const pr=progFor(e.id);if(!pr||!e.duration_sec)return 0;
+  if(isPlayed(e.id))return 1;return Math.min(.99,pr.s/e.duration_sec);}
+function progBarHTML(e){const f=progFrac(e);return f>0?'<div class="card-prog"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>':"";}
 function cardHTML(e){
   const played=isPlayed(e.id);
   return '<div class="card" data-id="'+e.id+'">'
     +'<div class="card-art" style="'+artFor(e)+'">'+ORB_SVG
     +'<span class="card-num">EP '+String(e.n).padStart(2,"0")+'</span>'
     +(played?'<span class="played-badge">'+I.check+' Played</span>':"")
-    +'<div class="card-listen"><span class="playring">'+I.play+'</span></div></div>'
+    +'<div class="card-listen"><span class="playring">'+I.play+'</span></div>'
+    +progBarHTML(e)+'</div>'
     +'<div class="card-body"><div class="card-kicker">'+esc(themeOf(e))+'</div>'
     +'<h3>'+esc(e.title)+'</h3>'
     +'<div class="card-tags">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")+'</div>'
@@ -440,6 +491,20 @@ function renderGrid(){
   $("empty").style.display=filtered.length?"none":"block";
   $("gridCount").textContent=filtered.length+" episodes";
   $("grid").querySelectorAll(".card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+}
+function renderContinue(){
+  const p=getProg();
+  const items=Object.entries(p)
+    .map(([id,v])=>({e:EPS.find(x=>x.id===id),v}))
+    .filter(x=>x.e&&!isPlayed(x.e.id))
+    .sort((a,b)=>b.v.t-a.v.t).slice(0,10);
+  $("contWrap").style.display=items.length?"block":"none";
+  $("contRow").innerHTML=items.map(({e,v})=>{
+    const f=Math.min(.99,v.s/(e.duration_sec||1)), left=Math.max(0,(e.duration_sec||0)-v.s);
+    return '<div class="cont-card" data-id="'+e.id+'"><div class="cont-art" style="'+artFor(e)+'">'+ORB_SVG+'</div>'
+      +'<div class="cont-body"><b>'+esc(e.title)+'</b><div class="cont-bar"><div style="width:'+(f*100).toFixed(1)+'%"></div></div>'
+      +'<span>Resume at '+fmt(v.s)+' · '+fmt(left)+' left</span></div></div>';}).join("");
+  $("contRow").querySelectorAll(".cont-card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
 }
 function renderFeatured(){
   const e=EPS[EPS.length-1]; if(!e)return;
@@ -456,7 +521,7 @@ function renderStats(){
   $("stHrs").textContent=fmtH(EPS.reduce((a,e)=>a+(e.duration_sec||0),0));
   $("stEnt").textContent=new Set(EPS.flatMap(e=>e.entities||[])).size;
 }
-function renderAll(){renderPills();renderGrid();renderFeatured();}
+function renderAll(){renderPills();renderGrid();renderFeatured();renderContinue();}
 
 /* ============ detail modal ============ */
 function openDetail(id){
@@ -469,6 +534,7 @@ function openDetail(id){
     +'<button class="detail-close" id="dClose" aria-label="Close">'+I.close+'</button></div>'
     +'<div class="detail-body">'
     +'<div class="detail-kicker">Episode '+String(e.n).padStart(2,"0")+' · '+esc(seasonLabel(e))+(isPlayed(e.id)?' · <span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
+    +'<div style="margin-bottom:16px"><button class="sharebtn" id="dShare"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3.5v11"/><path d="M8.5 6.5L12 3l3.5 3.5"/><path d="M6 11.5V18a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 18v-6.5"/></svg> Share episode</button></div>'
     +'<h2>'+esc(e.title)+'</h2>'
     +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
     +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
@@ -495,11 +561,14 @@ function openDetail(id){
   $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
   $("dPrevB").onclick=()=>step(-1,true); $("dNextB").onclick=()=>step(1,true);
   $("dTrack").onclick=seekFromTrack;
+  $("dShare").onclick=()=>shareEpisode(e);
+  try{history.replaceState(null,"","?ep="+e.id);}catch(err){}
   $("sheetInner").querySelectorAll(".rel").forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
   paintPlayState(); syncChrome();
 }
 /* closing the detail keeps audio playing — the mini player takes over */
-function closeDetail(){detailOpen=false;$("modal").classList.remove("open");document.body.style.overflow="";}
+function closeDetail(){detailOpen=false;$("modal").classList.remove("open");document.body.style.overflow="";
+  try{history.replaceState(null,"",location.pathname);}catch(err){}}
 $("scrim").onclick=closeDetail;
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
 
@@ -533,8 +602,11 @@ $("refresh").onclick=async()=>{
 })();
 
 /* boot */
-fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;renderStats();applyFilters();})
+fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;renderStats();applyFilters();
+  const epId=new URLSearchParams(location.search).get("ep");
+  if(epId&&EPS.some(x=>x.id===epId))openDetail(epId);})
 .catch(()=>{$("empty").style.display="block";$("empty").querySelector("h3").textContent="Could not load the archive.";});
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
