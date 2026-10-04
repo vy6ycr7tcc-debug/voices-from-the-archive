@@ -554,11 +554,8 @@ function prefetchNext(){
     l.href=nx.audio;l.dataset.pref='1';document.head.appendChild(l);}
 }
 audio.addEventListener("play",()=>{paintPlayState();ensureAudioGraph();startViz();
-  if(MUS.on){musicInit();if(MUS.ctx.state==='suspended')MUS.ctx.resume().catch(()=>{});
-    if(!MUS.timer){MUS.chordIx=0;const cyc=()=>{if(!MUS.on)return;
-      musicChord(CHORDS[MUS.chordIx%CHORDS.length],22);MUS.chordIx++;MUS.timer=setTimeout(cyc,19000);};cyc();}
-    musicFade(MUS.vol,3);}});
-audio.addEventListener("pause",()=>{paintPlayState();stopViz();musicFade(0.0001,2);
+  if(MUS.on)bedIn();});
+audio.addEventListener("pause",()=>{paintPlayState();stopViz();bedOut();
   if(currentId&&audio.duration&&isFinite(audio.duration))saveProg(currentId,audio.currentTime,audio.duration);});
 audio.addEventListener("ended",()=>{
   stopViz();
@@ -587,72 +584,69 @@ function seekFromTrack(ev){
   if(audio.duration&&isFinite(audio.duration)) audio.currentTime=f*audio.duration;
 }
 
-/* ============ generative ambient bed ============ */
-const MUS = {on:false, ctx:null, master:null, bus:null, timer:null, chordIx:0, vol:0.15};
+/* ============ ambient bed: Inward Journey water, crossfade-looped ============ */
+const MUS = {on:false, ctx:null, master:null, bedGain:null, src:null, buf:null, _loading:null};
 try{MUS.on = localStorage.getItem('wfw_music')==='1';}catch(e){}
-const CHORDS = [
-  [130.81,164.81,196.00,246.94],  /* Cmaj7 */
-  [110.00,130.81,164.81,196.00],  /* Am7 */
-  [87.31,130.81,174.61,220.00],   /* Fmaj7 */
-  [98.00,146.83,196.00,246.94],   /* G */
-];
-function musicInit(){
-  if(MUS.ctx)return;
-  const C = MUS.ctx = new (window.AudioContext||window.webkitAudioContext)();
-  MUS.master = C.createGain(); MUS.master.gain.value = 0;
-  const lp = C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=850; lp.Q.value=0.4;
-  const dly = C.createDelay(2); dly.delayTime.value=0.42;
-  const fb = C.createGain(); fb.gain.value=0.32;
-  const dlp = C.createBiquadFilter(); dlp.type='lowpass'; dlp.frequency.value=1100;
-  MUS.master.connect(lp); lp.connect(C.destination);
-  lp.connect(dly); dly.connect(dlp); dlp.connect(fb); fb.connect(dly); dly.connect(C.destination);
-  MUS.bus = C.createGain(); MUS.bus.connect(MUS.master);
+/* equal-power crossfade baked into the buffer — the loop seam never shows */
+function xfadeLoop(c, buf, secs){
+  const x = Math.min(Math.floor(secs*buf.sampleRate), Math.floor(buf.length/4));
+  const n = buf.length - x;
+  const out = c.createBuffer(buf.numberOfChannels, n, buf.sampleRate);
+  for(let ch=0; ch<buf.numberOfChannels; ch++){
+    const a = buf.getChannelData(ch), o = out.getChannelData(ch);
+    o.set(a.subarray(0,n));
+    for(let i=0;i<x;i++){
+      const k=i/x;
+      o[i] = a[i]*Math.sin(k*Math.PI/2) + a[n+i]*Math.cos(k*Math.PI/2);
+    }
+  }
+  return out;
 }
-function musicChord(freqs, dur){
-  const C=MUS.ctx, t=C.currentTime+0.1;
-  freqs.forEach((f)=>{
-    const o=C.createOscillator(); o.type='sine'; o.frequency.value=f;
-    o.detune.value=Math.random()*6-3;
-    const g=C.createGain();
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.exponentialRampToValueAtTime(0.05,t+6);
-    g.gain.setValueAtTime(0.05,t+dur-6);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur+2);
-    o.connect(g); g.connect(MUS.bus); o.start(t); o.stop(t+dur+3);
-    const o2=C.createOscillator(); o2.type='triangle'; o2.frequency.value=f*2;
-    const g2=C.createGain();
-    g2.gain.setValueAtTime(0.0001,t);
-    g2.gain.exponentialRampToValueAtTime(0.012,t+8);
-    g2.gain.exponentialRampToValueAtTime(0.0001,t+dur+2);
-    o2.connect(g2); g2.connect(MUS.bus); o2.start(t+1); o2.stop(t+dur+3);
+function musicEnsure(){
+  if(MUS._loading)return MUS._loading;
+  MUS._loading = (async()=>{
+    try{
+      const C = MUS.ctx = new (window.AudioContext||window.webkitAudioContext)();
+      MUS.master = C.createGain(); MUS.master.gain.value=0.0001;
+      MUS.bedGain = C.createGain(); MUS.bedGain.gain.value=0.3;
+      MUS.bedGain.connect(MUS.master); MUS.master.connect(C.destination);
+      const r = await fetch('./audio/water-bed.mp3');
+      const dec = await C.decodeAudioData(await r.arrayBuffer());
+      MUS.buf = xfadeLoop(C, dec, 4);
+      return true;
+    }catch(e){ MUS.ctx=null; MUS._loading=null; return false; }
+  })();
+  return MUS._loading;
+}
+function bedIn(){
+  musicEnsure().then(ok=>{
+    if(!ok||!MUS.on)return;
+    const C=MUS.ctx;
+    if(C.state==='suspended')C.resume().catch(()=>{});
+    if(!MUS.src){
+      const s=C.createBufferSource(); s.buffer=MUS.buf; s.loop=true;
+      s.connect(MUS.bedGain); s.start(); MUS.src=s;
+    }
+    const n=C.currentTime;
+    MUS.master.gain.cancelScheduledValues(n);
+    MUS.master.gain.setValueAtTime(Math.max(0.0001,MUS.master.gain.value),n);
+    MUS.master.gain.exponentialRampToValueAtTime(1,n+3);
   });
 }
-function musicFade(to, secs){
+function bedOut(){
   if(!MUS.ctx)return;
   const n=MUS.ctx.currentTime;
   MUS.master.gain.cancelScheduledValues(n);
   MUS.master.gain.setValueAtTime(Math.max(0.0001,MUS.master.gain.value),n);
-  MUS.master.gain.exponentialRampToValueAtTime(Math.max(0.0001,to),n+secs);
+  MUS.master.gain.exponentialRampToValueAtTime(0.0001,n+2.5);
 }
-function musicStart(){
-  musicInit();
-  const C=MUS.ctx; if(C.state==='suspended')C.resume().catch(()=>{});
-  MUS.on=true;
-  musicFade(MUS.vol,3);
-  const cyc=()=>{ if(!MUS.on)return;
-    musicChord(CHORDS[MUS.chordIx%CHORDS.length],22); MUS.chordIx++;
-    MUS.timer=setTimeout(cyc,19000); };
-  if(!MUS.timer)cyc();
-  document.querySelectorAll('.musicbtn').forEach(b=>b.classList.add('on'));
-  try{localStorage.setItem('wfw_music','1');}catch(e){}
+function musicToggle(){
+  MUS.on=!MUS.on;
+  document.querySelectorAll('.musicbtn').forEach(b=>b.classList.toggle('on',MUS.on));
+  try{localStorage.setItem('wfw_music',MUS.on?'1':'0');}catch(e){}
+  if(MUS.on){ if(!audio.paused&&!audio.ended)bedIn(); }
+  else bedOut();
 }
-function musicStop(){
-  MUS.on=false; if(MUS.timer){clearTimeout(MUS.timer);MUS.timer=null;}
-  musicFade(0.0001,2.5);
-  document.querySelectorAll('.musicbtn').forEach(b=>b.classList.remove('on'));
-  try{localStorage.setItem('wfw_music','0');}catch(e){}
-}
-function musicToggle(){ MUS.on?musicStop():musicStart(); }
 
 /* ============ rendering ============ */
 function topics(){
