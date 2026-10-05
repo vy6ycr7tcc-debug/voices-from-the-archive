@@ -5,6 +5,11 @@
 const CACHE = 'wfw-shell-v2';
 const AUDIO = 'wfw-audio-v1';
 const SHELL = ['./', './index.html', './episodes.json', './manifest.webmanifest'];
+// Audio lives in a separate repo (GitHub Pages caps sites at 1 GB).
+// raw.githubusercontent.com serves CORS * and Range, so offline cache + seeking work.
+const AUDIO_HOST = 'raw.githubusercontent.com';
+const AUDIO_REPO = 'vy6ycr7tcc-debug/voices-from-the-archive-audio';
+const AUDIO_BASE = 'https://' + AUDIO_HOST + '/' + AUDIO_REPO + '/main/audio/';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -28,11 +33,14 @@ function audioHeaders(extra) {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin || req.method !== 'GET') return;
+  if (req.method !== 'GET') return;
+  const sameOrigin = url.origin === self.location.origin;
+  const isAudioHost = url.host === AUDIO_HOST;
+  if (!sameOrigin && !isAudioHost) return;
 
   // Audio: try the network first (native streaming behavior), fall back to an
   // explicit offline download when the network is unreachable.
-  if (req.destination === 'audio' || url.pathname.endsWith('.mp3')) {
+  if ((req.destination === 'audio' || url.pathname.endsWith('.mp3')) && (sameOrigin || isAudioHost)) {
     e.respondWith((async () => {
       try {
         return await fetch(req);
