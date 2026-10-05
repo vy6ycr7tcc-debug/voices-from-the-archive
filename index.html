@@ -92,16 +92,14 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
   border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;font-family:var(--sans);padding:0;color:var(--ink)}
 .topic-card:hover{transform:translateY(-3px);border-color:rgba(201,169,106,.45);box-shadow:0 16px 40px rgba(0,0,0,.45)}
 .topic-card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 16px 40px rgba(0,0,0,.45)}
-.topic-art{height:86px;position:relative;overflow:hidden}
-.topic-dl{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.22);
+.topic-dl{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.22);
   background:rgba(10,10,18,.55);backdrop-filter:blur(6px);color:#e8e4da;cursor:pointer;display:flex;align-items:center;justify-content:center;
   font-size:.62rem;font-weight:600;letter-spacing:.02em;transition:.2s;z-index:2}
 .topic-dl:hover{border-color:var(--gold);color:var(--gold-bright)}
 .topic-dl.done{border-color:var(--gold);color:var(--gold-bright)}
 .topic-dl.busy{border-color:var(--gold);color:var(--gold-bright);pointer-events:none}
 .topic-dl .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.topic-art .orb{position:absolute;inset:-30%;width:160%;height:160%;opacity:.55}
-.topic-body{padding:13px 14px 14px}
+.topic-body{padding:13px 52px 14px 14px}
 .topic-name{font-family:var(--serif);font-size:1.02rem;font-weight:500;margin-bottom:4px;line-height:1.25}
 .topic-ess{font-size:.74rem;color:var(--ink-dim);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;
   -webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:3.3em}
@@ -841,20 +839,10 @@ const TOPIC_ESS={
  "Faith & incarnation":"Faith, reincarnation, and the journey between lives.",
  "Guidance for seekers":"Practical guidance for navigating these times.",
  "Ra \u2014 The Law of One":"The original contact \u2014 Don’s questions, Ra’s answers."};
-const TOPIC_HUE={"Meditation & stillness":232,"Oneness & reality":268,"Love":332,"Service":45,
- "Contact & the craft":196,"Learning to channel":172,"The turning of the age":22,"The human condition":214,
- "Q\u2019uo Q&A":280,"Energy centers":160,"The journey & catalyst":35,"Faith & incarnation":300,"Guidance for seekers":200,
- "Ra \u2014 The Law of One":255};
 const TOPIC_ORDER=["Meditation & stillness","Oneness & reality","Love","Service",
  "Contact & the craft","Learning to channel","The turning of the age","The human condition",
  "Q\u2019uo Q&A","Energy centers","The journey & catalyst","Faith & incarnation","Guidance for seekers",
  "Ra \u2014 The Law of One"];
-function topicArt(t){
-  const h1=TOPIC_HUE[t]??222, h2=(h1+44)%360;
-  return "background:radial-gradient(120% 90% at 18% 8%, hsla("+h1+",62%,42%,.85), transparent 55%),"+
-    "radial-gradient(110% 100% at 85% 90%, hsla("+h2+",58%,30%,.9), transparent 55%),"+
-    "linear-gradient(160deg, hsl("+h1+",45%,13%), hsl("+h2+",48%,7%));";
-}
 function renderTopics(){
   const byT={}; EPS.forEach(e=>{const t=themeOf(e);(byT[t]=byT[t]||[]).push(e);});
   let h='';
@@ -862,8 +850,7 @@ function renderTopics(){
     const eps=byT[t], mins=Math.round(eps.reduce((a,e)=>a+e.duration_sec,0)/60);
     const st=topicState(t);
     h+='<div class="topic-card'+(activeTheme===t?" on":"")+'" data-t="'+esc(t)+'" role="button" tabindex="0">'
-      +'<div class="topic-art" style="'+topicArt(t)+'">'+ORB_SVG
-      +'<button class="topic-dl'+(st.busy?" busy":"")+(st.done===st.total&&st.total>0?" done":"")+'" data-tdl="'+esc(t)+'" aria-label="Download all sessions in '+esc(t)+' for offline listening">'+topicDlIcon(t)+'</button></div>'
+      +'<button class="topic-dl'+(st.busy?" busy":"")+(st.done===st.total&&st.total>0?" done":"")+'" data-tdl="'+esc(t)+'" aria-label="Download all sessions in '+esc(t)+' for offline listening">'+topicDlIcon(t)+'</button>'
       +'<div class="topic-body"><div class="topic-name">'+esc(t)+'</div>'
       +'<div class="topic-ess">'+esc(TOPIC_ESS[t]||"")+'</div>'
       +'<div class="topic-count">'+eps.length+' session'+(eps.length>1?"s":"")+' \u00b7 '+mins+' min</div>'
