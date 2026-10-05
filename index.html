@@ -112,10 +112,9 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .pill.on{background:linear-gradient(135deg,rgba(201,169,106,.22),rgba(201,169,106,.1));border-color:var(--gold);color:var(--gold-bright)}
 
 /* ---------- featured ---------- */
-.featured{display:grid;grid-template-columns:340px 1fr;gap:0;margin:26px 0 8px;border-radius:20px;overflow:hidden;
+.featured{margin:26px 0 8px;border-radius:20px;overflow:hidden;
   background:var(--card);border:1px solid var(--line);cursor:pointer;transition:.3s;position:relative}
 .featured:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(201,169,106,.25)}
-.feat-art{position:relative;min-height:300px}
 .feat-body{padding:38px 40px;display:flex;flex-direction:column;justify-content:center}
 .feat-kicker{font-size:.7rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
 .feat-body h3{font-family:var(--serif);font-size:2rem;font-weight:500;line-height:1.2;margin-bottom:12px}
@@ -301,8 +300,6 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 @media(max-width:760px){
   .brand{font-size:1.02rem;white-space:nowrap}
   nav{gap:10px}
-  .featured{grid-template-columns:1fr}
-  .feat-art{min-height:190px}
   .feat-body{padding:26px}
   .detail-body{padding:24px 22px}
   .searchbox{width:130px}.searchbox:focus{width:160px}
@@ -943,8 +940,8 @@ function renderContinue(){
 }
 function renderFeatured(){
   const e=EPS.slice().sort((a,b)=>epDate(b)-epDate(a))[0]; if(!e)return;
-  $("featured").innerHTML='<div class="feat-art" style="'+artFor(e)+'">'+ORB_SVG+'</div>'
-    +'<div class="feat-body"><div class="feat-kicker">Latest session</div>'
+  $("featured").innerHTML=
+    '<div class="feat-body"><div class="feat-kicker">Latest session</div>'
     +'<h3>'+esc(e.title)+'</h3>'
     +(e.summary?'<p style="color:var(--ink-dim);font-size:.92rem;margin-bottom:16px;max-width:52ch">'+esc(e.summary)+'</p>':"")
     +'<div class="feat-meta"><span>'+esc(seasonLabel(e))+'</span><span class="dot">·</span><button class="tlink" data-theme="'+esc(themeOf(e))+'">'+esc(themeOf(e))+'</button><span class="dot">·</span><span>'+fmt(e.duration_sec)+'</span>'
