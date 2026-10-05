@@ -136,6 +136,8 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .row-kicker{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;
   display:flex;align-items:center;gap:8px}
 .row-kicker .played-inline{color:var(--gold-bright);letter-spacing:.14em;display:inline-flex;align-items:center;gap:4px}
+.tlink{background:none;border:none;padding:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;cursor:pointer}
+.tlink:hover{color:var(--gold-bright);text-decoration:underline}
 .row-body h3{font-family:var(--serif);font-size:1.06rem;font-weight:500;line-height:1.32;margin-bottom:3px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row-sum{font-size:.92rem;color:#c9c4b8;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;
@@ -579,9 +581,8 @@ const ORB_SVG='<svg class="orb" viewBox="0 0 200 200" preserveAspectRatio="xMidY
 const audio=new Audio(); audio.preload="none";
 let detailOpen=false;
 
-/* Next/Prev follow the list on screen (your sort & filters). Fallback: same topic, same sort. */
+/* Next/Prev stay within the current episode's theme. */
 function stepList(){
-  if(filtered.some(x=>x.id===currentId)&&filtered.length) return filtered.slice();
   const cur=EPS.find(x=>x.id===currentId);
   const g=cur?EPS.filter(x=>themeOf(x)===themeOf(cur)):EPS.slice();
   const S={new:(a,b)=>epDate(b)-epDate(a),old:(a,b)=>epDate(a)-epDate(b),
@@ -594,8 +595,15 @@ function step(d,autoplay,quiet){
   const i=g.findIndex(x=>x.id===currentId);
   if(i<0){loadEpisode(g[d>0?0:g.length-1],autoplay);return;}
   const n=i+d;
-  if(n<0||n>=g.length){syncChrome();if(!quiet)toast(d>0?"End of the list":"Start of the list");return;}
+  if(n<0||n>=g.length){syncChrome();if(!quiet)toast(d>0?"End of this theme":"Start of this theme");return;}
   loadEpisode(g[n],autoplay);
+}
+/* tapping a theme name anywhere jumps the list back to that theme */
+function goTheme(t){
+  activeTheme=t;
+  if(detailOpen) closeDetail();
+  applyFilters();
+  const h=$("allHead"); if(h) h.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function loadEpisode(e,autoplay){
   currentId=e.id;
@@ -898,7 +906,7 @@ function cardHTML(e){
   const played=isPlayed(e.id);
   return '<div class="row" data-id="'+e.id+'">'
     +'<div class="row-body">'
-    +'<div class="row-kicker"><span>'+esc(themeOf(e))+' · EP '+String(e.n).padStart(2,"0")+'</span>'
+    +'<div class="row-kicker"><button class="tlink" data-theme="'+esc(themeOf(e))+'">'+esc(themeOf(e))+'</button><span> · EP '+String(e.n).padStart(2,"0")+'</span>'
     +(played?'<span class="played-inline">'+I.check+' Played</span>':"")+'</div>'
     +'<h3>'+esc(e.title)+'</h3>'
     +summHTML(e)
@@ -914,6 +922,8 @@ function renderGrid(){
   $("grid").querySelectorAll(".row").forEach(c=>c.onclick=(ev)=>{
     if(ev.target.closest(".dlbtn")){toggleDownload(c.dataset.id);return;}
     openDetail(c.dataset.id);});
+  $("grid").querySelectorAll(".tlink").forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation(); goTheme(b.dataset.theme);});
 }
 function renderContinue(){
   const p=getProg();
@@ -937,10 +947,12 @@ function renderFeatured(){
     +'<div class="feat-body"><div class="feat-kicker">Latest session</div>'
     +'<h3>'+esc(e.title)+'</h3>'
     +(e.summary?'<p style="color:var(--ink-dim);font-size:.92rem;margin-bottom:16px;max-width:52ch">'+esc(e.summary)+'</p>':"")
-    +'<div class="feat-meta"><span>'+esc(seasonLabel(e))+'</span><span class="dot">·</span><span>'+esc(themeOf(e))+'</span><span class="dot">·</span><span>'+fmt(e.duration_sec)+'</span>'
+    +'<div class="feat-meta"><span>'+esc(seasonLabel(e))+'</span><span class="dot">·</span><button class="tlink" data-theme="'+esc(themeOf(e))+'">'+esc(themeOf(e))+'</button><span class="dot">·</span><span>'+fmt(e.duration_sec)+'</span>'
     +(isPlayed(e.id)?'<span class="dot">·</span><span style="color:var(--gold-bright)">Played</span>':"")+'</div>'
     +'<div class="feat-play"><span class="playring">'+I.play+'</span><span>Play episode</span></div></div>';
   $("featured").onclick=()=>{openDetail(e.id);};
+  $("featured").querySelectorAll(".tlink").forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation(); goTheme(b.dataset.theme);});
 }
 function renderAll(){renderTopics();renderEntSel();renderGrid();renderFeatured();renderContinue();}
 
@@ -958,7 +970,7 @@ function openDetail(id){
     +'<button class="shareicon" id="dShare" aria-label="Share episode"><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V5"/><path d="M8.5 8.5L12 5l3.5 3.5"/><path d="M6 12v7a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-7"/></svg></button></div>'
     +'<h2>'+esc(e.title)+'</h2>'
     +'<div class="detail-meta">'+(e.entities||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join("")
-    +'<span class="dot">·</span><span>'+esc(themeOf(e))+'</span></div>'
+    +'<span class="dot">·</span><button class="tlink" data-theme="'+esc(themeOf(e))+'">'+esc(themeOf(e))+'</button></div>'
     +'<div class="player">'
     +'<canvas class="viz" id="dViz"></canvas>'
     +'<div class="p-top"><span class="p-time p-cur">0:00</span>'
@@ -1004,6 +1016,7 @@ function openDetail(id){
   $("dShare").onclick=()=>shareEpisode(e);
   try{history.replaceState(null,"","?ep="+e.id);}catch(err){}
   $("sheetInner").querySelectorAll(".rel").forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
+  $("sheetInner").querySelectorAll(".tlink").forEach(b=>b.onclick=()=>goTheme(b.dataset.theme));
   paintPlayState(); syncChrome();
 }
 /* closing the detail keeps audio playing — the mini player takes over */
