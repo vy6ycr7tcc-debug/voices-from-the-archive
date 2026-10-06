@@ -8316,5 +8316,73 @@
   "audio": "https://raw.githubusercontent.com/vy6ycr7tcc-debug/voices-from-the-archive-audio/main/audio/special_densities.mp3",
   "transcript": "A special compilation episode: eleven verbatim passages on the fourth density of love and the fifth density of wisdom — the positive and negative paths, the lifting of the veil, how negative entities interact with third density, and the nested densities of Earth.",
   "summary": "Third density is the Choice, fourth is love, fifth is wisdom — and the negative path runs through both before hitting the wall at sixth. Plus nested Earths, and why you can only see what would not disturb you."
+ },
+ {
+  "id": "wfw288",
+  "n": 288,
+  "title": "What the Voices Say — Inside Fourth Density: The World After the Veil",
+  "season": 2,
+  "season_name": "Specials",
+  "theme": "The turning of the age",
+  "entities": [
+   "Q'uo",
+   "Ra",
+   "Latwii"
+  ],
+  "sources": [
+   {
+    "entity": "Ra",
+    "date": "Session 12",
+    "session_label": "special compilation",
+    "archive_ref": "special:Ra Session 12"
+   },
+   {
+    "entity": "Ra",
+    "date": "Session 25",
+    "session_label": "special compilation",
+    "archive_ref": "special:Ra Session 25"
+   },
+   {
+    "entity": "Latwii",
+    "date": "April 9, 1982",
+    "session_label": "special compilation",
+    "archive_ref": "special:Latwii April 9, 1982"
+   },
+   {
+    "entity": "Q'uo",
+    "date": "June 14, 1992",
+    "session_label": "special compilation",
+    "archive_ref": "special:Q'uo June 14, 1992"
+   },
+   {
+    "entity": "Q'uo",
+    "date": "October 4, 1992",
+    "session_label": "special compilation",
+    "archive_ref": "special:Q'uo October 4, 1992"
+   },
+   {
+    "entity": "Q'uo",
+    "date": "November 28, 2004",
+    "session_label": "special compilation",
+    "archive_ref": "special:Q'uo November 28, 2004"
+   },
+   {
+    "entity": "Q'uo",
+    "date": "March 15, 2008",
+    "session_label": "special compilation",
+    "archive_ref": "special:Q'uo March 15, 2008"
+   },
+   {
+    "entity": "Q'uo",
+    "date": "February 26, 2017",
+    "session_label": "special compilation",
+    "archive_ref": "special:Q'uo February 26, 2017"
+   }
+  ],
+  "interpretive": false,
+  "duration_sec": 439,
+  "audio": "https://raw.githubusercontent.com/vy6ycr7tcc-debug/voices-from-the-archive-audio/main/audio/special_fourth_density_world.mp3",
+  "transcript": "A special compilation episode: what fourth density is actually like — the lighter body, invisibility by choice, the atmosphere of unconditional love, and how the positive and negative polarities meet in the open, in the so-called war in heaven.",
+  "summary": "A solid world, invisible by choice, where everyone sees everyone: the lighter body, the one-way mirror, and why fourth density is the only one besides ours that still believes a battle is appropriate."
  }
 ]
