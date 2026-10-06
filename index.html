@@ -986,7 +986,7 @@ function openDetail(id){
     +'<button class="utilbtn dlbtn2" id="dDl" data-dl="'+e.id+'">'+dlLabel(e.id)+'</button></div>'
     +'</div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
-    +'<div class="sources"><em>An interpretive narration — not a verbatim channeling.</em>'
+    +'<div class="sources">'
     +(e.sources||[]).map(s=>"<div>After "+esc(s.entity)+" · "+esc(s.session_label||"")+" · "+esc(s.date||"")+"</div>").join("")+'</div>'
     +'<div class="disclaimer">Independent, AI-voiced, interpretive work · not affiliated with or endorsed by L/L Research</div>'
     +(rel.length?'<div class="related"><h4>Related episodes</h4>'+rel.map(r=>
