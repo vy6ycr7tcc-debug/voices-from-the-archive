@@ -2,14 +2,17 @@
    App shell offline-first; episodes.json stale-while-revalidate.
    Audio: network-first passthrough (streaming stays native), with cache
    fallback to explicit offline downloads, including Range support. */
-const CACHE = 'wfw-shell-v2';
+const CACHE = 'wfw-shell-v3';
 const AUDIO = 'wfw-audio-v1';
 const SHELL = ['./', './index.html', './episodes.json', './manifest.webmanifest'];
-// Audio lives in a separate repo (GitHub Pages caps sites at 1 GB).
-// raw.githubusercontent.com serves CORS * and Range, so offline cache + seeking work.
-const AUDIO_HOST = 'raw.githubusercontent.com';
-const AUDIO_REPO = 'vy6ycr7tcc-debug/voices-from-the-archive-audio';
-const AUDIO_BASE = 'https://' + AUDIO_HOST + '/' + AUDIO_REPO + '/main/audio/';
+// Audio hosts whose MP3s the SW intercepts (streaming passthrough + offline
+// cache fallback with Range support). GitHub raw serves CORS * and Range;
+// the R2 public bucket serves Range but needs a CORS policy for fetch() —
+// see the offline-download note in index.html.
+const AUDIO_HOSTS = [
+  'raw.githubusercontent.com',
+  'pub-8e7922afef144c8a81b657a25e424b0d.r2.dev',
+];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -35,7 +38,7 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (req.method !== 'GET') return;
   const sameOrigin = url.origin === self.location.origin;
-  const isAudioHost = url.host === AUDIO_HOST;
+  const isAudioHost = AUDIO_HOSTS.includes(url.host);
   if (!sameOrigin && !isAudioHost) return;
 
   // Audio: try the network first (native streaming behavior), fall back to an
