@@ -1257,17 +1257,19 @@ function exportHeart(){
 /* ============ oracle chat ============ */
 const ORACLE_URL="https://oracle-station.vy6ycr7tcc.workers.dev"; // the awakened oracle
 const STATION_FALLBACK=[
+  {id:"overall",name:"The Whole Oracle"},
   {id:"matrix",name:"The Lampkeeper"},{id:"potentiator",name:"The Deep Well"},
   {id:"catalyst",name:"The Thornkeeper"},{id:"experience",name:"The Weaver"},
   {id:"significator",name:"The Mirror"},{id:"transformation",name:"The Crossroads"},
   {id:"great-way",name:"The Wayfarer"}
 ];
-let ORACLE_STATIONS=null,oracleStation="significator",oracleAttach=false,oracleBusy=false,speakBtn=null;
+const OVERALL_OPTION={id:"overall",name:"The Whole Oracle"};
+let ORACLE_STATIONS=null,oracleStation="overall",oracleAttach=false,oracleBusy=false,speakBtn=null;
 function openOracle(opts){
   opts=opts||{};
   $("sheetInner").innerHTML=
     '<div class="detail-body">'
-    +'<div class="detail-toprow"><div class="detail-kicker" style="margin:0">Seven spirits, one archive</div>'
+    +'<div class="detail-toprow"><div class="detail-kicker" style="margin:0">One oracle · twenty-two archetypes</div>'
     +'<button class="detail-close" id="oClose" aria-label="Close" style="position:static">'+I.close+'</button></div>'
     +'<h2>The <em>Oracle</em></h2>'
     +'<div id="oracleBody"></div>'
@@ -1285,6 +1287,7 @@ async function renderOracleBody(pre){
   if(!ORACLE_STATIONS){
     try{const r=await fetch(ORACLE_URL+"/stations");const d=await r.json();ORACLE_STATIONS=d.stations&&d.stations.length?d.stations:STATION_FALLBACK;}
     catch(e){ORACLE_STATIONS=STATION_FALLBACK;}
+    if(!ORACLE_STATIONS.some(s=>s.id==="overall"))ORACLE_STATIONS=[OVERALL_OPTION].concat(ORACLE_STATIONS);
     if(!$("oracleBody"))return;
   }
   if(pre){oracleAttach=true;}
@@ -1313,7 +1316,8 @@ async function askOracle(){
   input.value="";
   addMsg("q",q);
   oracleBusy=true;
-  const payload={station:oracleStation,question:q};
+  const payload={question:q};
+  if(oracleStation==="overall")payload.mode="overall";else payload.station=oracleStation;
   let attached=0;
   if(oracleAttach){
     let texts=[];
