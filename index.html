@@ -1372,23 +1372,28 @@ function paintSpeakBtns(){
     const on=b===speakBtn;b.classList.toggle("on",on);b.textContent=on?"Stop":"Speak";
   });
 }
+let speakToken=0; /* invalidates in-flight speech chains when a new tap starts */
 function speakText(text,btn){
   if(!("speechSynthesis" in window)){toast("Speech is not available on this device");return;}
   const synth=window.speechSynthesis;
-  if(speakBtn===btn){synth.cancel();speakBtn=null;paintSpeakBtns();return;}
+  const my=++speakToken;
+  if(speakBtn===btn){synth.cancel();speakBtn=null;paintSpeakBtns();return;} /* toggle off */
   synth.cancel();
   const chunks=text.match(/[^.!?…]+[.!?…]+["”)]?/g)||[text];
   let ix=0;
   const next=()=>{
+    if(my!==speakToken)return;
     if(ix>=chunks.length){speakBtn=null;paintSpeakBtns();return;}
     const u=new SpeechSynthesisUtterance(chunks[ix++]);
     u.rate=0.95;
     const v=pickVoice();if(v)u.voice=v;
-    u.onend=next;
-    u.onerror=()=>{speakBtn=null;paintSpeakBtns();};
+    u.onend=()=>{if(my===speakToken)next();};
+    u.onerror=(e)=>{if(my!==speakToken||(e&&e.error==="interrupted"))return;speakBtn=null;paintSpeakBtns();};
     synth.speak(u);
   };
-  speakBtn=btn;paintSpeakBtns();next();
+  speakBtn=btn;paintSpeakBtns();
+  /* iOS Safari silently drops speak() issued synchronously after cancel() — one tick fixes it */
+  setTimeout(()=>{if(my===speakToken)next();},120);
 }
 try{if("speechSynthesis" in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{try{speechSynthesis.getVoices();}catch(e){}};}}catch(e){}
 
