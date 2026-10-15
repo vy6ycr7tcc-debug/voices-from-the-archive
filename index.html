@@ -297,6 +297,44 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .empty{text-align:center;padding:70px 20px;color:var(--ink-faint)}
 .empty h3{font-family:var(--serif);font-size:1.5rem;color:var(--ink-dim);margin-bottom:8px}
 
+/* ---------- my heart ---------- */
+.iconbtn{position:relative}
+.badge{position:absolute;top:0;right:0;min-width:17px;height:17px;border-radius:9px;background:var(--gold);color:#0a0a12;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.badge[hidden]{display:none}
+.noteedit textarea{width:100%;min-height:130px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:12px;color:var(--ink);font-family:var(--serif);font-size:1rem;line-height:1.6;padding:14px;resize:vertical}
+.noteedit textarea:focus{outline:none;border-color:var(--gold-dim)}
+.note-meta{color:var(--ink-dim);font-size:.8rem;margin-bottom:14px}
+.note-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.btn{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:12px;padding:10px 18px;font-size:.85rem;cursor:pointer;font-family:var(--sans)}
+.btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#0a0a12;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08);color:#0a0a12}
+.heart-tools{display:flex;gap:10px;margin:16px 0}
+.heart-search{flex:1;min-width:0;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:12px;color:var(--ink);padding:10px 14px;font-size:.9rem;font-family:var(--sans)}
+.heart-search:focus{outline:none;border-color:var(--gold-dim)}
+.note{border:1px solid var(--line-soft);border-radius:14px;padding:16px;margin-bottom:12px}
+.note-text{font-family:var(--serif);font-size:1rem;line-height:1.6;color:var(--ink);white-space:pre-wrap;margin-bottom:10px}
+.note-text textarea{width:100%;min-height:90px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:10px;color:var(--ink);font-family:var(--serif);font-size:.95rem;line-height:1.6;padding:10px;resize:vertical}
+.note-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.note-ep{background:none;border:none;color:var(--gold);font-size:.78rem;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px;font-family:var(--sans)}
+.note-date{color:var(--ink-faint);font-size:.75rem}
+.note-ops{margin-left:auto;display:flex;gap:8px}
+.mini{background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:10px;padding:6px 10px;font-size:.75rem;cursor:pointer;font-family:var(--sans)}
+.mini:hover{border-color:var(--gold-dim);color:var(--gold)}
+.mini.on{border-color:var(--gold);color:var(--gold)}
+/* ---------- oracle ---------- */
+.stationrow{display:flex;gap:10px;align-items:center;margin:16px 0;flex-wrap:wrap}
+.stationrow select{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:10px;color:var(--ink);padding:9px 12px;font-size:.85rem;font-family:var(--sans)}
+.stationrow select:focus{outline:none;border-color:var(--gold-dim)}
+.attachrow{display:flex;align-items:center;gap:10px;margin:0 0 14px;color:var(--ink-dim);font-size:.85rem;cursor:pointer}
+.attachrow input{accent-color:var(--gold);width:16px;height:16px;cursor:pointer}
+.chatlog{display:flex;flex-direction:column;gap:14px;max-height:46vh;overflow-y:auto;margin-bottom:6px}
+.msg{max-width:100%}
+.msg.q{align-self:flex-end;background:rgba(255,255,255,.05);border:1px solid var(--line-soft);border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:.9rem;color:var(--ink)}
+.msg.a{align-self:flex-start;width:100%}
+.msg.a .atext{font-family:var(--serif);font-size:1.02rem;line-height:1.65;color:var(--ink);white-space:pre-wrap}
+.afoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+
 @media(max-width:760px){
   .brand{font-size:1.02rem;white-space:nowrap}
   nav{gap:10px}
@@ -314,6 +352,8 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 <nav>
   <div class="brand">Voices <em>from the</em> Archive</div>
   <div class="nav-actions">
+    <button class="iconbtn" id="heartBtn" title="My Heart — your notes" aria-label="My Heart — your notes"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20.5C7 16.5 3.5 13.3 3.5 9.6 3.5 7 5.5 5 8 5c1.6 0 3.1.8 4 2.1C12.9 5.8 14.4 5 16 5c2.5 0 4.5 2 4.5 4.6 0 3.7-3.5 6.9-8.5 10.9z"/></svg><span class="badge" id="heartBadge" hidden></span></button>
+    <button class="iconbtn" id="oracleBtn" title="Oracle — ask the archive" aria-label="Oracle — ask the archive"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg></button>
     <button class="iconbtn" id="refresh" title="Reload the episode catalog"><svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>
   </div>
 </nav>
@@ -373,7 +413,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 </div>
 
 <!-- sticky mini player -->
-<div class="minibar" id="minibar"><div class="mini-prog" id="miniProg"><div class="track"></div><div class="fill"></div></div><div class="mini-inner">
+<div class="minibar" id="minibar"><div class="mini-prog" id="miniProg"><div class="track"></div><div class="fill" id="miniFill"></div></div><div class="mini-inner">
   <div class="mini-art" id="miniArt"></div>
   <div class="mini-info"><b id="miniTitle">–</b><span id="miniSub">–</span></div>
   <div class="mini-btns">
@@ -410,6 +450,31 @@ let EPS=[], filtered=[], currentId=null, activeTheme="All", activeEntity="All";
 let sortMode="new", hidePlayed=false;
 try{sortMode=localStorage.getItem("wfw_sort")||"new";hidePlayed=localStorage.getItem("wfw_hideplayed")==="1";}catch(e){}
 function epDate(e){const d=e.sources&&e.sources[0]&&e.sources[0].date;const t=Date.parse(d||"");return isNaN(t)?0:t;}
+
+/* ============ My Heart — notes repository ============ */
+const HEART_KEY='vfa:heart:v1';
+let HEART=[];
+function loadHeart(){
+  try{const raw=localStorage.getItem(HEART_KEY);const p=raw?JSON.parse(raw):[];HEART=Array.isArray(p)?p.filter(x=>x&&x.id&&x.text):[];}
+  catch(e){HEART=[];}
+}
+function saveHeart(){try{localStorage.setItem(HEART_KEY,JSON.stringify(HEART));}catch(e){}}
+function heartId(){try{if(crypto.randomUUID)return crypto.randomUUID();}catch(e){}return 'h'+Date.now().toString(36)+Math.floor(Math.random()*1e9).toString(36);}
+function addNote(episodeId,text,audioTime){
+  const e=episodeId?epById(episodeId):null;
+  const entry={id:heartId(),episodeId:episodeId||null,episodeTitle:e?e.title:'',text:String(text).trim(),createdAt:Date.now(),audioTime:(audioTime!=null&&isFinite(audioTime)&&audioTime>0)?Math.round(audioTime):null};
+  if(!entry.text)return null;
+  HEART.unshift(entry);saveHeart();paintHeartBadge();return entry;
+}
+function updateNote(id,text){const n=HEART.find(x=>x.id===id);const t=String(text).trim();if(n&&t){n.text=t;n.updatedAt=Date.now();saveHeart();}}
+function deleteNote(id){HEART=HEART.filter(x=>x.id!==id);saveHeart();paintHeartBadge();}
+function fmtClock(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function fmtDate(t){try{return new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});}catch(e){return '';}}
+function paintHeartBadge(){
+  const b=$('heartBadge');if(!b)return;
+  b.hidden=HEART.length===0;b.textContent=HEART.length>99?'99+':String(HEART.length);
+}
+loadHeart();
 
 /* ============ offline downloads (Cache Storage + SW range fallback) ============ */
 const AUDIO_CACHE='wfw-audio-v1';
@@ -983,7 +1048,8 @@ function openDetail(id){
     +'<div class="p-utils"><button class="utilbtn speedbtn" id="dSpeed">1x</button>'
     +'<button class="utilbtn musicbtn" id="dMusic"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v11"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg> Music</button>'
     +'<button class="utilbtn sleepbtn" id="dSleep">Sleep</button>'
-    +'<button class="utilbtn dlbtn2" id="dDl" data-dl="'+e.id+'">'+dlLabel(e.id)+'</button></div>'
+    +'<button class="utilbtn dlbtn2" id="dDl" data-dl="'+e.id+'">'+dlLabel(e.id)+'</button>'
++'<button class="utilbtn notebtn" id="dNote">Note</button></div>'
     +'</div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
     +'<div class="sources">'
@@ -1006,6 +1072,7 @@ function openDetail(id){
   $("dSleep").onclick=cycleSleep;
   $("dMusic").onclick=musicToggle;
   $("dDl").onclick=()=>toggleDownload(e.id);
+  $("dNote").onclick=()=>openNoteEditor(e);
   if(MUS.on)$("dMusic").classList.add('on');
   const sl=SLEEPS[sleepIx]; $("dSleep").textContent=sl?sl+' min':'Sleep'; $("dSleep").classList.toggle('on',!!sl);
   vizCanvas=$("dViz"); vizCtx=vizCanvas.getContext('2d'); sizeViz(); vizCanvas.classList.remove('live');
@@ -1080,6 +1147,252 @@ $("refresh").onclick=async()=>{
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{
   navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});});}
+/* ============ note editor ============ */
+function openNoteEditor(e){
+  const at=(!audio.paused||audio.currentTime>0)?audio.currentTime:null;
+  $("sheetInner").innerHTML=
+    '<div class="detail-art" style="'+artFor(e)+'">'+ORB_SVG
+    +'<button class="detail-close" id="nClose" aria-label="Close">'+I.close+'</button></div>'
+    +'<div class="detail-body noteedit">'
+    +'<div class="detail-kicker" style="margin:0 0 10px">A note for your heart</div>'
+    +'<h2>'+esc(e.title)+'</h2>'
+    +'<div class="note-meta">Episode '+String(e.n).padStart(2,"0")+(at!=null?' · '+fmtClock(at):'')+'</div>'
+    +'<textarea id="noteText" rows="6" placeholder="What moved you?"></textarea>'
+    +'<div class="note-actions"><button class="btn" id="noteCancel">Cancel</button>'
+    +'<button class="btn primary" id="noteSave">Keep it</button></div>'
+    +'</div>';
+  $("modal").classList.add("open");document.body.style.overflow="hidden";
+  $("nClose").onclick=()=>openDetail(e.id);
+  $("noteCancel").onclick=()=>openDetail(e.id);
+  $("noteSave").onclick=()=>{
+    const t=$("noteText").value;
+    if(!t.trim()){toast("Write something first");return;}
+    addNote(e.id,t,at);toast("Kept in your heart");openDetail(e.id);
+  };
+  setTimeout(()=>{const ta=$("noteText");if(ta)ta.focus();},80);
+}
+
+/* ============ My Heart repo ============ */
+function openHeart(){
+  $("sheetInner").innerHTML=
+    '<div class="detail-body">'
+    +'<div class="detail-toprow"><div class="detail-kicker" style="margin:0">Your notes, kept</div>'
+    +'<button class="detail-close" id="hClose" aria-label="Close" style="position:static">'+I.close+'</button></div>'
+    +'<h2>My <em>Heart</em></h2>'
+    +'<div class="heart-tools"><input class="heart-search" id="heartQ" type="search" placeholder="Search your notes…" autocomplete="off">'
+    +'<button class="btn" id="heartExport">Export</button></div>'
+    +'<div id="heartList"></div>'
+    +'</div>';
+  $("modal").classList.add("open");document.body.style.overflow="hidden";
+  $("hClose").onclick=closeDetail;
+  $("heartQ").addEventListener("input",()=>renderHeartList($("heartQ").value));
+  $("heartExport").onclick=exportHeart;
+  renderHeartList("");
+}
+function renderHeartList(q){
+  const box=$("heartList");if(!box)return;
+  q=(q||"").toLowerCase();
+  const list=HEART.filter(n=>!q||n.text.toLowerCase().indexOf(q)!==-1||(n.episodeTitle||"").toLowerCase().indexOf(q)!==-1);
+  if(!list.length){
+    box.innerHTML='<div class="empty"><h3>'+(HEART.length?"Nothing matches.":"Nothing kept yet.")+'</h3><p>'
+      +(HEART.length?"Try a different search.":"Your notes will gather here as you listen.")+'</p></div>';
+    return;
+  }
+  box.innerHTML=list.map(n=>
+    '<div class="note" data-id="'+n.id+'">'
+    +'<div class="note-text">'+esc(n.text)+'</div>'
+    +'<div class="note-foot">'
+    +(n.episodeId?'<button class="note-ep" data-act="open">'+esc(n.episodeTitle||"Episode")+'</button>':"")
+    +(n.audioTime!=null?'<span class="note-date">'+fmtClock(n.audioTime)+'</span>':"")
+    +'<span class="note-date">'+fmtDate(n.createdAt)+'</span>'
+    +'<span class="note-ops"><button class="mini" data-act="ask">Ask the oracle</button>'
+    +'<button class="mini" data-act="edit">Edit</button>'
+    +'<button class="mini" data-act="del">Delete</button></span>'
+    +'</div></div>').join("");
+  box.querySelectorAll(".note").forEach(el=>{
+    const id=el.getAttribute("data-id");
+    const on=(act,fn)=>{const b=el.querySelector('[data-act="'+act+'"]');if(b)b.addEventListener("click",fn);};
+    on("open",()=>{const n=HEART.find(x=>x.id===id);if(n&&n.episodeId)openDetail(n.episodeId);});
+    on("edit",()=>editNoteRow(el,id));
+    on("del",()=>{if(confirm("Let this note go?")){deleteNote(id);renderHeartList($("heartQ")?$("heartQ").value:"");}});
+    on("ask",()=>{const n=HEART.find(x=>x.id===id);if(n)openOracle({preattach:[n.text]});});
+  });
+}
+function editNoteRow(el,id){
+  const n=HEART.find(x=>x.id===id);if(!n)return;
+  const t=el.querySelector(".note-text");
+  t.innerHTML='<textarea id="editText" rows="4">'+esc(n.text)+'</textarea>'
+    +'<div class="note-actions"><button class="btn" id="editCancel">Cancel</button>'
+    +'<button class="btn primary" id="editSave">Save</button></div>';
+  $("editCancel").onclick=()=>renderHeartList($("heartQ")?$("heartQ").value:"");
+  $("editSave").onclick=()=>{
+    const v=$("editText").value;
+    if(!v.trim()){toast("Write something first");return;}
+    updateNote(id,v);toast("Kept");renderHeartList($("heartQ")?$("heartQ").value:"");
+  };
+  setTimeout(()=>{const ta=$("editText");if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}},60);
+}
+function exportHeart(){
+  if(!HEART.length){toast("Nothing to export yet");return;}
+  const byEp={},order=[];
+  HEART.forEach(n=>{const k=n.episodeTitle||"Unlinked";if(!byEp[k]){byEp[k]=[];order.push(k);}byEp[k].push(n);});
+  let md="# My Heart\n\nExported "+new Date().toLocaleDateString()+" from Voices from the Archive.\n\n";
+  order.forEach(k=>{
+    md+="## "+k+"\n\n";
+    byEp[k].forEach(n=>{
+      md+="- "+n.text.replace(/\s*\n\s*/g," ")
+        +(n.audioTime!=null?" ("+fmtClock(n.audioTime)+")":"")
+        +" — "+fmtDate(n.createdAt)+"\n";
+    });
+    md+="\n";
+  });
+  const blob=new Blob([md],{type:"text/markdown"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="my-heart-"+new Date().toISOString().slice(0,10)+".md";
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  toast("Your heart, exported");
+}
+
+/* ============ oracle chat ============ */
+const ORACLE_URL=""; // set to the deployed worker URL when the oracle is awakened
+const STATION_FALLBACK=[
+  {id:"matrix",name:"The Lampkeeper"},{id:"potentiator",name:"The Deep Well"},
+  {id:"catalyst",name:"The Thornkeeper"},{id:"experience",name:"The Weaver"},
+  {id:"significator",name:"The Mirror"},{id:"transformation",name:"The Crossroads"},
+  {id:"great-way",name:"The Wayfarer"}
+];
+let ORACLE_STATIONS=null,oracleStation="significator",oracleAttach=false,oracleBusy=false,speakBtn=null;
+function openOracle(opts){
+  opts=opts||{};
+  $("sheetInner").innerHTML=
+    '<div class="detail-body">'
+    +'<div class="detail-toprow"><div class="detail-kicker" style="margin:0">Seven spirits, one archive</div>'
+    +'<button class="detail-close" id="oClose" aria-label="Close" style="position:static">'+I.close+'</button></div>'
+    +'<h2>The <em>Oracle</em></h2>'
+    +'<div id="oracleBody"></div>'
+    +'</div>';
+  $("modal").classList.add("open");document.body.style.overflow="hidden";
+  $("oClose").onclick=closeDetail;
+  renderOracleBody(opts.preattach||null);
+}
+async function renderOracleBody(pre){
+  const body=$("oracleBody");if(!body)return;
+  if(!ORACLE_URL){
+    body.innerHTML='<div class="empty"><h3>The oracle is not yet awakened.</h3><p>It will answer from the archive once its station is deployed.</p></div>';
+    return;
+  }
+  if(!ORACLE_STATIONS){
+    try{const r=await fetch(ORACLE_URL+"/stations");const d=await r.json();ORACLE_STATIONS=d.stations&&d.stations.length?d.stations:STATION_FALLBACK;}
+    catch(e){ORACLE_STATIONS=STATION_FALLBACK;}
+    if(!$("oracleBody"))return;
+  }
+  if(pre){oracleAttach=true;}
+  body.innerHTML=
+    '<div class="stationrow"><select id="oStation" aria-label="Station spirit">'
+    +ORACLE_STATIONS.map(s=>'<option value="'+esc(s.id)+'"'+(s.id===oracleStation?" selected":"")+'>'+esc(s.name)+'</option>').join("")
+    +'</select></div>'
+    +'<label class="attachrow"><input type="checkbox" id="oAttach"'+(oracleAttach?" checked":"")+'>'
+    +'<span>Attach my heart'+(pre?" — 1 note ready":(HEART.length?" ("+HEART.length+" notes)":""))+'</span></label>'
+    +'<div class="chatlog" id="oLog" aria-live="polite"></div>'
+    +'<div class="heart-tools"><input class="heart-search" id="oInput" type="text" placeholder="Ask the archive…" autocomplete="off">'
+    +'<button class="btn primary" id="oSend">Ask</button></div>';
+  if(pre){try{body.dataset.pre=JSON.stringify(pre.slice(0,8));}catch(e){}}
+  $("oStation").addEventListener("change",ev=>{oracleStation=ev.target.value;});
+  $("oAttach").addEventListener("change",ev=>{oracleAttach=ev.target.checked;});
+  const send=()=>askOracle();
+  $("oSend").addEventListener("click",send);
+  $("oInput").addEventListener("keydown",ev=>{if(ev.key==="Enter")send();});
+  setTimeout(()=>{const i=$("oInput");if(i)i.focus();},80);
+}
+async function askOracle(){
+  if(oracleBusy||!ORACLE_URL)return;
+  const input=$("oInput"),log=$("oLog"),body=$("oracleBody");
+  if(!input||!log||!body)return;
+  const q=input.value.trim();if(!q)return;
+  input.value="";
+  addMsg("q",q);
+  oracleBusy=true;
+  const payload={station:oracleStation,question:q};
+  let attached=0;
+  if(oracleAttach){
+    let texts=[];
+    try{texts=JSON.parse(body.dataset.pre||"[]");}catch(e){texts=[];}
+    if(!texts.length)texts=HEART.slice(0,8).map(n=>n.text);
+    const kept=[];let total=0;
+    for(const t of texts){
+      const s=String(t).slice(0,400);if(!s.trim())continue;
+      if(total+s.length>2000)break;kept.push(s);total+=s.length;
+    }
+    if(kept.length){payload.heart=kept;attached=kept.length;}
+  }
+  const think=document.createElement("div");think.className="msg a";
+  think.innerHTML='<div class="atext" style="color:var(--ink-faint)">Listening…</div>';
+  log.appendChild(think);log.scrollTop=log.scrollHeight;
+  try{
+    const r=await fetch(ORACLE_URL+"/oracle",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+    const d=await r.json();
+    think.remove();
+    if(!r.ok)throw new Error(d.error||("http "+r.status));
+    addMsg("a",d.text,d.sources,attached);
+  }catch(err){think.remove();addMsg("a","The oracle is silent — check your connection and try again.");}
+  oracleBusy=false;
+}
+function addMsg(kind,text,sources,attached){
+  const log=$("oLog");if(!log)return;
+  const div=document.createElement("div");div.className="msg "+kind;
+  if(kind==="q"){div.textContent=text;}
+  else{
+    div.innerHTML='<div class="atext"></div>'
+      +'<div class="afoot"><button class="mini speakbtn" aria-label="Speak this answer">Speak</button>'
+      +(attached?'<span class="note-date">'+attached+" note"+(attached>1?"s":"")+" attached</span>":"")
+      +(sources&&sources.length?'<span class="note-date">'+sources.map(s=>esc(s.source||"archive")+(s.page?" p."+s.page:"")).join(" · ")+"</span>":"")
+      +"</div>";
+    div.querySelector(".atext").textContent=text;
+    const btn=div.querySelector(".speakbtn");
+    if(!("speechSynthesis" in window))btn.style.display="none";
+    else btn.addEventListener("click",()=>speakText(text,btn));
+  }
+  log.appendChild(div);log.scrollTop=log.scrollHeight;
+}
+/* tap-to-speak: the device's native voice, triggered by the tap itself */
+function pickVoice(){
+  try{
+    const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().indexOf("en")===0);
+    if(!vs.length)return null;
+    return vs.find(v=>/google us english/i.test(v.name))||vs.find(v=>/samantha/i.test(v.name))||vs.find(v=>/en[-_]us/i.test(v.lang))||vs[0];
+  }catch(e){return null;}
+}
+function paintSpeakBtns(){
+  document.querySelectorAll(".speakbtn").forEach(b=>{
+    const on=b===speakBtn;b.classList.toggle("on",on);b.textContent=on?"Stop":"Speak";
+  });
+}
+function speakText(text,btn){
+  if(!("speechSynthesis" in window)){toast("Speech is not available on this device");return;}
+  const synth=window.speechSynthesis;
+  if(speakBtn===btn){synth.cancel();speakBtn=null;paintSpeakBtns();return;}
+  synth.cancel();
+  const chunks=text.match(/[^.!?…]+[.!?…]+["”)]?/g)||[text];
+  let ix=0;
+  const next=()=>{
+    if(ix>=chunks.length){speakBtn=null;paintSpeakBtns();return;}
+    const u=new SpeechSynthesisUtterance(chunks[ix++]);
+    u.rate=0.95;
+    const v=pickVoice();if(v)u.voice=v;
+    u.onend=next;
+    u.onerror=()=>{speakBtn=null;paintSpeakBtns();};
+    synth.speak(u);
+  };
+  speakBtn=btn;paintSpeakBtns();next();
+}
+try{if("speechSynthesis" in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{try{speechSynthesis.getVoices();}catch(e){}};}}catch(e){}
+
+/* nav wiring for heart + oracle */
+$("heartBtn").addEventListener("click",openHeart);
+$("oracleBtn").addEventListener("click",()=>openOracle({}));
+paintHeartBadge();
+
 /* boot */
 fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;applyFilters();refreshDownloads();
   const epId=new URLSearchParams(location.search).get("ep");
