@@ -28468,6 +28468,25 @@
   "summary": "Three rings. Twenty-one lights. One decision."
  },
  {
+  "audio": "https://raw.githubusercontent.com/vy6ycr7tcc-debug/voices-from-the-archive-audio/main/audio/special_tumultuous_times.mp3",
+  "duration_sec": 963,
+  "entities": [
+   "Ra",
+   "Q'uo",
+   "Hatonn",
+   "Latwii"
+  ],
+  "id": "wfw1105",
+  "interpretive": false,
+  "n": 1105,
+  "season": 2,
+  "season_name": "Specials",
+  "summary": "Why the future feels like a movie you've already seen — and why this time you get to choose a different ending.",
+  "theme": "The turning of the age",
+  "title": "What the Voices Say — The Tumultuous Times",
+  "transcript": "Kardec's spirits on why intellect outruns morality, Ra and Q'uo on Atlantis and the repeating pattern, and what the tumultuous times are actually for."
+ },
+ {
   "id": "wfw1115",
   "n": 1115,
   "title": "Everything the Archive Says About Artificial Intelligence",
