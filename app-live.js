@@ -92,13 +92,12 @@
   var tCur = $('tCur');
   var tDur = $('tDur');
 
-  var miniEl = $('mini');
-  var miniPlay = $('miniPlay');
+  var miniEl = $('minibar');
+  var miniPlay = $('mPlay');
   var miniTitle = $('miniTitle');
-  var miniTime = $('miniTime');
-  var miniScrub = $('miniScrub');
+  var miniTime = $('miniSub');
+  var miniScrub = $('miniProg');
   var miniFill = $('miniFill');
-  var miniThumb = $('miniThumb');
 
   var toastEl = $('toast');
 
@@ -288,7 +287,7 @@
       if (fe && (e.entities || []).indexOf(fe) === -1) return false;
       if (fs && String(e.season) !== fs) return false;
       if (q) {
-        var hay = (e.title + ' ' + e.transcript + ' ' + e.theme + ' ' +
+        var hay = (e.title + ' ' + e.transcript + ' ' + (e.summary || '') + ' ' + e.theme + ' ' +
           (e.entities || []).join(' ')).toLowerCase();
         if (hay.indexOf(q) === -1) return false;
       }
@@ -385,12 +384,11 @@
 
     scrubFill.style.width = pct;
     scrubThumb.style.left = pct;
-    miniFill.style.width = pct;
-    miniThumb.style.left = pct;
+    if (miniFill) miniFill.style.width = pct;
 
     tCur.textContent = fmt(known ? cur : 0);
     tDur.textContent = fmt(known ? d : 0);
-    miniTime.textContent = fmt(known ? cur : 0);
+    if (miniTime) miniTime.textContent = known ? (fmt(cur) + ' / ' + fmt(d)) : '';
 
     var pctRound = String(Math.round(frac * 100));
     scrubEl.setAttribute('aria-valuenow', pctRound);
@@ -509,12 +507,16 @@
 
     $('btnSkipBack').addEventListener('click', function () { skip(-15); });
     $('btnSkipFwd').addEventListener('click', function () { skip(15); });
-    $('miniBack').addEventListener('click', function () { skip(-15); });
-    $('miniFwd').addEventListener('click', function () { skip(15); });
+    $('mPrev').addEventListener('click', function () { skip(-15); });
+    $('mNext').addEventListener('click', function () { skip(15); });
 
-    $('miniClose').addEventListener('click', function () {
-      audio.pause();
-      hideMini();
+    $('mOpen').addEventListener('click', function () {
+      if (current) openDetail(current.id);
+    });
+
+    var miniInfo = document.querySelector('#minibar .mini-info');
+    if (miniInfo) miniInfo.addEventListener('click', function () {
+      if (current) openDetail(current.id);
     });
 
     setupScrubber(scrubEl, 'detail');
@@ -578,13 +580,14 @@
   /* ---------------------------------------------------------------------- */
 
   function showMini() {
-    if (!current || !detailEl.hidden) return;
-    miniEl.hidden = false;
+    if (!current || !detailEl.hidden || !miniEl) return;
+    miniEl.classList.add('show');
     document.body.style.paddingBottom = (miniEl.offsetHeight + 24) + 'px';
   }
 
   function hideMini() {
-    miniEl.hidden = true;
+    if (!miniEl) return;
+    miniEl.classList.remove('show');
     document.body.style.paddingBottom = '';
   }
 
@@ -623,7 +626,7 @@
 
     dTranscript.textContent = e.transcript || '';
 
-    var srcHtml = '<div class="note">An interpretive narration \u2014 not a verbatim channeling.</div>';
+    var srcHtml = '<div class="note">An interpretive narration — not a verbatim channeling.</div>';
     (e.sources || []).forEach(function (s) {
       srcHtml += '<div class="src">After ' + esc(s.entity) +
         (s.session_label ? ' \u00b7 ' + esc(s.session_label) : '') +
