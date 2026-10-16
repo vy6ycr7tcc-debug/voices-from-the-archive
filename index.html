@@ -524,7 +524,7 @@ async function downloadEpisode(e){
     await fetchAndCache(e);
     delete dlProg[e.id]; dlDone.add(e.id);
     toast('Saved for offline listening');
-  }catch(err){ delete dlProg[e.id]; toast('Download failed \u2014 try again'); }
+  }catch(err){ delete dlProg[e.id]; toast('Download failed ('+String((err&&err.message)||err).slice(0,80)+')'); }
   paintDl(e.id); paintTopicsDl(); paintDlAll(); applyFilters();
 }
 function topicState(t){
