@@ -351,7 +351,15 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .membox{width:100%;margin-top:10px;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:8px;color:var(--ink);font-family:var(--sans);font-weight:300;font-size:.85em;line-height:1.65;padding:10px 12px;resize:vertical;min-height:96px}
 .membox:focus{outline:none;border-color:var(--gold-dim)}
 .membox::placeholder{color:var(--ink-faint)}
-.oprompts{margin:10px 0 4px}.opkicker{font-family:var(--serif);font-size:.8em;color:var(--ink-faint);margin:8px 0 6px}.oprow{display:flex;flex-wrap:wrap;gap:8px}.chip.opreset{cursor:pointer}.chip.opreset:hover{border-color:var(--gold-dim);color:var(--gold)}
+/* ---------- oracle ask bar (game layout) ---------- */
+.obar{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
+.oheart{flex:none;display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;padding:8px 14px;font-size:.8rem;cursor:pointer;font-family:var(--sans)}
+.oheart[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.oconsent{font-size:.72em;color:var(--ink-faint);margin:6px 2px 0}
+#oInput{flex:1;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:12px;color:var(--ink);font-family:var(--sans);font-size:.85em;padding:10px 12px;resize:none;min-height:20px;max-height:104px}
+#oInput:focus{outline:none;border-color:var(--gold-dim)}
+.oseal{flex:none;background:transparent;border:1px solid var(--line-soft);color:var(--gold);border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer}
+.oseal:hover{border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -1284,6 +1292,7 @@ const STATION_FALLBACK=[
 ];
 const OVERALL_OPTION={id:"overall",name:"The Whole Oracle"};
 let ORACLE_STATIONS=null,oracleStation="overall",oracleAttach=false,oracleBusy=false,speakBtn=null;
+let oracleWithHeart=false,oracleLast=null,oracleFollowing=false;
 const MEM_KEY='vfa-memories';
 function loadMemories(){try{return localStorage.getItem(MEM_KEY)||"";}catch(e){return "";}}
 function saveMemories(t){try{localStorage.setItem(MEM_KEY,t);}catch(e){}}
@@ -1301,6 +1310,16 @@ function clearMemories(){
   const b=document.getElementById("memBox");if(b)b.value="";
   toast("Memories deleted");
 }
+
+
+/* Anonymiser, mirroring the game's: names/places become [name A] (consistent across notes),
+   contact details, addresses, dates and numbers taken out — before anything leaves the device. */
+const ANON_KEEP=new Set(("I I'm I've I'd I'll Me My God Creator Infinite One Love Light Mind Body Spirit Matrix Potentiator Catalyst Experience Significator Transformation Great Way Choice Oracle Heart Soul Self Higher Universe Source Earth Sun Moon Monday Tuesday Wednesday Thursday Friday Saturday Sunday January February March April May June July August September October November December Today Tomorrow Yesterday Mom Mum Dad Mother Father Mama Papa Grandma Grandpa Granny Brother Sister Son Daughter Wife Husband Partner Friend Baby OK Okay Yes No Oh Maybe Please Thank Thanks Sorry Dear The A An And But Or So If When Then This That These Those It It's Its We Our Us You Your They Their He She His Her Him What Why How Who Where Which Not Now Here There Just Still Even Also").split(" "));
+function anonLearn(texts){const names=new Map();const cap=/(^|[^\p{L}\p{N}'’])(\p{Lu}[\p{L}'’-]+(?:\s+\p{Lu}[\p{L}'’-]+)*)/gu;
+  for(const t of texts){for(const line of String(t).split(/\n/)){cap.lastIndex=0;let m;while((m=cap.exec(line))){const start=m.index+m[1].length;const before=line.slice(0,start).trimEnd();const opens=before===""||/[.!?…:"“”]$/.test(before);const words=m[2].split(/\s+/).filter(w=>!ANON_KEEP.has(w.replace(/['’]s$/,"")));if(!words.length)continue;if(!opens)for(const w of words){const k=w.replace(/['’]s$/,"").toLowerCase();if(!names.has(k)){const n=names.size;names.set(k,"[name "+(n<26?String.fromCharCode(65+n):"#"+(n+1))+"]");}}}}}
+  return names;}
+function anonScrubOne(t,names){t=String(t);t=t.replace(/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g,"[email]");t=t.replace(/\b(?:https?:\/\/|www\.)\S+/gi,"[link]");t=t.replace(/(^|\s)@[\w.]{2,}/g,"$1[handle]");t=t.replace(/\b\d{1,5}\s+[A-Z][a-z]+\s+(Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Court|Ct|Plaza|Way)\b/g,"[address]");t=t.replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g,"[phone]");t=t.replace(/\b\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\b/g,"[date]");t=t.replace(/\$\s?[\d,]+(\.\d+)?/g,"[amount]");t=t.replace(/(^|[^\p{L}\p{N}'’])(\p{Lu}[\p{L}'’-]+(?:\s+\p{Lu}[\p{L}'’-]+)*)/gu,(m,p1,w)=>{const parts=w.split(/\s+/).map(x=>{const k=x.replace(/['’]s$/,"").toLowerCase();return names.get(k)||x;});return p1+parts.join(" ");});return t;}
+function anonymise(texts){const names=anonLearn(texts);return texts.map(t=>anonScrubOne(t,names));}
 
 function openOracle(opts){
   opts=opts||{};
@@ -1327,59 +1346,63 @@ async function renderOracleBody(pre){
     if(!ORACLE_STATIONS.some(s=>s.id==="overall"))ORACLE_STATIONS=[OVERALL_OPTION].concat(ORACLE_STATIONS);
     if(!$("oracleBody"))return;
   }
-  if(pre){oracleAttach=true;}
+  // Game layout: the ask bar holds a "share my heart" toggle, the question field, and the seal.
+  // Consent is asked anew each time the panel opens.
+  oracleWithHeart=false;
   body.innerHTML=
     '<div class="stationrow"><select id="oStation" aria-label="Station spirit">'
     +ORACLE_STATIONS.map(s=>'<option value="'+esc(s.id)+'"'+(s.id===oracleStation?" selected":"")+'>'+esc(s.name)+'</option>').join("")
     +'</select></div>'
-    +'<label class="attachrow"><input type="checkbox" id="oAttach"'+(oracleAttach?" checked":"")+'>'
-    +'<span>Attach my heart'+(pre?" — 1 note ready":((HEART.length?" ("+HEART.length+" notes)":"")+(loadMemories().trim()?" · memories kept":"")))+'</span></label>'
-    +'<div class="oprompts"><div class="opkicker">Ask</div><div class="oprow" id="oQuestions"></div>'
-    +'<div class="opkicker">Share a feeling</div><div class="oprow" id="oFeelings"></div></div>'
     +'<div class="chatlog" id="oLog" aria-live="polite"></div>'
-    +'<div class="heart-tools"><input class="heart-search" id="oInput" type="text" placeholder="Ask the archive…" autocomplete="off">'
-    +'<button class="btn primary" id="oSend">Ask</button></div>';
+    +'<div class="obar"><button class="oheart" id="oHeart" type="button" aria-pressed="false" aria-label="Share my heart" title="Share my heart">♥<span>share my heart</span></button>'
+    +'<textarea id="oInput" rows="1" maxlength="600" placeholder="What would you ask?" aria-label="Your question"></textarea>'
+    +'<button class="oseal" id="oSend" type="button" aria-label="Ask">✧</button></div>'
+    +'<p class="oconsent" id="oConsent" hidden>Your notes go with this question only, names and details taken out, and aren\'t kept.</p>';
   if(pre){try{body.dataset.pre=JSON.stringify(pre.slice(0,8));}catch(e){}}
+  const heartBtn=$("oHeart"),consent=$("oConsent"),field=$("oInput");
+  const setHeart=on=>{oracleWithHeart=on;heartBtn.setAttribute("aria-pressed",String(on));consent.hidden=!on;};
+  if(pre&&pre.length)setHeart(true);
+  heartBtn.addEventListener("click",()=>setHeart(!oracleWithHeart));
   $("oStation").addEventListener("change",ev=>{oracleStation=ev.target.value;});
-  $("oAttach").addEventListener("change",ev=>{oracleAttach=ev.target.checked;});
   const send=()=>askOracle();
   $("oSend").addEventListener("click",send);
-  $("oInput").addEventListener("keydown",ev=>{if(ev.key==="Enter")send();});
-  setTimeout(()=>{const i=$("oInput");if(i)i.focus();},80);
-  // Preset prompts, mirroring the game's sit-with-an-archetype layout: questions first, then feelings.
-  const O_QUESTIONS=["Who are you?","What do you teach?","Where do I meet you in my life?"];
-  const O_FEELINGS=["I feel lost.","I feel afraid.","still","bright","radiant"];
-  const mkChips=(id,arr,isFeeling)=>{const c=$(id);if(!c)return;c.innerHTML="";arr.forEach(txt=>{const b=document.createElement("button");b.className="chip opreset";b.type="button";b.textContent=txt;b.onclick=()=>{if(isFeeling){const a=$("oAttach");if(a&&!a.checked&&(HEART.length||loadMemories().trim())){a.checked=true;oracleAttach=true;}}const inp=$("oInput");if(inp)inp.value=txt;askOracle();};c.appendChild(b);});};
-  mkChips("oQuestions",O_QUESTIONS,false);mkChips("oFeelings",O_FEELINGS,true);
+  field.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&!ev.shiftKey){ev.preventDefault();send();}});
+  field.addEventListener("input",()=>{field.style.height="auto";field.style.height=Math.min(field.scrollHeight,104)+"px";});
+  setTimeout(()=>{field.focus();},80);
 }
 async function askOracle(){
   if(oracleBusy||!ORACLE_URL)return;
   const input=$("oInput"),log=$("oLog"),body=$("oracleBody");
   if(!input||!log||!body)return;
   const q=input.value.trim();if(!q)return;
-  input.value="";
+  input.value="";input.style.height="auto";
   addMsg("q",q);
   oracleBusy=true;
-  const payload={question:q};
+  // A follow-up carries the last exchange inside the question (the API keeps no thread).
+  let asked=q;
+  if(oracleFollowing&&oracleLast){
+    const cut=(x,n)=>x.length>n?x.slice(0,n).replace(/\s+\S*$/,"")+"…":x;
+    const room=Math.max(120,960-q.length-120);
+    asked=('Earlier I asked: "'+cut(oracleLast.q,160)+'". You reflected: "'+cut(oracleLast.a,room-160)+'". Following on from that, I ask: "'+q+'"').slice(0,1000);
+  }
+  const payload={question:asked};
   if(oracleStation==="overall")payload.mode="overall";else payload.station=oracleStation;
   let attached=0;
-  if(oracleAttach){
+  if(oracleWithHeart){
     let texts=[];
     try{texts=JSON.parse(body.dataset.pre||"[]");}catch(e){texts=[];}
-    if(!texts.length)texts=HEART.slice(0,8).map(n=>n.text);
-    try{
-      const mem=loadMemories();
-      if(mem.trim()){
-        const chunks=[];
-        mem.split(/\n\s*\n/).forEach(pp=>{const t=pp.trim();if(!t)return;for(let k=0;k<t.length;k+=400)chunks.push(t.slice(k,k+400));});
-        texts=chunks.concat(texts);
-      }
-    }catch(e){}
-    const kept=[];let total=0;
-    for(const t of texts){
-      const s=String(t).slice(0,400);if(!s.trim())continue;
-      if(total+s.length>2000)break;kept.push(s);total+=s.length;
+    // the oracle's own kept answers stay home: only the person's own words go
+    if(!texts.length)texts=HEART.filter(n=>n.episodeTitle!=="The oracle").slice(0,8).map(n=>n.text);
+    const mem=loadMemories();
+    if(mem.trim()){
+      const chunks=[];
+      mem.split(/\n\s*\n/).forEach(pp=>{const s=pp.trim();if(!s)return;for(let k=0;k<s.length;k+=400)chunks.push(s.slice(k,k+400));});
+      texts=chunks.concat(texts);
     }
+    // anonymised here first, as in the game: names, places and details never leave the device
+    const anon=anonymise(texts.map(x=>String(x).slice(0,400)).filter(x=>x.trim()));
+    const kept=[];let total=0;
+    for(const s of anon){if(total+s.length>2000)break;kept.push(s);total+=s.length;}
     if(kept.length){payload.heart=kept;attached=kept.length;}
   }
   const think=document.createElement("div");think.className="msg a";
@@ -1390,35 +1413,36 @@ async function askOracle(){
     const d=await r.json();
     think.remove();
     if(!r.ok)throw new Error(d.error||("http "+r.status));
-    addMsg("a",d.text,d.sources,attached);
+    oracleLast={q:q,a:d.text};oracleFollowing=false;
+    addMsg("a",d.text,d.sources,attached,q);
+    // every exchange is kept in My Heart by itself (on this device only)
+    try{const kn=addNote(null,"\u201c"+q+"\u201d\n\n"+d.text);if(kn){kn.episodeTitle="The oracle";saveHeart();}}catch(e){}
   }catch(err){think.remove();addMsg("a","The oracle is silent — check your connection and try again.");}
   oracleBusy=false;
 }
-function addMsg(kind,text,sources,attached){
+// Follow up: the next question follows on from the last answer.
+function oracleFollowUp(){
+  const input=$("oInput");if(!input||!oracleLast)return;
+  oracleFollowing=true;input.placeholder="And what follows from it?";input.focus();
+}
+function addMsg(kind,text,sources,attached,q){
   const log=$("oLog");if(!log)return;
-  const div=document.createElement("div");div.className="msg "+kind;
+  const div=document.createElement("div");div.className="msg "+kind;div._q=q||"";
   if(kind==="q"){div.textContent=text;}
   else{
     div.innerHTML='<div class="atext"></div>'
-      +'<div class="afoot"><button class="mini speakbtn" aria-label="Speak this answer">Speak</button>'
-      +'<button class="mini copybtn" aria-label="Copy this answer">Copy</button>'
+      +'<div class="afoot"><button class="mini keepbtn" aria-label="Keep this answer">\u2665 Keep</button>'
+      +'<button class="mini hearbtn" aria-label="Hear this answer">Hear it</button>'
+      +'<button class="mini followbtn" aria-label="Follow up">Follow up</button>'
       +(attached?'<span class="note-date">'+attached+" note"+(attached>1?"s":"")+" attached</span>":"")
       +"</div>";
     div.querySelector(".atext").textContent=text;
-    const btn=div.querySelector(".speakbtn");
-    if(!("speechSynthesis" in window))btn.style.display="none";
-    else btn.addEventListener("click",()=>speakText(text,btn));
-    const cbtn=div.querySelector(".copybtn");
-    cbtn.addEventListener("click",async()=>{
-      const done=()=>{cbtn.textContent="Copied";setTimeout(()=>{cbtn.textContent="Copy";},1500);};
-      try{await navigator.clipboard.writeText(text);done();}
-      catch(e){
-        const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
-        document.body.appendChild(ta);ta.select();
-        try{document.execCommand("copy");done();}catch(_){toast("Copy not available");}
-        ta.remove();
-      }
-    });
+    const kbtn=div.querySelector(".keepbtn");
+    kbtn.addEventListener("click",()=>{try{const n=addNote(null,"\u201c"+(div._q||"")+"\u201d\n\n"+text);if(n){n.episodeTitle="The oracle";saveHeart();}kbtn.textContent="\u2665 Kept";kbtn.disabled=true;}catch(e){toast("Not kept");}});
+    const hbtn=div.querySelector(".hearbtn");
+    if(!("speechSynthesis" in window))hbtn.style.display="none";
+    else hbtn.addEventListener("click",()=>speakText(text,hbtn));
+    div.querySelector(".followbtn").addEventListener("click",()=>oracleFollowUp());
   }
   log.appendChild(div);log.scrollTop=log.scrollHeight;
 }
