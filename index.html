@@ -351,6 +351,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .membox{width:100%;margin-top:10px;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:8px;color:var(--ink);font-family:var(--sans);font-weight:300;font-size:.85em;line-height:1.65;padding:10px 12px;resize:vertical;min-height:96px}
 .membox:focus{outline:none;border-color:var(--gold-dim)}
 .membox::placeholder{color:var(--ink-faint)}
+.oprompts{margin:10px 0 4px}.opkicker{font-family:var(--serif);font-size:.8em;color:var(--ink-faint);margin:8px 0 6px}.oprow{display:flex;flex-wrap:wrap;gap:8px}.chip.opreset{cursor:pointer}.chip.opreset:hover{border-color:var(--gold-dim);color:var(--gold)}
 </style>
 </head>
 <body>
@@ -1333,6 +1334,8 @@ async function renderOracleBody(pre){
     +'</select></div>'
     +'<label class="attachrow"><input type="checkbox" id="oAttach"'+(oracleAttach?" checked":"")+'>'
     +'<span>Attach my heart'+(pre?" — 1 note ready":((HEART.length?" ("+HEART.length+" notes)":"")+(loadMemories().trim()?" · memories kept":"")))+'</span></label>'
+    +'<div class="oprompts"><div class="opkicker">Ask</div><div class="oprow" id="oQuestions"></div>'
+    +'<div class="opkicker">Share a feeling</div><div class="oprow" id="oFeelings"></div></div>'
     +'<div class="chatlog" id="oLog" aria-live="polite"></div>'
     +'<div class="heart-tools"><input class="heart-search" id="oInput" type="text" placeholder="Ask the archive…" autocomplete="off">'
     +'<button class="btn primary" id="oSend">Ask</button></div>';
@@ -1343,6 +1346,11 @@ async function renderOracleBody(pre){
   $("oSend").addEventListener("click",send);
   $("oInput").addEventListener("keydown",ev=>{if(ev.key==="Enter")send();});
   setTimeout(()=>{const i=$("oInput");if(i)i.focus();},80);
+  // Preset prompts, mirroring the game's sit-with-an-archetype layout: questions first, then feelings.
+  const O_QUESTIONS=["Who are you?","What do you teach?","Where do I meet you in my life?"];
+  const O_FEELINGS=["I feel lost.","I feel afraid.","still","bright","radiant"];
+  const mkChips=(id,arr,isFeeling)=>{const c=$(id);if(!c)return;c.innerHTML="";arr.forEach(txt=>{const b=document.createElement("button");b.className="chip opreset";b.type="button";b.textContent=txt;b.onclick=()=>{if(isFeeling){const a=$("oAttach");if(a&&!a.checked&&(HEART.length||loadMemories().trim())){a.checked=true;oracleAttach=true;}}const inp=$("oInput");if(inp)inp.value=txt;askOracle();};c.appendChild(b);});};
+  mkChips("oQuestions",O_QUESTIONS,false);mkChips("oFeelings",O_FEELINGS,true);
 }
 async function askOracle(){
   if(oracleBusy||!ORACLE_URL)return;
