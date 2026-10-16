@@ -343,6 +343,14 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   .searchbox{width:130px}.searchbox:focus{width:160px}
   nav{padding:12px 16px}
 }
+
+/* ---------- my memories (import) ---------- */
+.memwrap{margin:14px 0 6px;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(16,23,49,.4)}
+.memhead{font-family:var(--serif);font-size:1.08em;color:var(--ink)}
+.mempriv{display:block;font-family:var(--sans);font-size:.72em;font-weight:300;color:var(--ink-faint);margin-top:2px}
+.membox{width:100%;margin-top:10px;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:8px;color:var(--ink);font-family:var(--sans);font-weight:300;font-size:.85em;line-height:1.65;padding:10px 12px;resize:vertical;min-height:96px}
+.membox:focus{outline:none;border-color:var(--gold-dim)}
+.membox::placeholder{color:var(--ink-faint)}
 </style>
 </head>
 <body>
@@ -1181,12 +1189,21 @@ function openHeart(){
     +'<h2>My <em>Heart</em></h2>'
     +'<div class="heart-tools"><input class="heart-search" id="heartQ" type="search" placeholder="Search your notes…" autocomplete="off">'
     +'<button class="btn" id="heartExport">Export</button></div>'
+    +'<div class="memwrap"><div class="memhead">My memories<span class="mempriv">Stored only in this browser. Never uploaded.</span></div>'
+    +'<textarea class="membox" id="memBox" rows="6" placeholder="Paste your journal here — your story, in your own words. When you share your heart with the oracle, it reads this as context."></textarea>'
+    +'<div class="heart-tools" style="margin-top:8px"><button class="btn primary" id="memSave">Save memories</button>'
+    +'<button class="btn" id="memExport">Export</button>'
+    +'<button class="btn" id="memClear">Delete</button></div></div>'
     +'<div id="heartList"></div>'
     +'</div>';
   $("modal").classList.add("open");document.body.style.overflow="hidden";
   $("hClose").onclick=closeDetail;
   $("heartQ").addEventListener("input",()=>renderHeartList($("heartQ").value));
   $("heartExport").onclick=exportHeart;
+  $("memBox").value=loadMemories();
+  $("memSave").onclick=()=>{saveMemories($("memBox").value);toast("Memories kept — only in this browser");};
+  $("memExport").onclick=exportMemories;
+  $("memClear").onclick=()=>{clearMemories();};
   renderHeartList("");
 }
 function renderHeartList(q){
@@ -1256,7 +1273,7 @@ function exportHeart(){
 
 /* ============ oracle chat ============ */
 const ORACLE_URL="https://oracle-station.vy6ycr7tcc.workers.dev"; // the awakened oracle
-const ORACLE_KEY="a16af48d2554193869f51e95784801297ea36eb2bf6d9193c3004f2758ad0d97"; // shared secret — sent as x-oracle-key (speed bump, lives in public JS)
+const ORACLE_KEY="59BuP-TS05kPnHyOnV1mz_yef0Gc8S3SOUaamhW9qNg"; // shared secret — sent as x-oracle-key (speed bump, lives in public JS) // shared secret — sent as x-oracle-key (speed bump, lives in public JS)
 const STATION_FALLBACK=[
   {id:"overall",name:"The Whole Oracle"},
   {id:"matrix",name:"The Lampkeeper"},{id:"potentiator",name:"The Deep Well"},
@@ -1266,6 +1283,24 @@ const STATION_FALLBACK=[
 ];
 const OVERALL_OPTION={id:"overall",name:"The Whole Oracle"};
 let ORACLE_STATIONS=null,oracleStation="overall",oracleAttach=false,oracleBusy=false,speakBtn=null;
+const MEM_KEY='vfa-memories';
+function loadMemories(){try{return localStorage.getItem(MEM_KEY)||"";}catch(e){return "";}}
+function saveMemories(t){try{localStorage.setItem(MEM_KEY,t);}catch(e){}}
+function exportMemories(){
+  const t=loadMemories();if(!t.trim()){toast("Nothing to export yet");return;}
+  const blob=new Blob([t],{type:"text/plain"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="my-memories-"+new Date().toISOString().slice(0,10)+".txt";
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  toast("Memories exported — they never left this browser");
+}
+function clearMemories(){
+  if(!loadMemories().trim()){toast("Nothing to delete");return;}
+  if(!confirm("Delete your imported memories from this browser?"))return;
+  try{localStorage.removeItem(MEM_KEY);}catch(e){}
+  const b=document.getElementById("memBox");if(b)b.value="";
+  toast("Memories deleted");
+}
+
 function openOracle(opts){
   opts=opts||{};
   $("sheetInner").innerHTML=
@@ -1297,7 +1332,7 @@ async function renderOracleBody(pre){
     +ORACLE_STATIONS.map(s=>'<option value="'+esc(s.id)+'"'+(s.id===oracleStation?" selected":"")+'>'+esc(s.name)+'</option>').join("")
     +'</select></div>'
     +'<label class="attachrow"><input type="checkbox" id="oAttach"'+(oracleAttach?" checked":"")+'>'
-    +'<span>Attach my heart'+(pre?" — 1 note ready":(HEART.length?" ("+HEART.length+" notes)":""))+'</span></label>'
+    +'<span>Attach my heart'+(pre?" — 1 note ready":((HEART.length?" ("+HEART.length+" notes)":"")+(loadMemories().trim()?" · memories kept":"")))+'</span></label>'
     +'<div class="chatlog" id="oLog" aria-live="polite"></div>'
     +'<div class="heart-tools"><input class="heart-search" id="oInput" type="text" placeholder="Ask the archive…" autocomplete="off">'
     +'<button class="btn primary" id="oSend">Ask</button></div>';
@@ -1324,6 +1359,14 @@ async function askOracle(){
     let texts=[];
     try{texts=JSON.parse(body.dataset.pre||"[]");}catch(e){texts=[];}
     if(!texts.length)texts=HEART.slice(0,8).map(n=>n.text);
+    try{
+      const mem=loadMemories();
+      if(mem.trim()){
+        const chunks=[];
+        mem.split(/\n\s*\n/).forEach(pp=>{const t=pp.trim();if(!t)return;for(let k=0;k<t.length;k+=400)chunks.push(t.slice(k,k+400));});
+        texts=chunks.concat(texts);
+      }
+    }catch(e){}
     const kept=[];let total=0;
     for(const t of texts){
       const s=String(t).slice(0,400);if(!s.trim())continue;
