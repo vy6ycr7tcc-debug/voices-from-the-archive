@@ -1350,13 +1350,24 @@ function addMsg(kind,text,sources,attached){
   else{
     div.innerHTML='<div class="atext"></div>'
       +'<div class="afoot"><button class="mini speakbtn" aria-label="Speak this answer">Speak</button>'
+      +'<button class="mini copybtn" aria-label="Copy this answer">Copy</button>'
       +(attached?'<span class="note-date">'+attached+" note"+(attached>1?"s":"")+" attached</span>":"")
-      +(sources&&sources.length?'<span class="note-date">'+sources.map(s=>esc(s.source||"archive")+(s.page?" p."+s.page:"")).join(" · ")+"</span>":"")
       +"</div>";
     div.querySelector(".atext").textContent=text;
     const btn=div.querySelector(".speakbtn");
     if(!("speechSynthesis" in window))btn.style.display="none";
     else btn.addEventListener("click",()=>speakText(text,btn));
+    const cbtn=div.querySelector(".copybtn");
+    cbtn.addEventListener("click",async()=>{
+      const done=()=>{cbtn.textContent="Copied";setTimeout(()=>{cbtn.textContent="Copy";},1500);};
+      try{await navigator.clipboard.writeText(text);done();}
+      catch(e){
+        const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+        document.body.appendChild(ta);ta.select();
+        try{document.execCommand("copy");done();}catch(_){toast("Copy not available");}
+        ta.remove();
+      }
+    });
   }
   log.appendChild(div);log.scrollTop=log.scrollHeight;
 }
