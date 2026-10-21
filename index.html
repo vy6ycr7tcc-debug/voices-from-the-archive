@@ -150,6 +150,14 @@ section{max-width:1180px;margin:0 auto;padding:0 24px}
 .dlbtn .ic{width:16px;height:16px}
 .dlbtn.done{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,169,106,.12)}
 .dlbtn.busy{color:var(--gold-bright);border-color:var(--gold-dim)}
+.row-btns{flex:none;align-self:center;display:flex;flex-direction:column;gap:8px}
+.svbtn{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line-soft);
+  background:rgba(255,255,255,.04);color:var(--ink-dim);cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;transition:.2s}
+.svbtn:hover{border-color:var(--gold-dim);color:var(--ink)}
+.svbtn .ic{width:16px;height:16px}
+.svbtn.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,169,106,.12)}
+.svbtn.on .ic{fill:currentColor}
 .row-prog{height:3px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
 .row-prog div{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
 .card{background:var(--card);border:1px solid var(--line-soft);border-radius:16px;overflow:hidden;cursor:pointer;transition:.28s;position:relative}
@@ -343,23 +351,6 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   .searchbox{width:130px}.searchbox:focus{width:160px}
   nav{padding:12px 16px}
 }
-
-/* ---------- my memories (import) ---------- */
-.memwrap{margin:14px 0 6px;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(16,23,49,.4)}
-.memhead{font-family:var(--serif);font-size:1.08em;color:var(--ink)}
-.mempriv{display:block;font-family:var(--sans);font-size:.72em;font-weight:300;color:var(--ink-faint);margin-top:2px}
-.membox{width:100%;margin-top:10px;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:8px;color:var(--ink);font-family:var(--sans);font-weight:300;font-size:.85em;line-height:1.65;padding:10px 12px;resize:vertical;min-height:96px}
-.membox:focus{outline:none;border-color:var(--gold-dim)}
-.membox::placeholder{color:var(--ink-faint)}
-/* ---------- oracle ask bar (game layout) ---------- */
-.obar{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
-.oheart{flex:none;display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line-soft);color:var(--ink-dim);border-radius:999px;padding:8px 14px;font-size:.8rem;cursor:pointer;font-family:var(--sans)}
-.oheart[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
-.oconsent{font-size:.72em;color:var(--ink-faint);margin:6px 2px 0}
-#oInput{flex:1;background:rgba(7,11,22,.6);border:1px solid var(--line-soft);border-radius:12px;color:var(--ink);font-family:var(--sans);font-size:.85em;padding:10px 12px;resize:none;min-height:20px;max-height:104px}
-#oInput:focus{outline:none;border-color:var(--gold-dim)}
-.oseal{flex:none;background:transparent;border:1px solid var(--line-soft);color:var(--gold);border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer}
-.oseal:hover{border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -398,6 +389,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
       <label class="fselect"><span>Voice</span><select id="entSel"></select></label>
       <button class="fchip" id="hidePlayedBtn">Hide played</button>
       <button class="fchip" id="dlFilterBtn">Downloaded</button>
+      <button class="fchip" id="svFilterBtn">Saved</button>
       <button class="fchip" id="dlAllBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7.5 11.5L12 16l4.5-4.5"/><path d="M5 19.5h14"/></svg>Download all</button>
       <button class="fchip" id="shuffleBtn"><svg class="ic" viewBox="0 0 24 24"><path d="M3 7h4l10 10h4"/><path d="M17 13l4 4-4 4"/><path d="M3 17h4l2.5-2.5"/><path d="M13.5 9.5L17 7h4"/><path d="M17 3l4 4-4 4"/></svg>Surprise me</button>
     </div>
@@ -541,7 +533,7 @@ async function downloadEpisode(e){
     await fetchAndCache(e);
     delete dlProg[e.id]; dlDone.add(e.id);
     toast('Saved for offline listening');
-  }catch(err){ delete dlProg[e.id]; toast('Download failed ('+String((err&&err.message)||err).slice(0,80)+')'); }
+  }catch(err){ delete dlProg[e.id]; toast('Download failed \u2014 try again'); }
   paintDl(e.id); paintTopicsDl(); paintDlAll(); applyFilters();
 }
 function topicState(t){
@@ -618,6 +610,29 @@ async function refreshDownloads(){
   }catch(err){}
   paintDlAll();
   applyFilters();
+}
+
+/* ============ save for later (bookmarks, localStorage) ============ */
+const SAVED_KEY="wfw_saved";
+let showSaved=false;
+const getSaved=()=>{try{const p=JSON.parse(localStorage.getItem(SAVED_KEY)||"[]");return Array.isArray(p)?p:[];}catch(e){return[];}};
+const isSaved=id=>getSaved().includes(id);
+const SV_HEART='<svg class="ic" viewBox="0 0 24 24"><path d="M12 20.5C7 16.5 3.5 13.3 3.5 9.6 3.5 7 5.5 5 8 5c1.6 0 3.1.8 4 2.1C12.9 5.8 14.4 5 16 5c2.5 0 4.5 2 4.5 4.6 0 3.7-3.5 6.9-8.5 10.9z"/></svg>';
+function paintSaved(id){
+  document.querySelectorAll('[data-sv="'+id+'"]').forEach(el=>{
+    const on=isSaved(id);
+    el.classList.toggle("on",on);
+    el.setAttribute("aria-pressed",on?"true":"false");
+    if(el.id==="dSave") el.textContent=on?"Saved ✓":"Save";
+  });
+}
+function toggleSaved(id){
+  const s=getSaved(), i=s.indexOf(id);
+  if(i===-1) s.push(id); else s.splice(i,1);
+  try{localStorage.setItem(SAVED_KEY,JSON.stringify(s));}catch(e){}
+  paintSaved(id);
+  toast(i===-1?"Saved for later":"Removed from saved");
+  if(showSaved) applyFilters();
 }
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -925,12 +940,11 @@ const TOPIC_ESS={
  "The journey & catalyst":"Catalyst, processing, and the path of the spiritual seeker.",
  "Faith & incarnation":"Faith, reincarnation, and the journey between lives.",
  "Guidance for seekers":"Practical guidance for navigating these times.",
- "Ra \u2014 The Law of One":"The original contact \u2014 Don’s questions, Ra’s answers.",
- "The archetypal mind":"The seven functions of the mind \u2014 in metaphors you can hold."};
+ "Ra \u2014 The Law of One":"The original contact \u2014 Don’s questions, Ra’s answers."};
 const TOPIC_ORDER=["Meditation & stillness","Oneness & reality","Love","Service",
  "Contact & the craft","Learning to channel","The turning of the age","The human condition",
  "Q\u2019uo Q&A","Energy centers","The journey & catalyst","Faith & incarnation","Guidance for seekers",
- "Ra \u2014 The Law of One","The archetypal mind"];
+ "Ra \u2014 The Law of One"];
 function renderTopics(){
   const byT={}; EPS.forEach(e=>{const t=themeOf(e);(byT[t]=byT[t]||[]).push(e);});
   let h='';
@@ -963,6 +977,7 @@ function applyFilters(){
     if(activeEntity!=="All"&&!(e.entities||[]).includes(activeEntity)) return false;
     if(hidePlayed&&isPlayed(e.id)) return false;
     if(showDownloaded&&!dlDone.has(e.id)) return false;
+    if(showSaved&&!isSaved(e.id)) return false;
     if(q){
       const hay=(e.title+" "+(e.entities||[]).join(" ")+" "+themeOf(e)+" "+(e.summary||"")).toLowerCase();
       if(!q.split(/\s+/).every(w=>hay.includes(w))) return false;
@@ -993,13 +1008,22 @@ function cardHTML(e){
     +'<div class="row-meta"><span>'+esc((e.entities||[]).join(" · "))+'</span>'
     +'<span class="dur">'+I.clock+' '+fmt(e.duration_sec)+'</span></div>'
     +rowProgHTML(e)
-    +'</div><button class="dlbtn" data-dl="'+e.id+'" aria-label="Download for offline listening">'+dlIcon(e.id)+'</button></div>';
+    +'</div><div class="row-btns"><button class="svbtn'+(isSaved(e.id)?' on':'')+'" data-sv="'+e.id+'" aria-label="Save episode for later" aria-pressed="'+(isSaved(e.id)?'true':'false')+'">'+SV_HEART+'</button>'
+    +'<button class="dlbtn" data-dl="'+e.id+'" aria-label="Download for offline listening">'+dlIcon(e.id)+'</button></div></div>';
 }
 function renderGrid(){
   $("grid").innerHTML=filtered.map(cardHTML).join("");
   $("empty").style.display=filtered.length?"none":"block";
+  if(showSaved&&!filtered.length){
+    $("empty").querySelector("h3").textContent="No saved episodes yet.";
+    $("empty").querySelector("p").textContent="Tap the heart on any episode to save it here.";
+  }else{
+    $("empty").querySelector("h3").textContent="Nothing in this corner of the archive.";
+    $("empty").querySelector("p").textContent="Try a different search or theme.";
+  }
   $("gridCount").textContent=filtered.length+" episodes";
   $("grid").querySelectorAll(".row").forEach(c=>c.onclick=(ev)=>{
+    if(ev.target.closest(".svbtn")){toggleSaved(c.dataset.id);return;}
     if(ev.target.closest(".dlbtn")){toggleDownload(c.dataset.id);return;}
     openDetail(c.dataset.id);});
   $("grid").querySelectorAll(".tlink").forEach(b=>b.onclick=ev=>{
@@ -1067,6 +1091,7 @@ function openDetail(id){
     +'<button class="utilbtn musicbtn" id="dMusic"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v11"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg> Music</button>'
     +'<button class="utilbtn sleepbtn" id="dSleep">Sleep</button>'
     +'<button class="utilbtn dlbtn2" id="dDl" data-dl="'+e.id+'">'+dlLabel(e.id)+'</button>'
++'<button class="utilbtn'+(isSaved(e.id)?' on':'')+'" id="dSave" data-sv="'+e.id+'" aria-pressed="'+(isSaved(e.id)?'true':'false')+'">'+(isSaved(e.id)?'Saved ✓':'Save')+'</button>'
 +'<button class="utilbtn notebtn" id="dNote">Note</button></div>'
     +'</div>'
     +'<div class="transcript"><h4>Transcript</h4><div class="tbody">'+esc(e.transcript||"Transcript not available.")+'</div></div>'
@@ -1090,6 +1115,7 @@ function openDetail(id){
   $("dSleep").onclick=cycleSleep;
   $("dMusic").onclick=musicToggle;
   $("dDl").onclick=()=>toggleDownload(e.id);
+  $("dSave").onclick=()=>toggleSaved(e.id);
   $("dNote").onclick=()=>openNoteEditor(e);
   if(MUS.on)$("dMusic").classList.add('on');
   const sl=SLEEPS[sleepIx]; $("dSleep").textContent=sl?sl+' min':'Sleep'; $("dSleep").classList.toggle('on',!!sl);
@@ -1135,6 +1161,8 @@ $("q").addEventListener("input",()=>{$("qClear").classList.toggle("show",!!$("q"
   dlb.classList.toggle("on",showDownloaded);
   dlb.onclick=()=>{showDownloaded=!showDownloaded;dlb.classList.toggle("on",showDownloaded);
     try{localStorage.setItem("wfw_showdl",showDownloaded?"1":"0");}catch(e){}applyFilters();};
+  const svb=$("svFilterBtn");
+  svb.onclick=()=>{showSaved=!showSaved;svb.classList.toggle("on",showSaved);applyFilters();};
   $("dlAllBtn").onclick=downloadAll;
   $("shuffleBtn").onclick=()=>{
     const pool=filtered.length?filtered:EPS; if(!pool.length)return;
@@ -1199,21 +1227,12 @@ function openHeart(){
     +'<h2>My <em>Heart</em></h2>'
     +'<div class="heart-tools"><input class="heart-search" id="heartQ" type="search" placeholder="Search your notes…" autocomplete="off">'
     +'<button class="btn" id="heartExport">Export</button></div>'
-    +'<div class="memwrap"><div class="memhead">My memories<span class="mempriv">Stored only in this browser. Never uploaded.</span></div>'
-    +'<textarea class="membox" id="memBox" rows="6" placeholder="Paste your journal here — your story, in your own words. When you share your heart with the oracle, it reads this as context."></textarea>'
-    +'<div class="heart-tools" style="margin-top:8px"><button class="btn primary" id="memSave">Save memories</button>'
-    +'<button class="btn" id="memExport">Export</button>'
-    +'<button class="btn" id="memClear">Delete</button></div></div>'
     +'<div id="heartList"></div>'
     +'</div>';
   $("modal").classList.add("open");document.body.style.overflow="hidden";
   $("hClose").onclick=closeDetail;
   $("heartQ").addEventListener("input",()=>renderHeartList($("heartQ").value));
   $("heartExport").onclick=exportHeart;
-  $("memBox").value=loadMemories();
-  $("memSave").onclick=()=>{saveMemories($("memBox").value);toast("Memories kept — only in this browser");};
-  $("memExport").onclick=exportMemories;
-  $("memClear").onclick=()=>{clearMemories();};
   renderHeartList("");
 }
 function renderHeartList(q){
@@ -1293,35 +1312,6 @@ const STATION_FALLBACK=[
 ];
 const OVERALL_OPTION={id:"overall",name:"The Whole Oracle"};
 let ORACLE_STATIONS=null,oracleStation="overall",oracleAttach=false,oracleBusy=false,speakBtn=null;
-let oracleWithHeart=false,oracleLast=null,oracleFollowing=false;
-const MEM_KEY='vfa-memories';
-function loadMemories(){try{return localStorage.getItem(MEM_KEY)||"";}catch(e){return "";}}
-function saveMemories(t){try{localStorage.setItem(MEM_KEY,t);}catch(e){}}
-function exportMemories(){
-  const t=loadMemories();if(!t.trim()){toast("Nothing to export yet");return;}
-  const blob=new Blob([t],{type:"text/plain"});const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);a.download="my-memories-"+new Date().toISOString().slice(0,10)+".txt";
-  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
-  toast("Memories exported — they never left this browser");
-}
-function clearMemories(){
-  if(!loadMemories().trim()){toast("Nothing to delete");return;}
-  if(!confirm("Delete your imported memories from this browser?"))return;
-  try{localStorage.removeItem(MEM_KEY);}catch(e){}
-  const b=document.getElementById("memBox");if(b)b.value="";
-  toast("Memories deleted");
-}
-
-
-/* Anonymiser, mirroring the game's: names/places become [name A] (consistent across notes),
-   contact details, addresses, dates and numbers taken out — before anything leaves the device. */
-const ANON_KEEP=new Set(("I I'm I've I'd I'll Me My God Creator Infinite One Love Light Mind Body Spirit Matrix Potentiator Catalyst Experience Significator Transformation Great Way Choice Oracle Heart Soul Self Higher Universe Source Earth Sun Moon Monday Tuesday Wednesday Thursday Friday Saturday Sunday January February March April May June July August September October November December Today Tomorrow Yesterday Mom Mum Dad Mother Father Mama Papa Grandma Grandpa Granny Brother Sister Son Daughter Wife Husband Partner Friend Baby OK Okay Yes No Oh Maybe Please Thank Thanks Sorry Dear The A An And But Or So If When Then This That These Those It It's Its We Our Us You Your They Their He She His Her Him What Why How Who Where Which Not Now Here There Just Still Even Also").split(" "));
-function anonLearn(texts){const names=new Map();const cap=/(^|[^\p{L}\p{N}'’])(\p{Lu}[\p{L}'’-]+(?:\s+\p{Lu}[\p{L}'’-]+)*)/gu;
-  for(const t of texts){for(const line of String(t).split(/\n/)){cap.lastIndex=0;let m;while((m=cap.exec(line))){const start=m.index+m[1].length;const before=line.slice(0,start).trimEnd();const opens=before===""||/[.!?…:"“”]$/.test(before);const words=m[2].split(/\s+/).filter(w=>!ANON_KEEP.has(w.replace(/['’]s$/,"")));if(!words.length)continue;if(!opens)for(const w of words){const k=w.replace(/['’]s$/,"").toLowerCase();if(!names.has(k)){const n=names.size;names.set(k,"[name "+(n<26?String.fromCharCode(65+n):"#"+(n+1))+"]");}}}}}
-  return names;}
-function anonScrubOne(t,names){t=String(t);t=t.replace(/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g,"[email]");t=t.replace(/\b(?:https?:\/\/|www\.)\S+/gi,"[link]");t=t.replace(/(^|\s)@[\w.]{2,}/g,"$1[handle]");t=t.replace(/\b\d{1,5}\s+[A-Z][a-z]+\s+(Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Court|Ct|Plaza|Way)\b/g,"[address]");t=t.replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g,"[phone]");t=t.replace(/\b\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\b/g,"[date]");t=t.replace(/\$\s?[\d,]+(\.\d+)?/g,"[amount]");t=t.replace(/(^|[^\p{L}\p{N}'’])(\p{Lu}[\p{L}'’-]+(?:\s+\p{Lu}[\p{L}'’-]+)*)/gu,(m,p1,w)=>{const parts=w.split(/\s+/).map(x=>{const k=x.replace(/['’]s$/,"").toLowerCase();return names.get(k)||x;});return p1+parts.join(" ");});return t;}
-function anonymise(texts){const names=anonLearn(texts);return texts.map(t=>anonScrubOne(t,names));}
-
 function openOracle(opts){
   opts=opts||{};
   $("sheetInner").innerHTML=
@@ -1347,63 +1337,44 @@ async function renderOracleBody(pre){
     if(!ORACLE_STATIONS.some(s=>s.id==="overall"))ORACLE_STATIONS=[OVERALL_OPTION].concat(ORACLE_STATIONS);
     if(!$("oracleBody"))return;
   }
-  // Game layout: the ask bar holds a "share my heart" toggle, the question field, and the seal.
-  // Consent is asked anew each time the panel opens.
-  oracleWithHeart=false;
+  if(pre){oracleAttach=true;}
   body.innerHTML=
     '<div class="stationrow"><select id="oStation" aria-label="Station spirit">'
     +ORACLE_STATIONS.map(s=>'<option value="'+esc(s.id)+'"'+(s.id===oracleStation?" selected":"")+'>'+esc(s.name)+'</option>').join("")
     +'</select></div>'
+    +'<label class="attachrow"><input type="checkbox" id="oAttach"'+(oracleAttach?" checked":"")+'>'
+    +'<span>Attach my heart'+(pre?" — 1 note ready":(HEART.length?" ("+HEART.length+" notes)":""))+'</span></label>'
     +'<div class="chatlog" id="oLog" aria-live="polite"></div>'
-    +'<div class="obar"><button class="oheart" id="oHeart" type="button" aria-pressed="false" aria-label="Share my heart" title="Share my heart">♥<span>share my heart</span></button>'
-    +'<textarea id="oInput" rows="1" maxlength="600" placeholder="What would you ask?" aria-label="Your question"></textarea>'
-    +'<button class="oseal" id="oSend" type="button" aria-label="Ask">✧</button></div>'
-    +'<p class="oconsent" id="oConsent" hidden>Your notes go with this question only, names and details taken out, and aren\'t kept.</p>';
+    +'<div class="heart-tools"><input class="heart-search" id="oInput" type="text" placeholder="Ask the archive…" autocomplete="off">'
+    +'<button class="btn primary" id="oSend">Ask</button></div>';
   if(pre){try{body.dataset.pre=JSON.stringify(pre.slice(0,8));}catch(e){}}
-  const heartBtn=$("oHeart"),consent=$("oConsent"),field=$("oInput");
-  const setHeart=on=>{oracleWithHeart=on;heartBtn.setAttribute("aria-pressed",String(on));consent.hidden=!on;};
-  if(pre&&pre.length)setHeart(true);
-  heartBtn.addEventListener("click",()=>setHeart(!oracleWithHeart));
   $("oStation").addEventListener("change",ev=>{oracleStation=ev.target.value;});
+  $("oAttach").addEventListener("change",ev=>{oracleAttach=ev.target.checked;});
   const send=()=>askOracle();
   $("oSend").addEventListener("click",send);
-  field.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&!ev.shiftKey){ev.preventDefault();send();}});
-  field.addEventListener("input",()=>{field.style.height="auto";field.style.height=Math.min(field.scrollHeight,104)+"px";});
-  setTimeout(()=>{field.focus();},80);
+  $("oInput").addEventListener("keydown",ev=>{if(ev.key==="Enter")send();});
+  setTimeout(()=>{const i=$("oInput");if(i)i.focus();},80);
 }
 async function askOracle(){
   if(oracleBusy||!ORACLE_URL)return;
   const input=$("oInput"),log=$("oLog"),body=$("oracleBody");
   if(!input||!log||!body)return;
   const q=input.value.trim();if(!q)return;
-  input.value="";input.style.height="auto";
+  input.value="";
   addMsg("q",q);
   oracleBusy=true;
-  // A follow-up carries the last exchange inside the question (the API keeps no thread).
-  let asked=q;
-  if(oracleFollowing&&oracleLast){
-    const cut=(x,n)=>x.length>n?x.slice(0,n).replace(/\s+\S*$/,"")+"…":x;
-    const room=Math.max(120,960-q.length-120);
-    asked=('Earlier I asked: "'+cut(oracleLast.q,160)+'". You reflected: "'+cut(oracleLast.a,room-160)+'". Following on from that, I ask: "'+q+'"').slice(0,1000);
-  }
-  const payload={question:asked};
+  const payload={question:q};
   if(oracleStation==="overall")payload.mode="overall";else payload.station=oracleStation;
   let attached=0;
-  if(oracleWithHeart){
+  if(oracleAttach){
     let texts=[];
     try{texts=JSON.parse(body.dataset.pre||"[]");}catch(e){texts=[];}
-    // the oracle's own kept answers stay home: only the person's own words go
-    if(!texts.length)texts=HEART.filter(n=>n.episodeTitle!=="The oracle").slice(0,8).map(n=>n.text);
-    const mem=loadMemories();
-    if(mem.trim()){
-      const chunks=[];
-      mem.split(/\n\s*\n/).forEach(pp=>{const s=pp.trim();if(!s)return;for(let k=0;k<s.length;k+=400)chunks.push(s.slice(k,k+400));});
-      texts=chunks.concat(texts);
-    }
-    // anonymised here first, as in the game: names, places and details never leave the device
-    const anon=anonymise(texts.map(x=>String(x).slice(0,400)).filter(x=>x.trim()));
+    if(!texts.length)texts=HEART.slice(0,8).map(n=>n.text);
     const kept=[];let total=0;
-    for(const s of anon){if(total+s.length>2000)break;kept.push(s);total+=s.length;}
+    for(const t of texts){
+      const s=String(t).slice(0,400);if(!s.trim())continue;
+      if(total+s.length>2000)break;kept.push(s);total+=s.length;
+    }
     if(kept.length){payload.heart=kept;attached=kept.length;}
   }
   const think=document.createElement("div");think.className="msg a";
@@ -1414,36 +1385,24 @@ async function askOracle(){
     const d=await r.json();
     think.remove();
     if(!r.ok)throw new Error(d.error||("http "+r.status));
-    oracleLast={q:q,a:d.text};oracleFollowing=false;
-    addMsg("a",d.text,d.sources,attached,q);
-    // every exchange is kept in My Heart by itself (on this device only)
-    try{const kn=addNote(null,"\u201c"+q+"\u201d\n\n"+d.text);if(kn){kn.episodeTitle="The oracle";saveHeart();}}catch(e){}
+    addMsg("a",d.text,d.sources,attached);
   }catch(err){think.remove();addMsg("a","The oracle is silent — check your connection and try again.");}
   oracleBusy=false;
 }
-// Follow up: the next question follows on from the last answer.
-function oracleFollowUp(){
-  const input=$("oInput");if(!input||!oracleLast)return;
-  oracleFollowing=true;input.placeholder="And what follows from it?";input.focus();
-}
-function addMsg(kind,text,sources,attached,q){
+function addMsg(kind,text,sources,attached){
   const log=$("oLog");if(!log)return;
-  const div=document.createElement("div");div.className="msg "+kind;div._q=q||"";
+  const div=document.createElement("div");div.className="msg "+kind;
   if(kind==="q"){div.textContent=text;}
   else{
     div.innerHTML='<div class="atext"></div>'
-      +'<div class="afoot"><button class="mini keepbtn" aria-label="Keep this answer">\u2665 Keep</button>'
-      +'<button class="mini hearbtn" aria-label="Hear this answer">Hear it</button>'
-      +'<button class="mini followbtn" aria-label="Follow up">Follow up</button>'
+      +'<div class="afoot"><button class="mini speakbtn" aria-label="Speak this answer">Speak</button>'
       +(attached?'<span class="note-date">'+attached+" note"+(attached>1?"s":"")+" attached</span>":"")
+      +(sources&&sources.length?'<span class="note-date">'+sources.map(s=>esc(s.source||"archive")+(s.page?" p."+s.page:"")).join(" · ")+"</span>":"")
       +"</div>";
     div.querySelector(".atext").textContent=text;
-    const kbtn=div.querySelector(".keepbtn");
-    kbtn.addEventListener("click",()=>{try{const n=addNote(null,"\u201c"+(div._q||"")+"\u201d\n\n"+text);if(n){n.episodeTitle="The oracle";saveHeart();}kbtn.textContent="\u2665 Kept";kbtn.disabled=true;}catch(e){toast("Not kept");}});
-    const hbtn=div.querySelector(".hearbtn");
-    if(!("speechSynthesis" in window))hbtn.style.display="none";
-    else hbtn.addEventListener("click",()=>speakText(text,hbtn));
-    div.querySelector(".followbtn").addEventListener("click",()=>oracleFollowUp());
+    const btn=div.querySelector(".speakbtn");
+    if(!("speechSynthesis" in window))btn.style.display="none";
+    else btn.addEventListener("click",()=>speakText(text,btn));
   }
   log.appendChild(div);log.scrollTop=log.scrollHeight;
 }
