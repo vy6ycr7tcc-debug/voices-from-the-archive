@@ -7,8 +7,8 @@ const AUDIO = 'wfw-audio-v1';
 const SHELL = ['./', './index.html', './episodes.json', './manifest.webmanifest'];
 // Audio hosts whose MP3s the SW intercepts (streaming passthrough + offline
 // cache fallback with Range support). GitHub raw serves CORS * and Range;
-// the R2 public bucket serves Range but needs a CORS policy for fetch() —
-// see the offline-download note in index.html.
+// the R2 public bucket serves Range and, since 2026-10-21, a CORS policy
+// (GET/HEAD, any origin) so the app's fetch-based offline downloads succeed.
 const AUDIO_HOSTS = [
   'raw.githubusercontent.com',
   'pub-8e7922afef144c8a81b657a25e424b0d.r2.dev',
