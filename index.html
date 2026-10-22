@@ -1212,15 +1212,32 @@ $("refresh").onclick=async()=>{
 };
 
 /* Reset cache: clears Cache Storage + unregisters the service worker, then
-   reloads fresh. Your notes, saved list and playback positions (localStorage)
-   are deliberately left alone. */
+   reloads with a cache-busting URL so iOS Safari cannot serve the same old
+   copy again. Your notes, saved list and playback positions (localStorage)
+   are deliberately left alone. Never waits forever: if the storage APIs
+   stall (iOS is slow deleting large audio caches), it reloads anyway. */
 $("cacheReset").onclick=async()=>{
   if(!confirm("Reset the app's cached data? Your notes, saved episodes and playback positions stay. Offline downloads will be removed and the app will reload fresh."))return;
+  toast("Clearing cache…");
+  const stall=new Promise(r=>setTimeout(r,5000));
   try{
-    if("caches" in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}
-    if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}
+    await Promise.race([
+      (async()=>{
+        if("caches" in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}
+        if("serviceWorker" in navigator){
+          const regs=await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r=>r.unregister()));
+          /* If a worker is still alive (iOS keeps it until Safari quits),
+             ask it to wipe its own caches too. */
+          if(navigator.serviceWorker.controller)
+            navigator.serviceWorker.controller.postMessage({type:"wfw-clear-all"});
+        }
+      })(),
+      stall
+    ]);
   }catch(err){}
-  location.reload();
+  const u=new URL(location.href); u.searchParams.set("v",Date.now().toString());
+  location.replace(u.toString());
 };
 
 /* starfield */
@@ -1500,6 +1517,16 @@ fetch("episodes.json").then(r=>r.json()).then(d=>{EPS=d;applyFilters();refreshDo
   const epId=new URLSearchParams(location.search).get("ep");
   if(epId&&EPS.some(x=>x.id===epId))openDetail(epId);})
 .catch(()=>{$("empty").style.display="block";$("empty").querySelector("h3").textContent="Could not load the archive.";});
+/* After a cache reset (?v= timestamp), confirm visibly that the fresh copy
+   loaded, then drop the parameter so links stay clean. */
+try{
+  const sp=new URLSearchParams(location.search);
+  if(sp.has("v")){
+    sp.delete("v"); const q=sp.toString();
+    history.replaceState(null,"",location.pathname+(q?"?"+q:""));
+    setTimeout(()=>toast("Cache cleared — fresh copy loaded"),700);
+  }
+}catch(err){}
 </script>
 <div class="toast" id="toast"></div>
 </body>

@@ -2,7 +2,7 @@
    App shell offline-first; episodes.json stale-while-revalidate.
    Audio: network-first passthrough (streaming stays native), with cache
    fallback to explicit offline downloads, including Range support. */
-const CACHE = 'wfw-shell-v4';
+const CACHE = 'wfw-shell-v5';
 const AUDIO = 'wfw-audio-v1';
 const SHELL = ['./', './index.html', './episodes.json', './manifest.webmanifest'];
 // Audio hosts whose MP3s the SW intercepts (streaming passthrough + offline
@@ -26,6 +26,14 @@ self.addEventListener('activate', (e) => {
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== AUDIO).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+/* Reset button fallback: if the worker is still alive after unregister
+   (iOS Safari keeps it until the browser quits), wipe every cache on demand. */
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'wfw-clear-all') {
+    e.waitUntil(caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))));
+  }
 });
 
 function audioHeaders(extra) {
