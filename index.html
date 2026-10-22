@@ -768,6 +768,16 @@ function ensureAudioGraph(){
     vizData=new Uint8Array(analyser.frequencyBinCount);
   }catch(err){AC=null;analyser=null;}
 }
+/* iOS Safari only unlocks an AudioContext from inside a real tap handler.
+   The audio element's "play" event fires later, outside the gesture, so a
+   context created there stays suspended — and a media element routed through
+   a suspended context plays silently while its clock advances. Every play
+   tap therefore unlocks the graph synchronously, before audio.play(). */
+function unlockAudio(){
+  if(REDUCED)return;
+  ensureAudioGraph();
+  if(AC&&AC.state==='suspended')AC.resume().catch(()=>{});
+}
 function sizeViz(){
   if(!vizCanvas)return;
   const dpr=Math.min(2,window.devicePixelRatio||1);
@@ -791,9 +801,9 @@ function drawViz(){
   for(let i=0;i<n;i++){
     const bin=Math.min(vizData.length-1,Math.floor(Math.pow(i/n,1.6)*vizData.length*.72));
     const v=vizData[bin]/255, bh=Math.max(2,v*top), x=i*bw;
-    const r=Math.min(3,(bw-3)/2);
+    const r=Math.max(0,Math.min(3,(bw-3)/2)), wd=Math.max(1,bw-3);
     vizCtx.beginPath();
-    if(vizCtx.roundRect)vizCtx.roundRect(x+1.5,h-bh,bw-3,bh,r);else vizCtx.rect(x+1.5,h-bh,bw-3,bh);
+    if(vizCtx.roundRect)vizCtx.roundRect(x+1.5,h-bh,wd,bh,r);else vizCtx.rect(x+1.5,h-bh,wd,bh);
     vizCtx.fill();
   }
 }
@@ -1144,7 +1154,7 @@ function openDetail(id){
     +'</div>';
   $("modal").classList.add("open"); document.body.style.overflow="hidden";
   $("dClose").onclick=closeDetail;
-  $("dPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
+  $("dPlay").onclick=()=>{unlockAudio();audio.paused?audio.play().catch(()=>{}):audio.pause();};
   $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
   $("dTrack").onclick=null; bindScrub($("dTrack"));
   $("dBack").onclick=()=>{audio.currentTime=Math.max(0,audio.currentTime-15);};
@@ -1172,7 +1182,7 @@ $("scrim").onclick=closeDetail;
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeDetail();});
 
 /* ============ chrome wiring ============ */
-$("mPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
+$("mPlay").onclick=()=>{unlockAudio();audio.paused?audio.play().catch(()=>{}):audio.pause();};
 $("mPrev").onclick=()=>step(-1,true);
 $("mNext").onclick=()=>step(1,true);
 $("mOpen").onclick=()=>{if(currentId)openDetail(currentId);};
@@ -1201,7 +1211,7 @@ $("q").addEventListener("input",()=>{$("qClear").classList.toggle("show",!!$("q"
   $("shuffleBtn").onclick=()=>{
     const pool=filtered.length?filtered:EPS; if(!pool.length)return;
     const e=pool[Math.floor(Math.random()*pool.length)];
-    loadEpisode(e,true); toast("Shuffled: "+e.title);
+    unlockAudio(); loadEpisode(e,true); toast("Shuffled: "+e.title);
   };
 
 $("refresh").onclick=async()=>{
