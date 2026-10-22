@@ -236,7 +236,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
   padding:7px 14px;font-size:.74rem;letter-spacing:.08em;cursor:pointer;font-family:var(--sans);transition:.2s;min-width:70px}
 .utilbtn:hover{border-color:var(--gold-dim);color:var(--gold)}
 .utilbtn.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,169,106,.12)}
-.p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative}
+.p-track{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);cursor:pointer;position:relative;touch-action:none}
 .p-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));width:0%}
 .p-knob{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--gold-bright);
   transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5);left:0%}
@@ -265,7 +265,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
 .minibar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;
   background:rgba(10,14,28,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .minibar.show{display:block;animation:slideup .3s ease}
-.mini-prog{position:absolute;top:0;left:0;right:0;height:14px;cursor:pointer;z-index:2}
+.mini-prog{position:absolute;top:0;left:0;right:0;height:20px;cursor:pointer;z-index:2;touch-action:none}
 .mini-prog .track{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.1)}
 .mini-prog .fill{position:absolute;top:0;left:0;bottom:auto;height:3px;width:0%;
   background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
@@ -363,6 +363,7 @@ footer .rule{width:60px;height:1px;background:var(--gold-dim);margin:0 auto 20px
     <button class="iconbtn" id="heartBtn" title="My Heart — your notes" aria-label="My Heart — your notes"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20.5C7 16.5 3.5 13.3 3.5 9.6 3.5 7 5.5 5 8 5c1.6 0 3.1.8 4 2.1C12.9 5.8 14.4 5 16 5c2.5 0 4.5 2 4.5 4.6 0 3.7-3.5 6.9-8.5 10.9z"/></svg><span class="badge" id="heartBadge" hidden></span></button>
     <button class="iconbtn" id="oracleBtn" title="Oracle — ask the archive" aria-label="Oracle — ask the archive"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg></button>
     <button class="iconbtn" id="refresh" title="Reload the episode catalog"><svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>
+    <button class="iconbtn" id="cacheReset" title="Reset cached data" aria-label="Reset cached data"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></button>
   </div>
 </nav>
 
@@ -513,10 +514,16 @@ function toggleDownload(id){
   const e=epById(id); if(!e||dlProg[id]!=null) return;
   if(dlDone.has(id)) removeDownload(e); else downloadEpisode(e);
 }
-async function fetchAndCache(e){
-  const r=await fetch(absAudio(e));
+async function fetchAndCache(e,signal){
+  const r=await fetch(absAudio(e),signal?{signal}:undefined);
   if(!r.ok) throw new Error('http '+r.status);
   const total=parseInt(r.headers.get('content-length')||'0',10);
+  if(!r.body){
+    const blob=await r.blob();
+    const c=await caches.open(AUDIO_CACHE);
+    await c.put(absAudio(e),new Response(blob,{headers:{'Content-Type':'audio/mpeg'}}));
+    return;
+  }
   const rd=r.body.getReader(), chunks=[]; let got=0;
   for(;;){
     const {done,value}=await rd.read(); if(done)break;
@@ -526,6 +533,11 @@ async function fetchAndCache(e){
   const c=await caches.open(AUDIO_CACHE);
   await c.put(absAudio(e),new Response(new Blob(chunks,{type:'audio/mpeg'}),
     {headers:{'Content-Type':'audio/mpeg'}}));
+}
+/* Per-file timeout so one stalled download cannot hang a whole topic. */
+function fetchWithTimeout(e,ms){
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),ms||120000);
+  return fetchAndCache(e,ctl.signal).finally(()=>clearTimeout(t));
 }
 async function downloadEpisode(e){
   dlProg[e.id]=0; paintDl(e.id);
@@ -559,14 +571,17 @@ function paintTopicsDl(){
 async function downloadTopic(t){
   const missing=EPS.filter(e=>themeOf(e)===t&&!dlDone.has(e.id)&&dlProg[e.id]==null);
   if(!missing.length){ toast('All sessions in this topic are saved for offline'); return; }
+  let ok=0, fail=0;
   for(const e of missing){
     dlProg[e.id]=0; paintDl(e.id); paintTopicsDl();
-    try{ await fetchAndCache(e); delete dlProg[e.id]; dlDone.add(e.id); }
-    catch(err){ delete dlProg[e.id]; toast('Download failed \u2014 try again'); break; }
+    try{ await fetchWithTimeout(e); delete dlProg[e.id]; dlDone.add(e.id); ok++; }
+    catch(err){ delete dlProg[e.id]; fail++; }
     paintDl(e.id); paintTopicsDl();
   }
   paintTopicsDl(); applyFilters();
-  toast('Topic saved for offline listening');
+  toast(fail
+    ?('Saved '+ok+' of '+missing.length+' sessions \u2014 '+fail+' failed, tap the button to retry')
+    : 'Topic saved for offline listening');
 }
 let dlAllBusy=false;
 function paintDlAll(done,total){
@@ -586,16 +601,18 @@ async function downloadAll(){
   const gb=(EPS.reduce((a,e)=>a+(e.duration_sec||0),0)*10000/1e9).toFixed(1);
   if(!confirm("Download all "+EPS.length+" sessions (~"+gb+" GB) for offline listening?")) return;
   dlAllBusy=true; paintDlAll(0,missing.length);
-  let done=0;
+  let done=0, failed=0;
   for(const e of missing){
     dlProg[e.id]=0; paintDl(e.id); paintTopicsDl();
-    try{ await fetchAndCache(e); delete dlProg[e.id]; dlDone.add(e.id); done++; }
-    catch(err){ delete dlProg[e.id]; toast("Download failed \u2014 try again"); break; }
+    try{ await fetchWithTimeout(e); delete dlProg[e.id]; dlDone.add(e.id); done++; }
+    catch(err){ delete dlProg[e.id]; failed++; }
     paintDl(e.id); paintTopicsDl(); paintDlAll(done,missing.length);
   }
   dlAllBusy=false; paintDlAll();
   paintTopicsDl(); applyFilters();
-  if(done) toast(done+" sessions saved for offline listening");
+  if(done) toast(failed
+    ? (done+" sessions saved, "+failed+" failed \u2014 tap Download all to retry")
+    : (done+" sessions saved for offline listening"));
 }
 async function removeDownload(e){
   try{const c=await caches.open(AUDIO_CACHE);await c.delete(absAudio(e));}catch(err){}
@@ -673,6 +690,10 @@ const ORB_SVG='<svg class="orb" viewBox="0 0 200 200" preserveAspectRatio="xMidY
 
 /* ============ audio engine ============ */
 const audio=new Audio(); audio.preload="none";
+/* CORS mode is required: the visualizer feeds this element into Web Audio,
+   and a cross-origin MP3 without it plays silence once connected. R2 and
+   GitHub raw both serve Access-Control-Allow-Origin: *, so this is safe. */
+audio.crossOrigin="anonymous";
 let detailOpen=false;
 
 /* Next/Prev stay within the current episode's theme. */
@@ -846,10 +867,27 @@ audio.addEventListener("timeupdate",()=>{
     if("mediaSession" in navigator){try{navigator.mediaSession.setPositionState({duration:d,playbackRate:audio.playbackRate||1,position:Math.min(audio.currentTime,d)});}catch(e){}}
   }
 });
-function seekFromTrack(ev){
-  const t=ev.currentTarget, r=t.getBoundingClientRect();
-  const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
-  if(audio.duration&&isFinite(audio.duration)) audio.currentTime=f*audio.duration;
+/* Draggable scrub bars (detail player + mini player). Pointer events with
+   touch-action:none so a drag scrubs instead of scrolling the page — the
+   old click-only bars could not be dragged, so going back mid-episode felt
+   broken on touch devices. */
+let scrubEl=null;
+function scrubTo(el,clientX){
+  const r=el.getBoundingClientRect();
+  const f=Math.min(1,Math.max(0,(clientX-r.left)/r.width));
+  try{if(audio.duration&&isFinite(audio.duration)) audio.currentTime=f*audio.duration;}catch(err){}
+}
+function bindScrub(el){
+  if(!el||el._scrubBound)return; el._scrubBound=true;
+  el.addEventListener("pointerdown",ev=>{
+    ev.preventDefault(); scrubEl=el;
+    try{el.setPointerCapture(ev.pointerId);}catch(err){}
+    scrubTo(el,ev.clientX);
+  });
+  el.addEventListener("pointermove",ev=>{ if(scrubEl===el) scrubTo(el,ev.clientX); });
+  const end=ev=>{ if(scrubEl===el){scrubEl=null; try{el.releasePointerCapture(ev.pointerId);}catch(err){}} };
+  el.addEventListener("pointerup",end);
+  el.addEventListener("pointercancel",end);
 }
 
 /* ============ ambient bed: Inward Journey water, crossfade-looped ============ */
@@ -1108,7 +1146,7 @@ function openDetail(id){
   $("dClose").onclick=closeDetail;
   $("dPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
   $("dPrev").onclick=()=>step(-1,true); $("dNext").onclick=()=>step(1,true);
-  $("dTrack").onclick=seekFromTrack;
+  $("dTrack").onclick=null; bindScrub($("dTrack"));
   $("dBack").onclick=()=>{audio.currentTime=Math.max(0,audio.currentTime-15);};
   $("dFwd").onclick=()=>{try{audio.currentTime=Math.min(audio.duration||1e9,audio.currentTime+30);}catch(err){}};
   $("dSpeed").onclick=cycleSpeed; $("dSpeed").textContent=SPEEDS[speedIx]+'x';
@@ -1138,11 +1176,7 @@ $("mPlay").onclick=()=>{audio.paused?audio.play().catch(()=>{}):audio.pause();};
 $("mPrev").onclick=()=>step(-1,true);
 $("mNext").onclick=()=>step(1,true);
 $("mOpen").onclick=()=>{if(currentId)openDetail(currentId);};
-$("miniProg").addEventListener("click",ev=>{
-  const r=ev.currentTarget.getBoundingClientRect();
-  const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
-  if(audio.duration&&isFinite(audio.duration))audio.currentTime=f*audio.duration;
-});
+bindScrub($("miniProg"));
 $("miniArt").parentElement.querySelector(".mini-info").onclick=()=>{if(currentId)openDetail(currentId);};
 $("q").addEventListener("input",()=>{$("qClear").classList.toggle("show",!!$("q").value);applyFilters();});
   $("qClear").onclick=()=>{$("q").value="";$("qClear").classList.remove("show");applyFilters();$("q").focus();};
@@ -1175,6 +1209,18 @@ $("refresh").onclick=async()=>{
   try{const r=await fetch("episodes.json?t="+Date.now(),{cache:"no-store"});EPS=await r.json();applyFilters();b.innerHTML=I.check;}
   catch(e){b.innerHTML="✕";}
   setTimeout(()=>{b.innerHTML='<svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';},1500);
+};
+
+/* Reset cache: clears Cache Storage + unregisters the service worker, then
+   reloads fresh. Your notes, saved list and playback positions (localStorage)
+   are deliberately left alone. */
+$("cacheReset").onclick=async()=>{
+  if(!confirm("Reset the app's cached data? Your notes, saved episodes and playback positions stay. Offline downloads will be removed and the app will reload fresh."))return;
+  try{
+    if("caches" in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}
+    if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}
+  }catch(err){}
+  location.reload();
 };
 
 /* starfield */

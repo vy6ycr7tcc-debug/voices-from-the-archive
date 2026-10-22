@@ -2,7 +2,7 @@
    App shell offline-first; episodes.json stale-while-revalidate.
    Audio: network-first passthrough (streaming stays native), with cache
    fallback to explicit offline downloads, including Range support. */
-const CACHE = 'wfw-shell-v3';
+const CACHE = 'wfw-shell-v4';
 const AUDIO = 'wfw-audio-v1';
 const SHELL = ['./', './index.html', './episodes.json', './manifest.webmanifest'];
 // Audio hosts whose MP3s the SW intercepts (streaming passthrough + offline
